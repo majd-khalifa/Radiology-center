@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:radiology_center_app/core/style/apptheme/app_theme.dart';
-import 'views/patient_dashboard/patient_dashboard.dart';
+import 'package:radiology_center_app/core/style/app_theme.dart';
+import 'views/patient_dashboard/home/home_page.dart';
 
 class App extends StatelessWidget {
   const App({super.key});

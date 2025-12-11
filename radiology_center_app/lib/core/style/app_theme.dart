@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import '../../constant/app_color.dart';
+import '../constant/app_color.dart';
 
 class AppTheme {
   // Gradient decoration
