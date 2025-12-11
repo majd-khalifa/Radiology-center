@@ -1,10 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:radiology_center_app/app.dart';
-
-void main() {
-  runApp(const MyApp());
-}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -15,9 +10,14 @@ class MyApp extends StatelessWidget {
       designSize: const Size(412, 915),
       minTextAdapt: true,
       splitScreenMode: true,
-      builder: (context, child) {
-        return const App(); // ننادي الـ App من ملف مستقل
+      builder: (_, child) {
+        return MaterialApp(
+          title: 'task7',
+          debugShowCheckedModeBanner: false,
+          home: child,
+        );
       },
+      child: const MyApp(),
     );
   }
 }
