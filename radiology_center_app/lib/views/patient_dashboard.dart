@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:radiology_center_app/core/style/colors/color.dart';
+import 'package:radiology_center_app/core/constant/app_color.dart';
 import 'package:radiology_center_app/core/widgets/custom_app_bar.dart';
+import '../core/constant/text_style.dart';
 
 class PatientDashboard extends StatelessWidget {
   const PatientDashboard({super.key});
@@ -53,33 +54,16 @@ class PatientDashboard extends StatelessWidget {
                               children: [
                                 Text(
                                   "Welcome!",
-                                  style: TextStyle(
-                                    fontFamily: 'Rubik',
-                                    fontSize: 32,
-                                    height: 38 / 32,
-                                    fontWeight: FontWeight.w600,
-                                    color: titleColor,
-                                  ),
+                                  style: AppTextStyles.textStyle32,
                                 ),
                                 Text(
                                   "Rajesh",
-                                  style: TextStyle(
-                                    fontFamily: 'Rubik',
-                                    fontSize: 32,
-                                    height: 38 / 32,
-                                    fontWeight: FontWeight.w600,
-                                    color: titleColor,
-                                  ),
+                                  style: AppTextStyles.textStyle32,
                                 ),
                                 const SizedBox(height: 4),
                                 Text(
                                   "How is it going today?",
-                                  style: TextStyle(
-                                    fontFamily: 'Rubik',
-                                    fontSize: 16,
-                                    height: 24 / 16,
-                                    color: subtitleColor,
-                                  ),
+                                  style: AppTextStyles.textStyle16,
                                 ),
                                 const SizedBox(height: 24),
                                 SizedBox(
@@ -98,12 +82,7 @@ class PatientDashboard extends StatelessWidget {
                                     ),
                                     label: Text(
                                       'Urgent Care',
-                                      style: TextStyle(
-                                        fontFamily: 'Rubik',
-                                        fontSize: 14,
-                                        height: 18 / 14,
-                                        color: white,
-                                      ),
+                                      style: AppTextStyles.textStyle14,
                                     ),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: urgent,
@@ -149,12 +128,8 @@ class PatientDashboard extends StatelessWidget {
                               padding: const EdgeInsets.all(20),
                               child: Text(
                                 "Our Services",
-                                style: TextStyle(
-                                  fontFamily: 'Rubik',
-                                  fontSize: 16,
-                                  height: 20 / 16,
-                                  fontWeight: FontWeight.w600,
-                                  color: titleColor,
+                                style: AppTextStyles.textStyle16.copyWith(
+                                  color: black,
                                 ),
                               ),
                             ),
@@ -196,23 +171,13 @@ class PatientDashboard extends StatelessWidget {
                                 children: [
                                   Text(
                                     "Appointment",
-                                    style: TextStyle(
-                                      fontFamily: 'Rubik',
-                                      fontSize: 16,
-                                      height: 20 / 16,
-                                      fontWeight: FontWeight.w600,
-                                      color: titleColor,
+                                    style: AppTextStyles.textStyle16.copyWith(
+                                      color: black,
                                     ),
                                   ),
                                   Text(
                                     "See All",
-                                    style: TextStyle(
-                                      fontFamily: 'Rubik',
-                                      fontSize: 14,
-                                      height: 18 / 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: tosca,
-                                    ),
+                                    style: AppTextStyles.textStyle14,
                                   ),
                                 ],
                               ),
@@ -282,16 +247,7 @@ Widget _buildCategory(String label, String iconPath) {
       const SizedBox(height: 8),
 
       // النص خارج الكونتينر
-      Text(
-        label,
-        style: TextStyle(
-          fontFamily: 'Rubik',
-          fontSize: 12,
-          height: 16 / 12,
-          fontWeight: FontWeight.w600,
-          color: titleColor,
-        ),
-      ),
+      Text(label, style: AppTextStyles.textStyle12),
     ],
   );
 }

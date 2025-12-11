@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:radiology_center_app/core/style/colors/color.dart';
+import 'package:radiology_center_app/core/constant/app_color.dart';
 
 class HomeHeader extends StatelessWidget {
   const HomeHeader({super.key});
