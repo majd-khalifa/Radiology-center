@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:radiology_center_app/core/widgets/custom_app_bar.dart';
+import 'package:radiology_center_app/views/patient_dashboard/appointment/appointment_screen.dart';
 import 'home_body.dart';
 import 'home_header.dart';
+import 'package:radiology_center_app/widgets/bottom_nav_bar.dart';
 
 class PatientDashboard extends StatelessWidget {
   const PatientDashboard({super.key});
@@ -18,18 +20,32 @@ class PatientDashboard extends StatelessWidget {
         ),
         child: SafeArea(
           child: Column(
-            children: [
-              const CustomAppBar(
+            children: const [
+              CustomAppBar(
                 leftWidget: CircleAvatar(
                   backgroundImage: AssetImage('assets/images/profile.png'),
                   radius: 21,
                 ),
               ),
-              const DashboardHeader(),
-              const HomeBody(), // هنا صار كل الـ Services + Appointment
+              DashboardHeader(),
+              HomeBody(),
             ],
           ),
         ),
+      ),
+      bottomNavigationBar: BottomNavBar(
+        currentIndex: 0,
+        onTap: (index) {
+          if (index == 1) {
+            // ✅ لما يضغط على Appointment
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => const AppointmentScreen(),
+              ),
+            );
+          }
+        },
       ),
     );
   }

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 const Color white = Color(0xffFFFFFF);
-const Color black = Color(0xff000000);
+const Color black = Color(0xff333333);
 const Color bottomIcons = Color(0xff183E78);
 const Color homeIcons = Color(0xff2A7EFC);
 const Color urgent = Color(0xffFF9C27);
@@ -13,6 +13,7 @@ const Color iconblue = Color(0xff2A7EFC);
 const Color silver = Color(0xffE9ECF2);
 const Color tosca = Color(0xff257CFF);
 const Color pinkBackground = Color(0xffFFA3DA);
+const Color grey = Color(0xff808D9E);
 
 // Gradient colors (from Figma design)
 const Color gradientWhite = Color(0xFFFFFFFF);
