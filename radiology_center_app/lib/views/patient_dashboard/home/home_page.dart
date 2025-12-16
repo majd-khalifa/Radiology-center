@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:radiology_center_app/core/widgets/custom_app_bar.dart';
+import 'package:radiology_center_app/views/patient_dashboard/chat/xray_analyzer_screen.dart';
+import 'package:radiology_center_app/widgets/custom_app_bar_home.dart';
 import 'package:radiology_center_app/views/patient_dashboard/appointment/appointment_screen.dart';
 import 'home_body.dart';
 import 'home_header.dart';
@@ -43,6 +44,12 @@ class PatientDashboard extends StatelessWidget {
               MaterialPageRoute(
                 builder: (context) => const AppointmentScreen(),
               ),
+            );
+          } else if (index == 2) {
+            // ✅ لما يضغط على ChatBot
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => XRayAnalyzerScreen()),
             );
           }
         },

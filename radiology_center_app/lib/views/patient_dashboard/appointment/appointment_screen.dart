@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
 import 'package:radiology_center_app/core/constant/text_style.dart';
+import 'package:radiology_center_app/widgets/custom_app_bar.dart';
+import 'package:radiology_center_app/widgets/scrollable_options.dart';
 
 class AppointmentScreen extends StatefulWidget {
   const AppointmentScreen({super.key});
@@ -23,7 +24,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     "03:00 PM",
     "04:00 PM",
   ];
-
   final List<String> reminders = ["30", "40", "25", "10", "35"];
 
   DateTime focusedDay = DateTime.now();
@@ -42,10 +42,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         child: SafeArea(
           child: Column(
             children: [
-              _buildAppBar(),
+              const CustomAppBar(title: "Appointment"),
               SizedBox(height: 16.h),
 
-              // Calendar Section
+              // Calendar
               Padding(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Container(
@@ -107,7 +107,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                 ),
               ),
 
-              // ✅ المسافة المطلوبة بين الجدول والقسم الأبيض
               SizedBox(height: 28.h),
 
               // White Section
@@ -135,7 +134,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           ),
                         ),
                         SizedBox(height: 27.h),
-                        _buildScrollableOptions(
+                        ScrollableOptions(
                           items: times,
                           selectedIndex: selectedTimeIndex,
                           onSelect: (i) =>
@@ -150,7 +149,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           ),
                         ),
                         SizedBox(height: 27.h),
-                        _buildScrollableOptions(
+                        ScrollableOptions(
                           items: reminders.map((r) => "$r min").toList(),
                           selectedIndex: selectedReminderIndex,
                           onSelect: (i) =>
@@ -186,71 +185,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  Widget _buildAppBar() {
-    return Padding(
-      padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-      child: Row(
-        children: [
-          SizedBox(
-            width: 30.w,
-            height: 30.h,
-            child: SvgPicture.asset(
-              'assets/icons/back1.svg',
-              colorFilter: ColorFilter.mode(grey, BlendMode.srcIn),
-            ),
-          ),
-          SizedBox(width: 12.w),
-          Text(
-            "Schedule Appointment",
-            style: AppTextStyles.textStyle16.copyWith(
-              color: black,
-              fontSize: 16.sp,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildScrollableOptions({
-    required List<String> items,
-    required int selectedIndex,
-    required Function(int) onSelect,
-  }) {
-    return SizedBox(
-      height: 60.h,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.symmetric(horizontal: 20.w),
-        itemCount: items.length,
-        separatorBuilder: (_, __) => SizedBox(width: 12.w),
-        itemBuilder: (context, index) {
-          final bool isSelected = index == selectedIndex;
-          return GestureDetector(
-            onTap: () => onSelect(index),
-            child: Container(
-              width: 60.w,
-              height: 60.h,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isSelected ? buttonBackground : const Color(0x140EBE7F),
-              ),
-              child: Text(
-                items[index],
-                textAlign: TextAlign.center,
-                style: AppTextStyles.textStyle14.copyWith(
-                  fontSize: 14.sp,
-                  color: isSelected ? Colors.white : buttonBackground,
-                ),
-              ),
-            ),
-          );
-        },
       ),
     );
   }
