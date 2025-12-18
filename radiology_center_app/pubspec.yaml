@@ -12,6 +12,11 @@ dependencies:
   cupertino_icons: ^1.0.8
   flutter_screenutil: ^5.9.3
   flutter_svg: ^2.0.9
+  table_calendar: ^3.0.9
+  file_picker: ^10.3.7
+  image_picker: ^1.0.4
+  image: ^4.1.7
+  http: ^1.2.1
 
 dev_dependencies:
   flutter_test:
