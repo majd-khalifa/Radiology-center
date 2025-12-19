@@ -17,8 +17,8 @@ class AppTheme {
 
   static ThemeData get lightTheme {
     return ThemeData(
-      scaffoldBackgroundColor:
-          Colors.transparent, // transparent to show gradient
+      // scaffoldBackgroundColor:
+      //     Colors.transparent, // transparent to show gradient
       fontFamily: 'Raleway',
 
       colorScheme: ColorScheme.fromSwatch().copyWith(
