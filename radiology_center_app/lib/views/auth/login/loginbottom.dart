@@ -7,7 +7,9 @@ import 'package:radiology_center_app/views/auth/signup/signup_body.dart';
 import 'package:radiology_center_app/widgets/green_button.dart';
 
 class Loginbottom extends StatelessWidget {
-  const Loginbottom({super.key});
+  final VoidCallback onLogin;
+
+  const Loginbottom({super.key, required this.onLogin});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class Loginbottom extends StatelessWidget {
               letterSpacing: -0.3,
             ),
           ),
-          onPressed: () {},
+          onPressed: onLogin,
         ),
         const SizedBox(height: 19),
         Center(
@@ -55,9 +57,7 @@ class Loginbottom extends StatelessWidget {
                     ..onTap = () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(
-                          builder: (context) => SignupScreen(),
-                        ),
+                        MaterialPageRoute(builder: (context) => SignupScreen()),
                       );
                     },
                 ),

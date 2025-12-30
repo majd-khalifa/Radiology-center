@@ -21,7 +21,7 @@ class GreenButton extends StatelessWidget {
           backgroundColor: buttonBackground,
         ),
 
-        onPressed: () {},
+        onPressed: onPressed,
         child: widget,
       ),
     );
