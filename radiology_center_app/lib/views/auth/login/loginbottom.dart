@@ -11,63 +11,61 @@ class Loginbottom extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      child: Column(
-        children: [
-          GreenButton(
-            widget: Text(
-              "Login",
-              style: AppTextStyles.textStyle18.copyWith(
-                color: white,
+    return Column(
+      children: [
+        GreenButton(
+          widget: Text(
+            "Login",
+            style: AppTextStyles.textStyle18.copyWith(
+              color: white,
+              letterSpacing: -0.3,
+            ),
+          ),
+          onPressed: () {},
+        ),
+        const SizedBox(height: 19),
+        Center(
+          child: InkWell(
+            child: Text(
+              "Forgot password",
+              style: AppTextStyles.textStyle14.copyWith(
+                color: buttonBackground,
                 letterSpacing: -0.3,
               ),
             ),
-            onPressed: () {},
           ),
-          const SizedBox(height: 19),
-          Center(
-            child: InkWell(
-              child: Text(
-                "Forgot password",
-                style: AppTextStyles.textStyle14.copyWith(
-                  color: buttonBackground,
-                  letterSpacing: -0.3,
-                ),
+        ),
+        SizedBox(height: 214.h),
+        Center(
+          child: RichText(
+            text: TextSpan(
+              text: "Don’t have an account?",
+              style: AppTextStyles.textStyle14.copyWith(
+                color: buttonBackground,
+                letterSpacing: -0.3,
               ),
-            ),
-          ),
-          SizedBox(height: 214.h),
-          Center(
-            child: RichText(
-              text: TextSpan(
-                text: "Don’t have an account?",
-                style: AppTextStyles.textStyle14.copyWith(
-                  color: buttonBackground,
-                  letterSpacing: -0.3,
-                ),
-                children: <TextSpan>[
-                  TextSpan(
-                    text: " Join us",
-                    style: AppTextStyles.textStyle14.copyWith(
-                      color: buttonBackground,
-                      letterSpacing: -0.3,
-                    ),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => SignupScreen(),
-                          ),
-                        );
-                      },
+              children: <TextSpan>[
+                TextSpan(
+                  text: " Join us",
+                  style: AppTextStyles.textStyle14.copyWith(
+                    color: buttonBackground,
+                    letterSpacing: -0.3,
                   ),
-                ],
-              ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SignupScreen(),
+                        ),
+                      );
+                    },
+                ),
+              ],
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

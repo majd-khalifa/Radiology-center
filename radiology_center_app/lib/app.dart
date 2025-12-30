@@ -14,7 +14,7 @@ class App extends StatelessWidget {
       title: 'Radiology Center',
       theme: AppTheme.lightTheme,
       debugShowCheckedModeBanner: false,
-      initialRoute: '/home',
+      initialRoute: '/login',
       routes: {
         '/home': (context) => const PatientDashboard(),
         '/onboarding': (context) => const OnBoardingScreen(),

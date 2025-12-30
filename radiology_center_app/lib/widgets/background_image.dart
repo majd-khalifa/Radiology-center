@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 class Backgroundimage extends StatelessWidget {
   final Widget child;
   const Backgroundimage({super.key, required this.child});
@@ -14,7 +13,7 @@ class Backgroundimage extends StatelessWidget {
       decoration: BoxDecoration(
         image: DecorationImage(
           image: AssetImage("assets/images/onboarding_BG.png"),
-          fit: BoxFit.cover,
+          fit: BoxFit.fitWidth,
         ),
       ),
       child: Center(child: child),
