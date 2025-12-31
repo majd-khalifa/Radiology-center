@@ -21,4 +21,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     # هذا السطر هو الذي يخبر دجانغو بالذهاب لمجلد accounts للبحث عن الروابط
     path('api/accounts/', include('accounts.urls')), 
+    path('api/radiology/', include('radiology.urls')), 
 ]
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
