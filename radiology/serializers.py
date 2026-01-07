@@ -12,4 +12,4 @@ class DeviceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Device
-        fields = ['id', 'name', 'appointments'] # أضف باقي حقول الجهاز هنا
+        fields = ['id', 'name', 'specialty', 'description', 'image', 'rating'] # أضف باقي حقول الجهاز هنا
