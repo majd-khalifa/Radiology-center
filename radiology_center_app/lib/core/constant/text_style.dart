@@ -7,21 +7,21 @@ class AppTextStyles {
     fontSize: 12,
     fontWeight: FontWeight.w600,
     fontFamily: AppFont.rubik,
-    color: titleColor,
+    color: AppColor.titleColor,
     height: 16 / 12,
   );
   static TextStyle textStyle14 = TextStyle(
     fontSize: 14,
     fontWeight: FontWeight.normal,
     fontFamily: AppFont.rubik,
-    color: white,
+    color: AppColor.white,
     height: 18 / 14,
   );
   static TextStyle textStyle16 = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.normal,
     fontFamily: AppFont.rubik,
-    color: subtitleColor,
+    color: AppColor.subtitleColor,
     height: 24 / 16,
   );
   static TextStyle textStyle18 = TextStyle(
@@ -49,7 +49,7 @@ class AppTextStyles {
     fontSize: 32,
     fontWeight: FontWeight.w600,
     fontFamily: AppFont.rubik,
-    color: titleColor,
+    color: AppColor.titleColor,
     height: 38 / 32,
   );
 }

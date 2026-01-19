@@ -20,7 +20,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             width: 42,
             height: 42,
             decoration: BoxDecoration(
-              color: silver,
+              color: AppColor.silver,
               borderRadius: BorderRadius.circular(20),
             ),
             child: Center(
@@ -28,7 +28,10 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
                 'assets/icons/bell.svg',
                 width: 24,
                 height: 24,
-                colorFilter: const ColorFilter.mode(black, BlendMode.srcIn),
+                colorFilter: const ColorFilter.mode(
+                  AppColor.black,
+                  BlendMode.srcIn,
+                ),
               ),
             ),
           ),

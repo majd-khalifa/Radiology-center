@@ -46,24 +46,24 @@ class _PasswordFieldState extends State<TextFiledWithAction> {
               textAlign: TextAlign.start,
               widget.hinttext,
               style: AppTextStyles.textStyle16.copyWith(
-                color: subtitleColor,
+                color: AppColor.subtitleColor,
                 letterSpacing: -0.3,
                 fontWeight: FontWeight.w100,
               ),
             ),
             filled: true,
-            fillColor: white,
+            fillColor: AppColor.white,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide(
-                color: subtitleColor,
+                color: AppColor.subtitleColor,
                 style: BorderStyle.solid,
               ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14.r),
               borderSide: BorderSide(
-                color: subtitleColor,
+                color: AppColor.subtitleColor,
                 style: BorderStyle.solid,
               ),
             ),

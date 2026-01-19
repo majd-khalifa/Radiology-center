@@ -27,24 +27,24 @@ class Mytextfield extends StatelessWidget {
             hint: Text(
               text,
               style: AppTextStyles.textStyle16.copyWith(
-                color: subtitleColor,
+                color: AppColor.subtitleColor,
                 letterSpacing: -0.3,
                 fontWeight: FontWeight.w100,
               ),
             ),
-            fillColor: white,
+            fillColor: AppColor.white,
             filled: true,
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(14.r),
               borderSide: BorderSide(
-                color: subtitleColor,
+                color: AppColor.subtitleColor,
                 style: BorderStyle.solid,
               ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: BorderSide(
-                color: subtitleColor,
+                color: AppColor.subtitleColor,
                 style: BorderStyle.solid,
               ),
             ),

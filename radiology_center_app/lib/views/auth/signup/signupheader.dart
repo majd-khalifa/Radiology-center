@@ -18,7 +18,7 @@ class Signupheader extends StatelessWidget {
             textAlign: TextAlign.center,
             "Join us to start searching",
             style: AppTextStyles.textStyle24.copyWith(
-              color: black,
+              color: AppColor.black,
               letterSpacing: -0.3,
               height: 1,
             ),
@@ -28,7 +28,7 @@ class Signupheader extends StatelessWidget {
             textAlign: TextAlign.center,
             "You can search course, apply course and find scholarship for abroad studies",
             style: AppTextStyles.textStyle14.copyWith(
-              color: subtitleColor,
+              color: AppColor.subtitleColor,
               letterSpacing: -0.3,
               height: 1.656,
             ),

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:radiology_center_app/core/constant/app_font.dart';
 import 'package:radiology_center_app/core/constant/app_route.dart';
-import 'package:radiology_center_app/views/patient_dashboard/home/home_page.dart';
+import 'package:radiology_center_app/views/patient_dashboard/home/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,10 +31,10 @@ class MyApp extends StatelessWidget {
             ),
           ),
 
-          initialRoute: AppRoute.login,
+          initialRoute: AppRoute.appointment,
         );
       },
-      child: const PatientDashboard(),
+      child: const HomeScreen(),
     );
   }
 }

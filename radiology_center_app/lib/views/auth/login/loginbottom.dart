@@ -19,7 +19,7 @@ class Loginbottom extends StatelessWidget {
           widget: Text(
             "Login",
             style: AppTextStyles.textStyle18.copyWith(
-              color: white,
+              color: AppColor.white,
               letterSpacing: -0.3,
             ),
           ),
@@ -31,7 +31,7 @@ class Loginbottom extends StatelessWidget {
             child: Text(
               "Forgot password",
               style: AppTextStyles.textStyle14.copyWith(
-                color: buttonBackground,
+                color: AppColor.buttonBackground,
                 letterSpacing: -0.3,
               ),
             ),
@@ -43,14 +43,14 @@ class Loginbottom extends StatelessWidget {
             text: TextSpan(
               text: "Don’t have an account?",
               style: AppTextStyles.textStyle14.copyWith(
-                color: buttonBackground,
+                color: AppColor.buttonBackground,
                 letterSpacing: -0.3,
               ),
               children: <TextSpan>[
                 TextSpan(
                   text: " Join us",
                   style: AppTextStyles.textStyle14.copyWith(
-                    color: buttonBackground,
+                    color: AppColor.buttonBackground,
                     letterSpacing: -0.3,
                   ),
                   recognizer: TapGestureRecognizer()

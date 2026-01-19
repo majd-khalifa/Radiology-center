@@ -1,12 +1,12 @@
-// ignore_for_file: deprecated_member_use
-
+// views/patient_dashboard/appointment/appointment_screen.dart
 import 'package:flutter/material.dart';
-import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
 import 'package:radiology_center_app/core/constant/text_style.dart';
-import 'package:radiology_center_app/views/patient_dashboard/appointment/widgets/custom_app_bar.dart';
-import 'package:radiology_center_app/views/patient_dashboard/appointment/widgets/scrollable_options.dart';
+import 'package:radiology_center_app/core/widgets/background_image.dart';
+import 'package:radiology_center_app/core/widgets/custom_app_bar.dart';
+import 'package:radiology_center_app/views/patient_dashboard/appointment/widgets/appointment_date_item.dart';
+import 'package:radiology_center_app/views/patient_dashboard/appointment/widgets/device_info_card.dart';
 
 class AppointmentScreen extends StatefulWidget {
   const AppointmentScreen({super.key});
@@ -16,171 +16,93 @@ class AppointmentScreen extends StatefulWidget {
 }
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
-  int selectedTimeIndex = 2;
-  int selectedReminderIndex = 2;
+  int selectedDateIndex = 1;
+  String? selectedTime;
 
-  final List<String> times = [
-    "10:00 AM",
-    "12:00 AM",
-    "02:00 PM",
-    "03:00 PM",
-    "04:00 PM",
+  final List<String> afternoonSlots = [
+    "1:00 PM",
+    "1:30 PM",
+    "2:00 PM",
+    "2:30 PM",
+    "3:00 PM",
+    "3:30 PM",
+    "4:00 PM",
   ];
-  final List<String> reminders = ["30", "40", "25", "10", "35"];
-
-  DateTime focusedDay = DateTime.now();
-  DateTime? selectedDay;
+  final List<String> eveningSlots = [
+    "5:00 PM",
+    "5:30 PM",
+    "6:00 PM",
+    "6:30 PM",
+    "7:00 PM",
+  ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/background.png"),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: SafeArea(
+    return Backgroundimage(
+      child: Scaffold(
+        backgroundColor: AppColor.gradientWhite,
+        body: SafeArea(
           child: Column(
             children: [
-              const CustomAppBar(title: "Appointment"),
-              SizedBox(height: 16.h),
-
-              // Calendar
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16.r),
-                  ),
-                  child: TableCalendar(
-                    firstDay: DateTime.utc(2020, 1, 1),
-                    lastDay: DateTime.utc(2030, 12, 31),
-                    focusedDay: focusedDay,
-                    selectedDayPredicate: (day) => isSameDay(selectedDay, day),
-                    onDaySelected: (selected, focused) {
-                      setState(() {
-                        selectedDay = selected;
-                        focusedDay = focused;
-                      });
-                    },
-                    headerStyle: HeaderStyle(
-                      titleCentered: true,
-                      formatButtonVisible: false,
-                      decoration: BoxDecoration(
-                        color: buttonBackground,
-                        borderRadius: BorderRadius.vertical(
-                          top: Radius.circular(16.r),
-                        ),
-                      ),
-                      titleTextStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                      leftChevronIcon: Icon(
-                        Icons.chevron_left,
-                        color: Colors.white,
-                        size: 20.sp,
-                      ),
-                      rightChevronIcon: Icon(
-                        Icons.chevron_right,
-                        color: Colors.white,
-                        size: 20.sp,
-                      ),
-                    ),
-                    calendarStyle: CalendarStyle(
-                      todayDecoration: BoxDecoration(
-                        color: buttonBackground.withOpacity(0.3),
-                        shape: BoxShape.circle,
-                      ),
-                      selectedDecoration: BoxDecoration(
-                        color: buttonBackground,
-                        shape: BoxShape.circle,
-                      ),
-                      selectedTextStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14.sp,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-
-              SizedBox(height: 28.h),
-
-              // White Section
+              const CustomAppBar(title: "Select Time"),
               Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(40.r),
-                      topRight: Radius.circular(40.r),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 20.w),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: 35.h),
-                        Text(
-                          "Available Time",
-                          style: AppTextStyles.textStyle16.copyWith(
-                            color: black,
-                            fontSize: 16.sp,
-                          ),
-                        ),
-                        SizedBox(height: 27.h),
-                        ScrollableOptions(
-                          items: times,
-                          selectedIndex: selectedTimeIndex,
-                          onSelect: (i) =>
-                              setState(() => selectedTimeIndex = i),
-                        ),
-                        SizedBox(height: 38.h),
-                        Text(
-                          "Remind Me Before",
-                          style: AppTextStyles.textStyle16.copyWith(
-                            color: black,
-                            fontSize: 16.sp,
-                          ),
-                        ),
-                        SizedBox(height: 27.h),
-                        ScrollableOptions(
-                          items: reminders.map((r) => "$r min").toList(),
-                          selectedIndex: selectedReminderIndex,
-                          onSelect: (i) =>
-                              setState(() => selectedReminderIndex = i),
-                        ),
-                        const Spacer(),
-                        SizedBox(
-                          height: 54.h,
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: () {},
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: buttonBackground,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12.r),
-                              ),
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const DeviceInfoCard(),
+                      SizedBox(height: 25.h),
+
+                      // اختيار التاريخ
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Row(
+                          children: [
+                            AppointmentDateItem(
+                              day: "Today, 23 Feb",
+                              subtitle: "No slots available",
+                              isSelected: selectedDateIndex == 0,
+                              onTap: () =>
+                                  setState(() => selectedDateIndex = 0),
                             ),
-                            child: Text(
-                              "Confirm",
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16.sp,
-                              ),
+                            SizedBox(width: 10.w),
+                            AppointmentDateItem(
+                              day: "Tomorrow, 24 Feb",
+                              subtitle: "9 slots available",
+                              isSelected: selectedDateIndex == 1,
+                              onTap: () =>
+                                  setState(() => selectedDateIndex = 1),
                             ),
+                            SizedBox(width: 10.w),
+                            AppointmentDateItem(
+                              day: "Thu, 25 Feb",
+                              subtitle: "10 slots available",
+                              isSelected: selectedDateIndex == 2,
+                              onTap: () =>
+                                  setState(() => selectedDateIndex = 2),
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(height: 25.h),
+                      Center(
+                        child: Text(
+                          "Today, 23 Feb",
+                          style: AppTextStyles.textStyle18.copyWith(
+                            color: AppColor.black,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        SizedBox(height: 24.h),
-                      ],
-                    ),
+                      ),
+                      SizedBox(height: 20.h),
+
+                      _buildTimeGrid("Afternoon 7 slots", afternoonSlots),
+                      SizedBox(height: 20.h),
+                      _buildTimeGrid("Evening 5 slots", eveningSlots),
+                      SizedBox(height: 30.h),
+                    ],
                   ),
                 ),
               ),
@@ -188,6 +110,35 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTimeGrid(String title, List<String> times) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: AppTextStyles.textStyle16.copyWith(
+            fontWeight: FontWeight.bold,
+            color: AppColor.black,
+          ),
+        ),
+        SizedBox(height: 15.h),
+        Wrap(
+          spacing: 10.w,
+          runSpacing: 10.h,
+          children: times
+              .map(
+                (time) => TimeSlotItem(
+                  time: time,
+                  isSelected: selectedTime == time,
+                  onTap: () => setState(() => selectedTime = time),
+                ),
+              )
+              .toList(),
+        ),
+      ],
     );
   }
 }

@@ -38,7 +38,9 @@ class _OnBoarding1State extends State<OnBoarding1> {
                 SizedBox(height: 85),
                 Text(
                   "Find Trusted Doctors",
-                  style: AppTextStyles.textStyle28.copyWith(color: titleColor),
+                  style: AppTextStyles.textStyle28.copyWith(
+                    color: AppColor.titleColor,
+                  ),
                 ),
                 SizedBox(height: 11),
                 SizedBox(
@@ -48,7 +50,7 @@ class _OnBoarding1State extends State<OnBoarding1> {
                     textAlign: TextAlign.center,
                     "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of it over 2000 years old.",
                     style: AppTextStyles.textStyle14.copyWith(
-                      color: subtitleColor,
+                      color: AppColor.subtitleColor,
                       letterSpacing: -0.3,
                       height: 1.656,
                     ),

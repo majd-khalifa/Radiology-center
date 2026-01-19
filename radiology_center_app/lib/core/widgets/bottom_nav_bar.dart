@@ -49,7 +49,7 @@ class BottomNavBar extends StatelessWidget {
       child: Icon(
         Icons.home,
         size: 24,
-        color: isSelected ? const Color(0xFF183E78) : white,
+        color: isSelected ? const Color(0xFF183E78) : AppColor.white,
       ),
     );
   }
@@ -63,7 +63,7 @@ class BottomNavBar extends StatelessWidget {
         width: 24,
         height: 24,
         colorFilter: ColorFilter.mode(
-          isSelected ? const Color(0xFF183E78) : grey,
+          isSelected ? const Color(0xFF183E78) : AppColor.grey,
           BlendMode.srcIn,
         ),
       ),

@@ -12,7 +12,7 @@ class SectionTitle extends StatelessWidget {
       padding: const EdgeInsets.all(20),
       child: Text(
         text,
-        style: AppTextStyles.textStyle16.copyWith(color: black),
+        style: AppTextStyles.textStyle16.copyWith(color: AppColor.black),
       ),
     );
   }

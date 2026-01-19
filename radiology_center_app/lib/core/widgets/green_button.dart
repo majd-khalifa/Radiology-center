@@ -18,7 +18,7 @@ class GreenButton extends StatelessWidget {
           shape: ContinuousRectangleBorder(
             borderRadius: BorderRadius.circular(20.r),
           ),
-          backgroundColor: buttonBackground,
+          backgroundColor: AppColor.buttonBackground,
         ),
 
         onPressed: onPressed,

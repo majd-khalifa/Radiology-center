@@ -13,7 +13,7 @@ class LoginHeader extends StatelessWidget {
         Text(
           "Welcome back",
           style: AppTextStyles.textStyle24.copyWith(
-            color: black,
+            color: AppColor.black,
             letterSpacing: -0.3,
             height: 1,
           ),
@@ -23,7 +23,7 @@ class LoginHeader extends StatelessWidget {
           "You can search c ourse, apply course and\nfind scholarship for abroad studies",
           textAlign: TextAlign.center,
           style: AppTextStyles.textStyle14.copyWith(
-            color: subtitleColor,
+            color: AppColor.subtitleColor,
             letterSpacing: -0.3,
             height: 1.4,
           ),

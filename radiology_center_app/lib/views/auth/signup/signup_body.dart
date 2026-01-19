@@ -106,7 +106,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     widget: Text(
                       "Sign up",
                       style: AppTextStyles.textStyle18.copyWith(
-                        color: white,
+                        color: AppColor.white,
                         letterSpacing: -0.3,
                       ),
                     ),
@@ -120,14 +120,14 @@ class _SignupScreenState extends State<SignupScreen> {
                       text: TextSpan(
                         text: "Have an account?",
                         style: AppTextStyles.textStyle14.copyWith(
-                          color: buttonBackground,
+                          color: AppColor.buttonBackground,
                           letterSpacing: -0.3,
                         ),
                         children: <TextSpan>[
                           TextSpan(
                             text: "Log in",
                             style: AppTextStyles.textStyle14.copyWith(
-                              color: buttonBackground,
+                              color: AppColor.buttonBackground,
                               letterSpacing: -0.3,
                             ),
                             recognizer: TapGestureRecognizer()

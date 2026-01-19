@@ -40,7 +40,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: white,
+      backgroundColor: AppColor.white,
       body: Backgroundimage(
         child: Stack(
           children: [
@@ -60,7 +60,9 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                   GreenButton(
                     widget: Text(
                       currentPage == 0 ? "Get Started" : "Next",
-                      style: AppTextStyles.textStyle18.copyWith(color: white),
+                      style: AppTextStyles.textStyle18.copyWith(
+                        color: AppColor.white,
+                      ),
                     ),
                     onPressed: () => nextPage(),
                   ),
@@ -70,7 +72,7 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                       child: Text(
                         "Skip",
                         style: AppTextStyles.textStyle14.copyWith(
-                          color: subtitleColor,
+                          color: AppColor.subtitleColor,
                         ),
                       ),
                     ),

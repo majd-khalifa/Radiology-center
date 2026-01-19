@@ -6,8 +6,8 @@ import 'home_body.dart';
 import 'home_header.dart';
 import 'package:radiology_center_app/core/widgets/bottom_nav_bar.dart';
 
-class PatientDashboard extends StatelessWidget {
-  const PatientDashboard({super.key});
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

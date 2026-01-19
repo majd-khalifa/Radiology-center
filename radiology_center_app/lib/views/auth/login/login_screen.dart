@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
 import 'package:radiology_center_app/core/services/auth_service.dart';
@@ -59,7 +61,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         },
                         widget: Icon(
                           Icons.check,
-                          color: ischecked ? buttonBackground : subtitleColor,
+                          color: ischecked
+                              ? AppColor.buttonBackground
+                              : AppColor.subtitleColor,
                         ),
                         obscureText: false,
                       ),

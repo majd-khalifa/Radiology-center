@@ -42,7 +42,7 @@ class ServicesSection extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           child: Text(
             "Our Services",
-            style: AppTextStyles.textStyle16.copyWith(color: black),
+            style: AppTextStyles.textStyle16.copyWith(color: AppColor.black),
           ),
         ),
         Padding(
@@ -75,7 +75,9 @@ class AppointmentSection extends StatelessWidget {
             children: [
               Text(
                 "Appointment",
-                style: AppTextStyles.textStyle16.copyWith(color: black),
+                style: AppTextStyles.textStyle16.copyWith(
+                  color: AppColor.black,
+                ),
               ),
               Text("See All", style: AppTextStyles.textStyle14),
             ],
