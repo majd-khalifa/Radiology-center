@@ -5,8 +5,8 @@ import 'package:table_calendar/table_calendar.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
 import 'package:radiology_center_app/core/constant/text_style.dart';
-import 'package:radiology_center_app/widgets/custom_app_bar.dart';
-import 'package:radiology_center_app/widgets/scrollable_options.dart';
+import 'package:radiology_center_app/views/patient_dashboard/appointment/widgets/custom_app_bar.dart';
+import 'package:radiology_center_app/views/patient_dashboard/appointment/widgets/scrollable_options.dart';
 
 class AppointmentScreen extends StatefulWidget {
   const AppointmentScreen({super.key});

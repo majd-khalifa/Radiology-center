@@ -4,7 +4,7 @@ import 'package:radiology_center_app/core/services/auth_service.dart';
 import 'package:radiology_center_app/views/auth/login/login_header.dart';
 import 'package:radiology_center_app/views/auth/login/loginbottom.dart';
 import 'package:radiology_center_app/views/auth/widgets/text_filed_with_action.dart';
-import 'package:radiology_center_app/widgets/background_image.dart';
+import 'package:radiology_center_app/core/widgets/background_image.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});

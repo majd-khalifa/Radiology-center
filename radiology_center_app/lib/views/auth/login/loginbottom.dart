@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
 import 'package:radiology_center_app/core/constant/text_style.dart';
 import 'package:radiology_center_app/views/auth/signup/signup_body.dart';
-import 'package:radiology_center_app/widgets/green_button.dart';
+import 'package:radiology_center_app/core/widgets/green_button.dart';
 
 class Loginbottom extends StatelessWidget {
   final VoidCallback onLogin;

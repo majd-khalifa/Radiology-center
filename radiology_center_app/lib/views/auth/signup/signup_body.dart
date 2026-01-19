@@ -9,8 +9,8 @@ import 'package:radiology_center_app/views/auth/signup/signupheader.dart';
 import 'package:radiology_center_app/views/auth/widgets/my_text_field.dart';
 import 'package:radiology_center_app/views/auth/widgets/text_filed_with_action.dart';
 
-import 'package:radiology_center_app/widgets/background_image.dart';
-import 'package:radiology_center_app/widgets/green_button.dart';
+import 'package:radiology_center_app/core/widgets/background_image.dart';
+import 'package:radiology_center_app/core/widgets/green_button.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});

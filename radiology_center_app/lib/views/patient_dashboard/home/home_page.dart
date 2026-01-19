@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:radiology_center_app/views/patient_dashboard/chat/xray_analyzer_screen.dart';
-import 'package:radiology_center_app/widgets/custom_app_bar_home.dart';
+import 'package:radiology_center_app/views/patient_dashboard/home/widgets/custom_app_bar_home.dart';
 import 'package:radiology_center_app/views/patient_dashboard/appointment/appointment_screen.dart';
 import 'home_body.dart';
 import 'home_header.dart';
-import 'package:radiology_center_app/widgets/bottom_nav_bar.dart';
+import 'package:radiology_center_app/core/widgets/bottom_nav_bar.dart';
 
 class PatientDashboard extends StatelessWidget {
   const PatientDashboard({super.key});
