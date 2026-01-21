@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:radiology_center_app/views/admin_dashboard/admin_dashboard_screen.dart';
 import 'package:radiology_center_app/views/auth/login/login_screen.dart';
 import 'package:radiology_center_app/views/auth/signup/signup_body.dart';
+import 'package:radiology_center_app/views/patient_dashboard/Ai/cxr_screen.dart';
 import 'package:radiology_center_app/views/patient_dashboard/on_boarding/on_boarding_screen.dart';
 import 'package:radiology_center_app/views/patient_dashboard/appointment/appointment_screen.dart';
 import 'package:radiology_center_app/views/patient_dashboard/home/home_screen.dart';
@@ -17,6 +18,7 @@ class AppRoute {
   static const String appointment = '/appointment';
   static const String patientDetails = '/patientDetails';
   static const String adminDashboard = '/adminDashboard';
+  static const String aiAnalysis = '/aiAnalysis';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -36,6 +38,8 @@ class AppRoute {
         return MaterialPageRoute(builder: (_) => PatientDetails());
       case adminDashboard:
         return MaterialPageRoute(builder: (_) => const AdminDashboardScreen());
+      case aiAnalysis:
+        return MaterialPageRoute(builder: (_) => const CxrScreen());
 
       default:
         return MaterialPageRoute(

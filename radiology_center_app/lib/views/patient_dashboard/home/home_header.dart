@@ -40,8 +40,11 @@ class DashboardHeader extends StatelessWidget {
                       ),
                     ),
                     label: Text(
-                      'Urgent Care',
-                      style: AppTextStyles.textStyle14,
+                      'AI Analysis',
+                      style: AppTextStyles.textStyle14.copyWith(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColor.urgent,

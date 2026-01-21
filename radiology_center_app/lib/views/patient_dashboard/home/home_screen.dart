@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:radiology_center_app/views/patient_dashboard/chat/xray_analyzer_screen.dart';
+import 'package:radiology_center_app/views/patient_dashboard/Ai/cxr_screen.dart';
 import 'package:radiology_center_app/views/patient_dashboard/home/widgets/custom_app_bar_home.dart';
 import 'package:radiology_center_app/views/patient_dashboard/appointment/appointment_screen.dart';
 import 'home_body.dart';
@@ -49,7 +49,7 @@ class HomeScreen extends StatelessWidget {
             // ✅ لما يضغط على ChatBot
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => XRayAnalyzerScreen()),
+              MaterialPageRoute(builder: (context) => AppointmentScreen()),
             );
           }
         },
