@@ -1,12 +1,11 @@
-// lib/screens/xray_analyzer_screen.dart - SIMPLE AND WORKING
+// ignore_for_file: library_private_types_in_public_api, use_key_in_widget_constructors, avoid_print, unnecessary_to_list_in_spreads
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:radiology_center_app/core/services/xray_analyzer_service.dart';
 
 class XRayAnalyzerScreen extends StatefulWidget {
-  const XRayAnalyzerScreen({Key? key}) : super(key: key);
-
   @override
   _XRayAnalyzerScreenState createState() => _XRayAnalyzerScreenState();
 }
@@ -16,35 +15,37 @@ class _XRayAnalyzerScreenState extends State<XRayAnalyzerScreen> {
   bool _isLoading = false;
   Map<String, dynamic>? _analysisResult;
 
-  // 🎯 Pick image from gallery
+  // 📸 اختيار صورة من المعرض
   Future<void> _pickImage() async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: ImageSource.gallery,
-    );
-    if (pickedFile == null) return;
-
-    setState(() {
-      _selectedImage = File(pickedFile.path);
-      _analysisResult = null; // Clear previous result
-    });
+    try {
+      final XFile? image = await ImagePicker().pickImage(
+        source: ImageSource.gallery,
+      );
+      if (image != null) {
+        setState(() {
+          _selectedImage = File(image.path);
+          _analysisResult = null; // مسح النتائج القديمة
+        });
+      }
+    } catch (e) {
+      _showSnackBar('Failed to pick image: $e', Colors.red);
+    }
   }
 
-  // 🎯 Analyze selected image
+  // 🔍 تحليل الصورة
   Future<void> _analyzeImage() async {
     if (_selectedImage == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('⚠️ Please select an image first!'),
-          backgroundColor: Colors.orange,
-        ),
-      );
+      _showSnackBar('⚠️ Please select an image first!', Colors.orange);
       return;
     }
 
-    setState(() => _isLoading = true);
+    setState(() {
+      _isLoading = true;
+      _analysisResult = null;
+    });
 
     try {
-      final result = await XRayAnalyzerService().analyzeXRay(_selectedImage!);
+      final result = await XRayAnalyzerService.analyzeXRay(_selectedImage!);
       print('📥 Received result: $result');
 
       setState(() {
@@ -52,57 +53,58 @@ class _XRayAnalyzerScreenState extends State<XRayAnalyzerScreen> {
         _isLoading = false;
       });
 
-      // Show error if exists
-      if (result.containsKey('Error')) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('❌ ${result['Message']}'),
-            backgroundColor: Colors.red,
-            duration: const Duration(seconds: 5),
-          ),
-        );
+      // ✅ نجاح
+      if (result['Status'] == 'Success') {
+        _showSnackBar('✅ Analysis completed!', Colors.green);
+      }
+      // ❌ خطأ
+      else {
+        _showSnackBar('❌ ${result['Message']}', Colors.red);
       }
     } catch (e) {
-      print('❌ UI Error: $e');
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('❌ Failed to analyze: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      _showSnackBar('❌ Failed to analyze: $e', Colors.red);
     }
+  }
+
+  // 💬 رسائل للمستخدم
+  void _showSnackBar(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message),
+        backgroundColor: color,
+        duration: Duration(seconds: 3),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('🩺 X-Ray Analyzer'),
+        title: Text('🩺 X-ray AI Analyzer'),
         backgroundColor: Colors.blue[800],
         centerTitle: true,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // 📱 Image picker button
-            ElevatedButton(
+            // 📱 زر اختيار الصورة
+            ElevatedButton.icon(
               onPressed: _pickImage,
+              icon: Icon(Icons.photo_library),
+              label: Text('📂 SELECT X-RAY IMAGE'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.green[700],
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.all(16),
-              ),
-              child: const Text(
-                '📂 SELECT X-RAY IMAGE',
-                style: TextStyle(fontSize: 16),
+                padding: EdgeInsets.all(16),
               ),
             ),
-            const SizedBox(height: 10),
+            SizedBox(height: 10),
 
-            // 📸 Selected image preview
+            // 📸 عرض الصورة المحددة
             if (_selectedImage != null)
               Container(
                 height: 200,
@@ -116,93 +118,91 @@ class _XRayAnalyzerScreenState extends State<XRayAnalyzerScreen> {
                 ),
               ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
 
-            // 🔬 Analyze button
-            ElevatedButton(
+            // 🔬 زر التحليل
+            ElevatedButton.icon(
               onPressed: _isLoading ? null : _analyzeImage,
+              icon: _isLoading
+                  ? SizedBox(
+                      width: 16,
+                      height: 16,
+                      child: CircularProgressIndicator(color: Colors.white),
+                    )
+                  : Icon(Icons.search),
+              label: Text(_isLoading ? '🔬 Analyzing...' : '🔬 ANALYZE X-RAY'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: _isLoading ? Colors.grey : Colors.blue[800],
                 foregroundColor: Colors.white,
-                padding: const EdgeInsets.all(16),
+                padding: EdgeInsets.all(16),
               ),
-              child: _isLoading
-                  ? const SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(color: Colors.white),
-                    )
-                  : const Text(
-                      '🔬 ANALYZE X-RAY',
-                      style: TextStyle(fontSize: 16),
-                    ),
             ),
 
-            const SizedBox(height: 20),
+            SizedBox(height: 20),
 
-            // 📊 Display results
+            // 📊 عرض النتائج
             if (_analysisResult != null) ...[
-              if (_analysisResult!.containsKey('Error'))
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.red[100],
-                    border: Border.all(color: Colors.red),
-                    borderRadius: BorderRadius.circular(10),
+              Container(
+                padding: EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: _analysisResult!['Status'] == 'Success'
+                      ? Colors.green[100]
+                      : Colors.red[100],
+                  border: Border.all(
+                    color: _analysisResult!['Status'] == 'Success'
+                        ? Colors.green
+                        : Colors.red,
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        '❌ ERROR',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.red,
-                        ),
-                      ),
-                      const SizedBox(height: 5),
-                      Text(
-                        '${_analysisResult!['Error']}: ${_analysisResult!['Message']}',
-                      ),
-                    ],
-                  ),
-                )
-              else
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.green[100],
-                    border: Border.all(color: Colors.green),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        '✅ ANALYSIS RESULT',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      // Show all key-value pairs
-                      ..._analysisResult!.entries.map(
-                        (entry) => Padding(
-                          padding: const EdgeInsets.only(bottom: 5),
-                          child: Text('• ${entry.key}: ${entry.value}'),
-                        ),
-                      ),
-                    ],
-                  ),
+                  borderRadius: BorderRadius.circular(10),
                 ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _analysisResult!['Status'] == 'Success'
+                          ? '✅ ANALYSIS RESULT'
+                          : '❌ ERROR',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: _analysisResult!['Status'] == 'Success'
+                            ? Colors.green[800]
+                            : Colors.red[800],
+                      ),
+                    ),
+                    SizedBox(height: 10),
+                    ..._analysisResult!.entries
+                        .where((e) => e.key != 'Status')
+                        .map(
+                          (e) => Padding(
+                            padding: EdgeInsets.only(bottom: 5),
+                            child: Text(
+                              '• ${e.key}: ${e.value}',
+                              style: TextStyle(fontSize: 14),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ],
+                ),
+              ),
             ],
 
-            // 📊 Loading indicator
-            if (_isLoading == true) ...[
-              const SizedBox(height: 20),
-              const Center(child: CircularProgressIndicator()),
+            // ⏳ مؤشر التحميل
+            if (_isLoading) ...[
+              SizedBox(height: 20),
+              Center(
+                child: Column(
+                  children: [
+                    CircularProgressIndicator(),
+                    SizedBox(height: 10),
+                    Text(
+                      'Analyzing X-ray...',
+                      style: TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ],
         ),

@@ -18,7 +18,7 @@ class CategoryItem extends StatelessWidget {
           height: 65,
           decoration: BoxDecoration(
             shape: BoxShape.circle,
-            border: Border.all(color: silver, width: 1.5),
+            border: Border.all(color: AppColor.silver, width: 1.5),
             color: Colors.white,
           ),
           child: Center(
@@ -26,7 +26,10 @@ class CategoryItem extends StatelessWidget {
               iconPath,
               width: 36,
               height: 36,
-              colorFilter: const ColorFilter.mode(iconblue, BlendMode.srcIn),
+              colorFilter: const ColorFilter.mode(
+                AppColor.iconblue,
+                BlendMode.srcIn,
+              ),
             ),
           ),
         ),

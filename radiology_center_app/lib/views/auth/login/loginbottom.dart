@@ -1,0 +1,71 @@
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:radiology_center_app/core/constant/app_color.dart';
+import 'package:radiology_center_app/core/constant/text_style.dart';
+import 'package:radiology_center_app/views/auth/signup/signup_body.dart';
+import 'package:radiology_center_app/core/widgets/green_button.dart';
+
+class Loginbottom extends StatelessWidget {
+  final VoidCallback onLogin;
+
+  const Loginbottom({super.key, required this.onLogin});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        GreenButton(
+          widget: Text(
+            "Login",
+            style: AppTextStyles.textStyle18.copyWith(
+              color: AppColor.white,
+              letterSpacing: -0.3,
+            ),
+          ),
+          onPressed: onLogin,
+        ),
+        const SizedBox(height: 19),
+        Center(
+          child: InkWell(
+            child: Text(
+              "Forgot password",
+              style: AppTextStyles.textStyle14.copyWith(
+                color: AppColor.buttonBackground,
+                letterSpacing: -0.3,
+              ),
+            ),
+          ),
+        ),
+        SizedBox(height: 214.h),
+        Center(
+          child: RichText(
+            text: TextSpan(
+              text: "Don’t have an account?",
+              style: AppTextStyles.textStyle14.copyWith(
+                color: AppColor.buttonBackground,
+                letterSpacing: -0.3,
+              ),
+              children: <TextSpan>[
+                TextSpan(
+                  text: " Join us",
+                  style: AppTextStyles.textStyle14.copyWith(
+                    color: AppColor.buttonBackground,
+                    letterSpacing: -0.3,
+                  ),
+                  recognizer: TapGestureRecognizer()
+                    ..onTap = () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => SignupScreen()),
+                      );
+                    },
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

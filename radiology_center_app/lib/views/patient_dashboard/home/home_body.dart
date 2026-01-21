@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
 import 'package:radiology_center_app/core/constant/text_style.dart';
-import 'package:radiology_center_app/widgets/category_item.dart';
+import 'package:radiology_center_app/views/patient_dashboard/home/widgets/category_item.dart';
 
 class HomeBody extends StatelessWidget {
   const HomeBody({super.key});
@@ -42,7 +42,7 @@ class ServicesSection extends StatelessWidget {
           padding: const EdgeInsets.all(20),
           child: Text(
             "Our Services",
-            style: AppTextStyles.textStyle16.copyWith(color: black),
+            style: AppTextStyles.textStyle16.copyWith(color: AppColor.black),
           ),
         ),
         Padding(
@@ -75,7 +75,9 @@ class AppointmentSection extends StatelessWidget {
             children: [
               Text(
                 "Appointment",
-                style: AppTextStyles.textStyle16.copyWith(color: black),
+                style: AppTextStyles.textStyle16.copyWith(
+                  color: AppColor.black,
+                ),
               ),
               Text("See All", style: AppTextStyles.textStyle14),
             ],

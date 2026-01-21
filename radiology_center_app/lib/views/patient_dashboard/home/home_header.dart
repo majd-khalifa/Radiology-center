@@ -44,7 +44,7 @@ class DashboardHeader extends StatelessWidget {
                       style: AppTextStyles.textStyle14,
                     ),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: urgent,
+                      backgroundColor: AppColor.urgent,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(40),
                       ),

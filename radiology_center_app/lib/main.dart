@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:radiology_center_app/app.dart';
+import 'package:radiology_center_app/core/constant/app_font.dart';
+import 'package:radiology_center_app/core/constant/app_route.dart';
+import 'package:radiology_center_app/views/patient_dashboard/home/home_screen.dart';
 
-void main() {
-  runApp(const MyApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -12,12 +16,25 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
-      designSize: const Size(412, 915),
+      designSize: const Size(393, 852),
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (context, child) {
-        return const App(); // ننادي الـ App من ملف مستقل
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          onGenerateRoute: AppRoute.generateRoute,
+          theme: ThemeData(
+            fontFamily: AppFont.rubik,
+            textTheme: const TextTheme(
+              bodyMedium: TextStyle(color: Colors.white),
+              bodySmall: TextStyle(color: Colors.white70),
+            ),
+          ),
+
+          initialRoute: AppRoute.appointment,
+        );
       },
+      child: const HomeScreen(),
     );
   }
 }
