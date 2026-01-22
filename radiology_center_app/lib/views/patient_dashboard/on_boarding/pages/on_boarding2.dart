@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
 import 'package:radiology_center_app/core/constant/text_style.dart';
-import 'package:radiology_center_app/views/on_boarding/widget/backgroundgreencircle.dart';
+import 'package:radiology_center_app/views/patient_dashboard/on_boarding/widget/backgroundgreencircle.dart';
 
 class OnBoarding2 extends StatefulWidget {
   const OnBoarding2({super.key});

@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
 import 'package:radiology_center_app/core/constant/text_style.dart';
-import 'package:radiology_center_app/views/on_boarding/widget/backgroundgreencircle.dart';
+import 'package:radiology_center_app/views/patient_dashboard/on_boarding/widget/backgroundgreencircle.dart';
 
-class OnBoarding3 extends StatefulWidget {
-  const OnBoarding3({super.key});
+class OnBoarding1 extends StatefulWidget {
+  const OnBoarding1({super.key});
 
   @override
-  State<OnBoarding3> createState() => _OnBoarding3State();
+  State<OnBoarding1> createState() => _OnBoarding1State();
 }
 
-class _OnBoarding3State extends State<OnBoarding3> {
+class _OnBoarding1State extends State<OnBoarding1> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,7 +37,7 @@ class _OnBoarding3State extends State<OnBoarding3> {
                 ),
                 SizedBox(height: 85),
                 Text(
-                  "Easy Appointments",
+                  "Find Trusted Doctors",
                   style: AppTextStyles.textStyle28.copyWith(
                     color: AppColor.titleColor,
                   ),

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:radiology_center_app/views/auth/login/login_screen.dart';
 import 'package:radiology_center_app/views/auth/signup/signup_body.dart';
-import 'package:radiology_center_app/views/on_boarding/on_boarding_screen.dart';
+import 'package:radiology_center_app/views/patient_dashboard/on_boarding/on_boarding_screen.dart';
 import 'package:radiology_center_app/views/patient_dashboard/appointment/appointment_screen.dart';
 import 'package:radiology_center_app/views/patient_dashboard/home/home_screen.dart';
 import 'package:radiology_center_app/views/patient_dashboard/profile/profile_screen.dart';
