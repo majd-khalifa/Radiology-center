@@ -18,9 +18,10 @@ class _PatientDetailsState extends State<PatientDetails> {
   final _formKey = GlobalKey<FormState>();
 
   final patientNameController = TextEditingController();
+  final phoneNumeberController = TextEditingController();
+  final emailController = TextEditingController();
 
   final List<String> days = [
-    'Day',
     'Monday',
     'Tuesday',
     'Wednesday',
@@ -30,11 +31,10 @@ class _PatientDetailsState extends State<PatientDetails> {
     'Sunday',
   ];
 
-  String selectedDay = 'Day';
-  String selectedMonth = 'Month';
-  String selectedYear = 'Year';
+  String? selectedDay;
+  String? selectedMonth;
+  String? selectedYear;
   final List<String> months = [
-    'Month',
     'January',
     'February',
     'March',
@@ -49,7 +49,6 @@ class _PatientDetailsState extends State<PatientDetails> {
     'December',
   ];
   final List<String> years = [
-    'Year',
     '2020',
     '2021',
     '2022',
@@ -61,6 +60,7 @@ class _PatientDetailsState extends State<PatientDetails> {
   String selectedGender = '';
   final List<String> genders = ['Male', 'Female', 'Others'];
   String gender = "";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -159,10 +159,14 @@ class _PatientDetailsState extends State<PatientDetails> {
                                 ),
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton(
+                                    hint: const Text("Day"),
                                     padding: EdgeInsets.only(left: 10),
                                     isExpanded: true,
                                     borderRadius: BorderRadius.circular(1.r),
-                                    value: selectedDay,
+                                    value: days.contains(selectedDay)
+                                        ? selectedDay
+                                        : null,
+
                                     items: days.map((day) {
                                       return DropdownMenuItem(
                                         value: day,
@@ -193,10 +197,14 @@ class _PatientDetailsState extends State<PatientDetails> {
                                 ),
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton(
+                                    hint: const Text("Month"),
                                     padding: EdgeInsets.only(left: 10),
                                     isExpanded: true,
                                     borderRadius: BorderRadius.circular(1.r),
-                                    value: selectedMonth,
+                                    value: months.contains(selectedMonth)
+                                        ? selectedMonth
+                                        : null,
+
                                     items: months.map((month) {
                                       return DropdownMenuItem(
                                         value: month,
@@ -224,10 +232,14 @@ class _PatientDetailsState extends State<PatientDetails> {
                                 ),
                                 child: DropdownButtonHideUnderline(
                                   child: DropdownButton(
+                                    hint: const Text("Year"),
                                     padding: EdgeInsets.only(left: 10),
                                     isExpanded: true,
                                     borderRadius: BorderRadius.circular(1.r),
-                                    value: selectedYear,
+                                    value: years.contains(selectedYear)
+                                        ? selectedYear
+                                        : null,
+
                                     icon: const Icon(Icons.keyboard_arrow_down),
                                     items: years.map((year) {
                                       return DropdownMenuItem(
@@ -236,9 +248,7 @@ class _PatientDetailsState extends State<PatientDetails> {
                                       );
                                     }).toList(),
                                     onChanged: (value) {
-                                      if (value != null) {
-                                        setState(() => selectedYear = value);
-                                      }
+                                      setState(() => selectedYear = value);
                                     },
                                   ),
                                 ),
@@ -256,35 +266,122 @@ class _PatientDetailsState extends State<PatientDetails> {
                           ),
                           SizedBox(height: 8),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Expanded(
-                                child: RadioListTile(
-                                  value: "male",
-                                  title: Text("Male"),
-                                  groupValue: selectedGender,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedGender = value!;
-                                    });
-                                  },
-                                ),
+                              Row(
+                                children: [
+                                  Radio<String>(
+                                    value: 'male',
+                                    groupValue: selectedGender,
+                                    onChanged: (value) {
+                                      setState(() => selectedGender = value!);
+                                    },
+                                  ),
+                                  Text(
+                                    'Male',
+                                    style: AppTextStyles.textStyle16.copyWith(
+                                      fontWeight: FontWeight.w300,
+                                      color: AppColor.subtitleColor,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              Expanded(
-                                child: RadioListTile(
-                                  title: const Text('Female'),
-                                  value: "femal",
-                                  groupValue: selectedGender,
-                                  onChanged: (value) {
-                                    setState(() {
-                                      selectedGender = value!;
-                                    });
-                                  },
-                                ),
+                              Row(
+                                children: [
+                                  Radio<String>(
+                                    value: 'female',
+                                    groupValue: selectedGender,
+                                    onChanged: (value) {
+                                      setState(() => selectedGender = value!);
+                                    },
+                                  ),
+                                  Text(
+                                    'Female',
+                                    style: AppTextStyles.textStyle16.copyWith(
+                                      fontWeight: FontWeight.w300,
+                                      color: AppColor.subtitleColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                children: [
+                                  Radio<String>(
+                                    value: 'other',
+                                    groupValue: selectedGender,
+                                    onChanged: (value) {
+                                      setState(() => selectedGender = value!);
+                                    },
+                                  ),
+                                  Text(
+                                    'Other',
+                                    style: AppTextStyles.textStyle16.copyWith(
+                                      fontWeight: FontWeight.w300,
+                                      color: AppColor.subtitleColor,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
+                          SizedBox(height: 15),
+                          Text(
+                            "Mobile Number",
+                            style: AppTextStyles.textStyle16.copyWith(
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: -0.3,
+                              color: AppColor.black,
+                            ),
+                          ),
+                          Mytextfield(
+                            text: "+8801000000000",
+                            controller: phoneNumeberController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "please enter a password";
+                              }
+                              return null;
+                            },
+                          ),
+                          SizedBox(height: 17),
+                          Text(
+                            "Email",
+                            style: AppTextStyles.textStyle16.copyWith(
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: -0.3,
+                              color: AppColor.black,
+                            ),
+                          ),
+                          Mytextfield(
+                            text: "itsmemamun1@gmail.com",
+                            controller: emailController,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return "please enter a password";
+                              }
+                              return null;
+                            },
+                          ),
                         ],
                       ),
+                    ),
+                  ),
+                ),
+                SizedBox(height: 38),
+                ElevatedButton(
+                  onPressed: () {},
+                  style: ElevatedButton.styleFrom(
+                    shape: ContinuousRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    fixedSize: Size(270.w, 54.h),
+                    backgroundColor: AppColor.buttonBackground,
+                  ),
+                  child: Text(
+                    "Continue",
+                    style: AppTextStyles.textStyle18.copyWith(
+                      color: AppColor.white,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
