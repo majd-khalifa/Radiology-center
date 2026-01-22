@@ -8,34 +8,48 @@ from rest_framework import generics
 from .models import PatientProfile
 from .serializers import PatientProfileSerializer
 from rest_framework.permissions import IsAuthenticated
+
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def login_view(request):
+    # 1. استخراج البيانات المطلوبة (Email + Password)
     email = request.data.get('email')
     password = request.data.get('password')
     
-    # التحقق من المستخدم
+    # 2. التحقق من أن الحقول المطلوبة موجودة (Required)
+    if not email or not password:
+        return Response({
+            "status": False,
+            "message": "Required: Email and Password must be provided"
+        }, status=400)
+
+    # 3. محاولة توثيق المستخدم (نستخدم الـ email كـ username في نظام Django)
     user = authenticate(username=email, password=password)
     
     if user:
+        # إنشاء أو جلب التوكن
         token, _ = Token.objects.get_or_create(user=user)
+        
+        # 4. بناء الرد النهائي ليطابق طلبك والـ ID
         return Response({
-            "status": True,
             "data": {
                 "user": {
-                    "id": user.id,
-                    "name": user.username.split('@')[0], # استخراج الاسم من الإيميل كمثال
+                    "id": user.id,          # الـ ID التلقائي من قاعدة البيانات
+                    "name": user.username.split('@')[0], # استخراج الاسم قبل الـ @
                     "email": user.email,
                     "role": "user"
                 },
-                "token": token.key
+                "token": token.key          # التوكن اللازم لعمل المبرمج
             },
-            "message": "Login successfully"
+            "message": "Login successfully" # رسالة النجاح كما بالصورة
         }, status=200)
-    else:
-        return Response({
-            "status": False,
-            "message": "Invalid credentials"
-        }, status=401)
+    
+    # في حال كانت البيانات خاطئة
+    return Response({
+        "status": False,
+        "message": "Invalid email or password"
+    }, status=401)
+
 @api_view(['POST'])
 @permission_classes([AllowAny]) # ضروري جداً للسماح بالتسجيل بدون Token
 def register_user(request):
