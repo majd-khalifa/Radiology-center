@@ -30,7 +30,7 @@ class CustomAppBar extends StatelessWidget {
                   'assets/icons/back1.svg',
                   width: 7.w,
                   height: 12.71.h,
-                  colorFilter: ColorFilter.mode(grey, BlendMode.srcIn),
+                  colorFilter: ColorFilter.mode(AppColor.grey, BlendMode.srcIn),
                 ),
               ),
             ),
@@ -39,7 +39,7 @@ class CustomAppBar extends StatelessWidget {
           Text(
             title,
             style: AppTextStyles.textStyle16.copyWith(
-              color: black,
+              color: AppColor.black,
               fontSize: 16.sp,
             ),
           ),

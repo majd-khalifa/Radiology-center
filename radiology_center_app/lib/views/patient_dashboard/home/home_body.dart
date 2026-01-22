@@ -50,9 +50,9 @@ class ServicesSection extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: const [
-              CategoryItem("Consultation", 'assets/icons/consultation.svg'),
-              CategoryItem("Medicines", 'assets/icons/medicines.svg'),
-              CategoryItem("Ambulance", 'assets/icons/ambulance.svg'),
+              CategoryItem("X-Ray", 'assets/icons/consultation.svg'),
+              CategoryItem("CTI", 'assets/icons/medicines.svg'),
+              CategoryItem("MRI", 'assets/icons/ambulance.svg'),
             ],
           ),
         ),
