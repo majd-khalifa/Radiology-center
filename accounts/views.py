@@ -8,8 +8,34 @@ from rest_framework import generics
 from .models import PatientProfile
 from .serializers import PatientProfileSerializer
 from rest_framework.permissions import IsAuthenticated
-
 @api_view(['POST'])
+def login_view(request):
+    email = request.data.get('email')
+    password = request.data.get('password')
+    
+    # التحقق من المستخدم
+    user = authenticate(username=email, password=password)
+    
+    if user:
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({
+            "status": True,
+            "data": {
+                "user": {
+                    "id": user.id,
+                    "name": user.username.split('@')[0], # استخراج الاسم من الإيميل كمثال
+                    "email": user.email,
+                    "role": "user"
+                },
+                "token": token.key
+            },
+            "message": "Login successfully"
+        }, status=200)
+    else:
+        return Response({
+            "status": False,
+            "message": "Invalid credentials"
+        }, status=401)
 @permission_classes([AllowAny]) # ضروري جداً للسماح بالتسجيل بدون Token
 def register_user(request):
     serializer = RegisterSerializer(data=request.data)
