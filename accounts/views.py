@@ -36,6 +36,7 @@ def login_view(request):
             "status": False,
             "message": "Invalid credentials"
         }, status=401)
+@api_view(['POST'])
 @permission_classes([AllowAny]) # ضروري جداً للسماح بالتسجيل بدون Token
 def register_user(request):
     serializer = RegisterSerializer(data=request.data)
