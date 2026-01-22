@@ -14,7 +14,7 @@ class AppTextStyles {
     fontSize: 14,
     fontWeight: FontWeight.normal,
     fontFamily: AppFont.rubik,
-    color: AppColor.white,
+    color: AppColor.black,
     height: 18 / 14,
   );
   static TextStyle textStyle16 = TextStyle(

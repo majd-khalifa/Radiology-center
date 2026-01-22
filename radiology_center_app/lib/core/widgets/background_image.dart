@@ -18,10 +18,10 @@ class Backgroundimage extends StatelessWidget {
         image: DecorationImage(
           image: AssetImage(AppImage.onbordingbackground),
           fit: BoxFit.cover,
-          colorFilter: ColorFilter.mode(
-            AppColor.white.withOpacity(0.9), // تفتيح الصورة لتظهر النصوص بوضوح
-            BlendMode.lighten,
-          ),
+          // colorFilter: ColorFilter.mode(
+          //   // AppColor.white.withOpacity(0.9), // تفتيح الصورة لتظهر النصوص بوضوح
+          //   // BlendMode.lighten,
+          // ),
         ),
       ),
       child: child,
