@@ -8,10 +8,10 @@ class PatientProfile(models.Model):
         ('Female', 'Female'),
         ('Others', 'Others'),
     ]
-
-    user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='profile')
-    full_name = models.CharField(max_length=255, blank=True)
-    
+    user = models.OneToOneField('auth.User', on_delete=models.CASCADE)
+    full_name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True, verbose_name="وصف المريض")
+    # ... بقية الحقول (تاريخ الميلاد والجنس)
     # حقول العمر المنفصلة (Dropdowns في التصميم)
     birth_day = models.CharField(max_length=2, blank=True, null=True)
     birth_month = models.CharField(max_length=20, blank=True, null=True)

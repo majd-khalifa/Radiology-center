@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
           initialRoute: AppRoute.patientDetails,
         );
       },
-      child:  PatientDetails(),
+      child: PatientDetails(),
     );
   }
 }

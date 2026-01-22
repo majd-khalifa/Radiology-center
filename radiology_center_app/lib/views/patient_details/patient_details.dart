@@ -257,25 +257,29 @@ class _PatientDetailsState extends State<PatientDetails> {
                           SizedBox(height: 8),
                           Row(
                             children: [
-                              RadioListTile(
-                                value: "male",
-                                title: Text("Male"),
-                                groupValue: selectedGender,
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedGender = value!;
-                                  });
-                                },
+                              Expanded(
+                                child: RadioListTile(
+                                  value: "male",
+                                  title: Text("Male"),
+                                  groupValue: selectedGender,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedGender = value!;
+                                    });
+                                  },
+                                ),
                               ),
-                              RadioListTile(
-                                title: const Text('Female'),
-                                value: "femal",
-                                groupValue: selectedGender,
-                                onChanged: (value) {
-                                  setState(() {
-                                    selectedGender = value!;
-                                  });
-                                },
+                              Expanded(
+                                child: RadioListTile(
+                                  title: const Text('Female'),
+                                  value: "femal",
+                                  groupValue: selectedGender,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedGender = value!;
+                                    });
+                                  },
+                                ),
                               ),
                             ],
                           ),

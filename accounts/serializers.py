@@ -8,11 +8,13 @@ class PatientProfileSerializer(serializers.ModelSerializer):
         model = PatientProfile
         # هذه الحقول مطابقة تماماً لشاشة Patient Details (صورة 34) وشاشة Profile (صورة 39)
         fields = [
+            'user_id',
             'full_name', 
             'birth_day', 
             'birth_month', 
             'birth_year', 
             'gender', 
+            'description',
             'contact_number', 
             'patient_email', 
             'location', 
