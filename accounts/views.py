@@ -1,29 +1,36 @@
-from rest_framework import status
-from rest_framework import status
+from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny
-from rest_framework.response import Response
-from .serializers import RegisterSerializer
-from rest_framework import generics
-from .models import PatientProfile
-from .serializers import PatientProfileSerializer
-from rest_framework.permissions import IsAuthenticated
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
+from django.contrib.auth.models import User
+from django.db import IntegrityError
+from rest_framework.permissions import IsAdminUser # لضمان أن الأدمن فقط من يملك الصلاحية
+from .serializers import UserSerializer
+from rest_framework import viewsets
+from django.contrib.auth.models import User 
+
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def login_view(request):
+    # استقبال Email و Password فقط
     email = request.data.get('email')
     password = request.data.get('password')
     
-    # التحقق من المستخدم
+    if not email or not password:
+        return Response({"message": "Email and password are required"}, status=400)
+
+    # محاولة توثيق المستخدم (Django يستخدم username داخلياً لذا نمرر الإيميل مكانه)
     user = authenticate(username=email, password=password)
     
     if user:
         token, _ = Token.objects.get_or_create(user=user)
+        # إرجاع الـ ID والبيانات المطلوبة
         return Response({
-            "status": True,
             "data": {
                 "user": {
-                    "id": user.id,
-                    "name": user.username.split('@')[0], # استخراج الاسم من الإيميل كمثال
+                    "id": user.id, 
+                    "name": user.first_name, # نستخدم first_name للسماح بالتكرار
                     "email": user.email,
                     "role": "user"
                 },
@@ -31,29 +38,42 @@ def login_view(request):
             },
             "message": "Login successfully"
         }, status=200)
-    else:
-        return Response({
-            "status": False,
-            "message": "Invalid credentials"
-        }, status=401)
-@api_view(['POST'])
-@permission_classes([AllowAny]) # ضروري جداً للسماح بالتسجيل بدون Token
-def register_user(request):
-    serializer = RegisterSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response({
-            "status": "success",
-            "message": "تم إنشاء الحساب بنجاح!"
-        }, status=status.HTTP_201_CREATED)
     
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"message": "Invalid email or password"}, status=401)
 
-class PatientProfileUpdateView(generics.RetrieveUpdateAPIView):
-    serializer_class = PatientProfileSerializer
-    permission_classes = [IsAuthenticated]
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register_user(request):
+    email = request.data.get('email')
+    password = request.data.get('password')
+    name = request.data.get('name') # الاسم الذي يمكن أن يتكرر
 
-    def get_object(self):
-        # جلب البروفايل الخاص بالمستخدم المسجل حالياً فقط
-        profile, created = PatientProfile.objects.get_or_create(user=self.request.user)
-        return profile
+    if User.objects.filter(email=email).exists():
+        return Response({"message": "هذا الحساب مسجل مسبقاً"}, status=400)
+
+    try:
+        # إنشاء المستخدم بجعل الإيميل هو الـ username لضمان عدم التكرار
+        user = User.objects.create_user(username=email, email=email, password=password)
+        user.first_name = name # تخزين الاسم القابل للتكرار هنا
+        user.save()
+        
+        token = Token.objects.create(user=user)
+        return Response({
+            "data": {"id": user.id, "token": token.key},
+            "message": "User created successfully"
+        }, status=201)
+    except Exception as e:
+        return Response({"message": str(e)}, status=400)
+    
+
+class UserManagementViewSet(viewsets.ModelViewSet):
+    """
+    هذا الكلاس يوفر تلقائياً:
+    1. GET /api/accounts/users/ -> عرض كل الحسابات
+    2. GET /api/accounts/users/{id}/ -> عرض حساب معين
+    3. PUT /api/accounts/users/{id}/ -> تعديل حساب
+    4. DELETE /api/accounts/users/{id}/ -> حذف حساب
+    """
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAdminUser] # حماية الرابط ليكون للأدمن فقط

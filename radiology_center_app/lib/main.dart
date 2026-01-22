@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
 
-          initialRoute: AppRoute.profile,
+          initialRoute: AppRoute.onboarding,
         );
       },
       child: const HomeScreen(),
