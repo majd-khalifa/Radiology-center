@@ -4,8 +4,12 @@ import 'package:radiology_center_app/core/constant/app_color.dart';
 import 'package:radiology_center_app/core/constant/text_style.dart';
 import 'package:radiology_center_app/core/widgets/background_image.dart';
 import 'package:radiology_center_app/core/widgets/custom_app_bar.dart';
+import 'package:radiology_center_app/core/widgets/green_button.dart';
 import 'package:radiology_center_app/views/auth/widgets/my_text_field.dart';
 import 'package:radiology_center_app/views/patient_details/widgets/custom_progress_bar.dart';
+import 'package:radiology_center_app/views/patient_details/widgets/custom_text.dart';
+import 'package:radiology_center_app/views/patient_details/widgets/drop_down_button.dart';
+import 'package:radiology_center_app/views/patient_details/widgets/radio_item.dart';
 
 class PatientDetails extends StatefulWidget {
   const PatientDetails({super.key});
@@ -91,7 +95,7 @@ class _PatientDetailsState extends State<PatientDetails> {
                           ),
                         ),
                         SizedBox(width: 15),
-                        Expanded(child: CustomProgressBar(progress: 0.4)),
+                        Expanded(child: CustomProgressBar(progress: 0.1)),
                       ],
                     ),
                   ),
@@ -105,285 +109,139 @@ class _PatientDetailsState extends State<PatientDetails> {
                     borderRadius: BorderRadius.circular(12.r),
                   ),
 
-                  child: Form(
-                    key: _formKey,
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 14.w,
-                        vertical: 28.h,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            "Patient’s Name",
-                            style: AppTextStyles.textStyle16.copyWith(
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: -0.3,
-                              color: AppColor.black,
+                  child: SingleChildScrollView(
+                    child: Form(
+                      key: _formKey,
+                      child: Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 14.w,
+                          vertical: 28.h,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomText(text: "Patient’s Name"),
+                            SizedBox(height: 9),
+                            Mytextfield(
+                              text: 'Abdullah Mamun',
+                              controller: patientNameController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "please enter a password";
+                                }
+                                return null;
+                              },
                             ),
-                          ),
-                          SizedBox(height: 9),
-                          Mytextfield(
-                            text: 'Abdullah Mamun',
-                            controller: patientNameController,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "please enter a password";
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: 16),
-                          Text(
-                            "Age",
-                            style: AppTextStyles.textStyle16.copyWith(
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: -0.3,
-                              color: AppColor.black,
-                            ),
-                          ),
-                          SizedBox(height: 9),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Container(
-                                height: 54.h,
-                                width: 100.w,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color: AppColor.subtitleColor,
-                                    width: 1,
-                                  ),
+                            SizedBox(height: 16),
+                            CustomText(text: "Age"),
+                            SizedBox(height: 9),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                DropDownButton(
+                                  item: "Day",
+                                  items: days,
+                                  selectedItem: selectedDay,
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      setState(() => selectedDay = value);
+                                    }
+                                  },
                                 ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton(
-                                    hint: const Text("Day"),
-                                    padding: EdgeInsets.only(left: 10),
-                                    isExpanded: true,
-                                    borderRadius: BorderRadius.circular(1.r),
-                                    value: days.contains(selectedDay)
-                                        ? selectedDay
-                                        : null,
+                                DropDownButton(
+                                  items: months,
+                                  onChanged: (value) {
+                                    if (value != null) {
+                                      setState(() => selectedMonth = value);
+                                    }
+                                  },
+                                  selectedItem: selectedMonth,
+                                  item: 'Month',
+                                ),
 
-                                    items: days.map((day) {
-                                      return DropdownMenuItem(
-                                        value: day,
-                                        child: Text(
-                                          day,
-                                          style: AppTextStyles.textStyle16
-                                              .copyWith(),
-                                        ),
-                                      );
-                                    }).toList(),
-                                    onChanged: (value) {
-                                      if (value != null) {
-                                        setState(() => selectedDay = value);
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ),
-                              Container(
-                                height: 54.h,
-                                width: 100.w,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color: AppColor.subtitleColor,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton(
-                                    hint: const Text("Month"),
-                                    padding: EdgeInsets.only(left: 10),
-                                    isExpanded: true,
-                                    borderRadius: BorderRadius.circular(1.r),
-                                    value: months.contains(selectedMonth)
-                                        ? selectedMonth
-                                        : null,
-
-                                    items: months.map((month) {
-                                      return DropdownMenuItem(
-                                        value: month,
-                                        child: Text(month),
-                                      );
-                                    }).toList(),
-                                    onChanged: (value) {
-                                      if (value != null) {
-                                        setState(() => selectedMonth = value);
-                                      }
-                                    },
-                                  ),
-                                ),
-                              ),
-
-                              Container(
-                                height: 54.h,
-                                width: 100.w,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(
-                                    color: AppColor.subtitleColor,
-                                    width: 1,
-                                  ),
-                                ),
-                                child: DropdownButtonHideUnderline(
-                                  child: DropdownButton(
-                                    hint: const Text("Year"),
-                                    padding: EdgeInsets.only(left: 10),
-                                    isExpanded: true,
-                                    borderRadius: BorderRadius.circular(1.r),
-                                    value: years.contains(selectedYear)
-                                        ? selectedYear
-                                        : null,
-
-                                    icon: const Icon(Icons.keyboard_arrow_down),
-                                    items: years.map((year) {
-                                      return DropdownMenuItem(
-                                        value: year,
-                                        child: Text(year),
-                                      );
-                                    }).toList(),
-                                    onChanged: (value) {
+                                DropDownButton(
+                                  selectedItem: selectedYear,
+                                  onChanged: (value) {
+                                    if (value != null) {
                                       setState(() => selectedYear = value);
-                                    },
-                                  ),
+                                    }
+                                  },
+                                  items: years,
+                                  item: "Year",
                                 ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 18),
-                          Text(
-                            "Gender",
-                            style: AppTextStyles.textStyle16.copyWith(
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: -0.3,
-                              color: AppColor.black,
+                              ],
                             ),
-                          ),
-                          SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Row(
-                                children: [
-                                  Radio<String>(
-                                    value: 'male',
-                                    groupValue: selectedGender,
-                                    onChanged: (value) {
-                                      setState(() => selectedGender = value!);
-                                    },
-                                  ),
-                                  Text(
-                                    'Male',
-                                    style: AppTextStyles.textStyle16.copyWith(
-                                      fontWeight: FontWeight.w300,
-                                      color: AppColor.subtitleColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Radio<String>(
-                                    value: 'female',
-                                    groupValue: selectedGender,
-                                    onChanged: (value) {
-                                      setState(() => selectedGender = value!);
-                                    },
-                                  ),
-                                  Text(
-                                    'Female',
-                                    style: AppTextStyles.textStyle16.copyWith(
-                                      fontWeight: FontWeight.w300,
-                                      color: AppColor.subtitleColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Row(
-                                children: [
-                                  Radio<String>(
-                                    value: 'other',
-                                    groupValue: selectedGender,
-                                    onChanged: (value) {
-                                      setState(() => selectedGender = value!);
-                                    },
-                                  ),
-                                  Text(
-                                    'Other',
-                                    style: AppTextStyles.textStyle16.copyWith(
-                                      fontWeight: FontWeight.w300,
-                                      color: AppColor.subtitleColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 15),
-                          Text(
-                            "Mobile Number",
-                            style: AppTextStyles.textStyle16.copyWith(
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: -0.3,
-                              color: AppColor.black,
+                            SizedBox(height: 18),
+                            CustomText(text: "Gender"),
+                            SizedBox(height: 8),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                RadioItem(
+                                  selectedGender: selectedGender,
+                                  onChanged: (value) {
+                                    setState(() => selectedGender = value!);
+                                  },
+                                  gender: 'Male',
+                                ),
+                                RadioItem(
+                                  selectedGender: selectedGender,
+                                  onChanged: (value) {
+                                    setState(() => selectedGender = value!);
+                                  },
+                                  gender: 'female',
+                                ),
+                                RadioItem(
+                                  selectedGender: selectedGender,
+                                  onChanged: (value) {
+                                    setState(() => selectedGender = value!);
+                                  },
+                                  gender: "Other",
+                                ),
+                              ],
                             ),
-                          ),
-                          Mytextfield(
-                            text: "+8801000000000",
-                            controller: phoneNumeberController,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "please enter a password";
-                              }
-                              return null;
-                            },
-                          ),
-                          SizedBox(height: 17),
-                          Text(
-                            "Email",
-                            style: AppTextStyles.textStyle16.copyWith(
-                              fontWeight: FontWeight.w500,
-                              letterSpacing: -0.3,
-                              color: AppColor.black,
+                            SizedBox(height: 15),
+                            CustomText(text: "Mobile Number"),
+                            SizedBox(height: 9),
+                            Mytextfield(
+                              text: "+8801000000000",
+                              controller: phoneNumeberController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "please enter a password";
+                                }
+                                return null;
+                              },
                             ),
-                          ),
-                          Mytextfield(
-                            text: "itsmemamun1@gmail.com",
-                            controller: emailController,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return "please enter a password";
-                              }
-                              return null;
-                            },
-                          ),
-                        ],
+                            SizedBox(height: 17),
+                            CustomText(text: "Email"),
+                            SizedBox(height: 9),
+                            Mytextfield(
+                              text: "itsmemamun1@gmail.com",
+                              controller: emailController,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return "please enter a password";
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
                 SizedBox(height: 38),
-                ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    shape: ContinuousRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    fixedSize: Size(270.w, 54.h),
-                    backgroundColor: AppColor.buttonBackground,
-                  ),
-                  child: Text(
+                GreenButton(
+                  widget: Text(
                     "Continue",
                     style: AppTextStyles.textStyle18.copyWith(
                       color: AppColor.white,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
+                  onPressed: () {},
                 ),
               ],
             ),
