@@ -5,6 +5,7 @@ import 'package:radiology_center_app/views/patient_dashboard/on_boarding/on_boar
 import 'package:radiology_center_app/views/patient_dashboard/appointment/appointment_screen.dart';
 import 'package:radiology_center_app/views/patient_dashboard/home/home_screen.dart';
 import 'package:radiology_center_app/views/patient_dashboard/profile/profile_screen.dart';
+import 'package:radiology_center_app/views/patient_details/patient_details.dart';
 
 class AppRoute {
   static const String home = '/home';
@@ -13,6 +14,8 @@ class AppRoute {
   static const String login = '/login';
   static const String profile = '/profile';
   static const String appointment = '/appointment';
+  static const String patientDetails = '/patientDetails';
+
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -28,6 +31,8 @@ class AppRoute {
         return MaterialPageRoute(builder: (_) => const ProfileScreen());
       case appointment:
         return MaterialPageRoute(builder: (_) => const AppointmentScreen());
+      case patientDetails:
+        return MaterialPageRoute(builder: (_) =>  PatientDetails());
 
       default:
         return MaterialPageRoute(
