@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
+import 'package:radiology_center_app/core/services/api/api_services.dart';
 import 'package:radiology_center_app/core/services/auth_service.dart';
 import 'package:radiology_center_app/views/auth/login/login_header.dart';
 import 'package:radiology_center_app/views/auth/login/loginbottom.dart';
@@ -22,13 +23,14 @@ class _LoginScreenState extends State<LoginScreen> {
   bool ischecked = false;
   bool obscureText = true;
 
-  final AuthService _authService = AuthService();
-
-  void _printToken() async {
-    final token = await _authService.getAccessToken();
-    print("ACCESS TOKEN = $token");
+  final ApiServices api = ApiServices();
+ Future<void> login({required String email, required String password}) async{
+  try {
+    
+  } catch (e) {
+    
   }
-
+ }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
