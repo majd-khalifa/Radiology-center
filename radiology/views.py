@@ -5,6 +5,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes
 from django.shortcuts import get_object_or_404
 from datetime import datetime
+from rest_framework.authentication import TokenAuthentication
+from rest_framework_simplejwt.authentication import JWTAuthentication
+
 
 from .models import Appointment, Device
 from .utils import generate_device_appointments
@@ -14,6 +17,9 @@ from .serializers import AppointmentSerializer, DeviceSerializer
 #   عرض قائمة الأجهزة
 # ============================
 class DeviceListView(APIView):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
     def get(self, request):
         devices = Device.objects.all()
         serializer = DeviceSerializer(devices, many=True)
