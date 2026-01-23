@@ -3,9 +3,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
 import 'package:radiology_center_app/core/constant/text_style.dart';
 import 'package:radiology_center_app/core/widgets/background_image.dart';
-import 'package:radiology_center_app/views/on_boarding/pages/on_boarding1.dart';
-import 'package:radiology_center_app/views/on_boarding/pages/on_boarding2.dart';
-import 'package:radiology_center_app/views/on_boarding/pages/on_boarding3.dart';
+import 'package:radiology_center_app/views/patient_dashboard/on_boarding/pages/on_boarding1.dart';
+import 'package:radiology_center_app/views/patient_dashboard/on_boarding/pages/on_boarding2.dart';
+import 'package:radiology_center_app/views/patient_dashboard/on_boarding/pages/on_boarding3.dart';
 import 'package:radiology_center_app/core/widgets/green_button.dart';
 // import 'package:radiology_center_app/views/patient_dashboard/home/home_page.dart';
 

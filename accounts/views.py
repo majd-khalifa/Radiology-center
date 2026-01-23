@@ -1,29 +1,37 @@
-from rest_framework import status
-from rest_framework import status
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
-from .serializers import RegisterSerializer
-from rest_framework import generics
-from .models import PatientProfile
-from .serializers import PatientProfileSerializer
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAdminUser
+from rest_framework.authtoken.models import Token as AuthToken
+from rest_framework import viewsets
+
+from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+from django.db import IntegrityError
+
+from .serializers import UserSerializer
+
+
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def login_view(request):
     email = request.data.get('email')
     password = request.data.get('password')
-    
-    # التحقق من المستخدم
+    print("Login attempt:", email)
+    if not email or not password:
+        return Response({"message": "Email and password are required"}, status=400)
+
     user = authenticate(username=email, password=password)
     
     if user:
-        token, _ = Token.objects.get_or_create(user=user)
+        print("User authenticated:", user)
+        print("AuthToken class:", AuthToken)
+
+        token, _ = AuthToken.objects.get_or_create(user=user)
         return Response({
-            "status": True,
             "data": {
                 "user": {
-                    "id": user.id,
-                    "name": user.username.split('@')[0], # استخراج الاسم من الإيميل كمثال
+                    "id": user.id, 
+                    "name": user.first_name,
                     "email": user.email,
                     "role": "user"
                 },
@@ -31,29 +39,34 @@ def login_view(request):
             },
             "message": "Login successfully"
         }, status=200)
-    else:
-        return Response({
-            "status": False,
-            "message": "Invalid credentials"
-        }, status=401)
-@api_view(['POST'])
-@permission_classes([AllowAny]) # ضروري جداً للسماح بالتسجيل بدون Token
-def register_user(request):
-    serializer = RegisterSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response({
-            "status": "success",
-            "message": "تم إنشاء الحساب بنجاح!"
-        }, status=status.HTTP_201_CREATED)
     
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"message": "Invalid email or password"}, status=401)
 
-class PatientProfileUpdateView(generics.RetrieveUpdateAPIView):
-    serializer_class = PatientProfileSerializer
-    permission_classes = [IsAuthenticated]
 
-    def get_object(self):
-        # جلب البروفايل الخاص بالمستخدم المسجل حالياً فقط
-        profile, created = PatientProfile.objects.get_or_create(user=self.request.user)
-        return profile
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def register_user(request):
+    email = request.data.get('email')
+    password = request.data.get('password')
+    name = request.data.get('name')
+
+    if User.objects.filter(email=email).exists():
+        return Response({"message": "هذا الحساب مسجل مسبقاً"}, status=400)
+
+    try:
+        user = User.objects.create_user(username=email, email=email, password=password)
+        user.first_name = name
+        user.save()
+
+        return Response({
+            "data": {"id": user.id},
+            "message": "User created successfully. Please login to get your token."
+        }, status=201)
+    except Exception as e:
+        return Response({"message": str(e)}, status=400)
+
+
+class UserManagementViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [IsAdminUser]
