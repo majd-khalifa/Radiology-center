@@ -2,11 +2,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
+import 'package:radiology_center_app/core/helper/snack_bar_helper.dart';
+import 'package:radiology_center_app/core/services/api/api_link.dart';
+import 'package:radiology_center_app/core/services/api/api_services.dart';
 import 'package:radiology_center_app/core/services/auth_service.dart';
 import 'package:radiology_center_app/views/auth/login/login_header.dart';
 import 'package:radiology_center_app/views/auth/login/loginbottom.dart';
 import 'package:radiology_center_app/views/auth/widgets/text_filed_with_action.dart';
 import 'package:radiology_center_app/core/widgets/background_image.dart';
+import 'package:radiology_center_app/views/patient_dashboard/home/home_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,13 +26,19 @@ class _LoginScreenState extends State<LoginScreen> {
   bool ischecked = false;
   bool obscureText = true;
 
-  // 🔥 تعريف AuthService
-  final AuthService _authService = AuthService();
-
-  // 🔥 دالة لطباعة التوكن
-  void _printToken() async {
-    final token = await _authService.getAccessToken();
-    print("TOKEN = $token");
+  final ApiServices api = ApiServices();
+  Future<bool> login({required String email, required String password}) async {
+    try {
+      final response = await api.postData(
+        url: ApiLink.login,
+        body: {'email': email, 'password': password},
+      );
+      print("success");
+      return true;
+    } catch (e) {
+      print("faild");
+      return false;
+    }
   }
 
   @override
@@ -108,29 +118,23 @@ class _LoginScreenState extends State<LoginScreen> {
                     onLogin: () async {
                       print("LOGIN BUTTON PRESSED");
 
-                      if (formkey.currentState!.validate()) {
-                        final success = await _authService.login(
-                          email: emailcontroller.text.trim(),
-                          password: passwordcontroller.text.trim(),
+                      final success = await login(
+                        email: "majed11@email.com",
+                        password: "123456789",
+                      );
+                      if (success) {
+                        SnackBarHelper.showSuccess(
+                          context,
+                          "تم تسجيل الدخول بنجاح",
                         );
-
-                        print("LOGIN RESULT = $success");
-
-                        if (success) {
-                          _printToken();
-
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Login successful")),
-                          );
-
-                          Navigator.pushReplacementNamed(context, "/home");
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Invalid email or password"),
-                            ),
-                          );
-                        }
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const HomeScreen(),
+                          ),
+                        );
+                      } else {
+                        SnackBarHelper.showError(context, "فشل تسجيل الدخول");
                       }
                     },
                   ),
