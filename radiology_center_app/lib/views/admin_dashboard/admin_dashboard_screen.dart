@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
 import 'package:radiology_center_app/views/admin_dashboard/widgets/side_menu.dart';
 import 'package:radiology_center_app/views/admin_dashboard/tabs/manage_accounts_tab.dart';
-// تأكد من عمل Import لباقي الـ Tabs عند إنشائها
+import 'package:radiology_center_app/views/admin_dashboard/tabs/appointments_tab.dart';
+
+// 1. أضف الـ Import الخاص بتابة الأجهزة الجديدة
+import 'package:radiology_center_app/views/admin_dashboard/tabs/manage_devices_tab.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -14,28 +17,26 @@ class AdminDashboardScreen extends StatefulWidget {
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   int _selectedIndex = 0;
 
-  // المحتويات (Tabs)
+  // 2. تحديث قائمة الـ Tabs لاستبدال النصوص الثابتة بالكلاسات الفعلية
   final List<Widget> _tabs = [
-    const Center(child: Text("Overview Content")), // سنقوم ببرمجتها لاحقاً
-    const ManageAccountsTab(), // التي برمجناها في الرد السابق
-    const Center(child: Text("Manage Devices Content")),
-    const Center(child: Text("Appointments Content")),
+    const Center(
+      child: Text("Overview Content"),
+    ), // سنضع هنا OverviewTab لاحقاً
+    const ManageAccountsTab(),
+    const ManageDevicesTab(), // تم استبدال النص الثابت بالكلاس الجديد للأجهزة
+    const AppointmentsTab(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColor.silver.withOpacity(
-        0.3,
-      ), // خلفية خفيفة لتمييز الـ Content
+      backgroundColor: AppColor.silver.withOpacity(0.3),
       body: Row(
         children: [
-          // 1. القائمة الجانبية ثابتة في اليسار
           SideMenu(
             selectedIndex: _selectedIndex,
             onItemSelected: (index) {
               if (index == -1) {
-                // منطق تسجيل الخروج هنا
                 print("Logout clicked");
               } else {
                 setState(() {
@@ -44,15 +45,14 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               }
             },
           ),
-
-          // 2. فاصل بصري بسيط
           VerticalDivider(width: 1, color: AppColor.silver),
-
-          // 3. منطقة المحتوى المتغير
           Expanded(
             child: AnimatedSwitcher(
               duration: const Duration(milliseconds: 300),
-              child: _tabs[_selectedIndex],
+              child: Container(
+                key: ValueKey<int>(_selectedIndex),
+                child: _tabs[_selectedIndex],
+              ),
             ),
           ),
         ],

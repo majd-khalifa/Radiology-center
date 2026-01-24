@@ -5,7 +5,6 @@ import 'package:radiology_center_app/core/constant/app_color.dart';
 import 'package:radiology_center_app/core/helper/snack_bar_helper.dart';
 import 'package:radiology_center_app/core/services/api/api_link.dart';
 import 'package:radiology_center_app/core/services/api/api_services.dart';
-import 'package:radiology_center_app/core/services/auth_service.dart';
 import 'package:radiology_center_app/views/auth/login/login_header.dart';
 import 'package:radiology_center_app/views/auth/login/loginbottom.dart';
 import 'package:radiology_center_app/views/auth/widgets/text_filed_with_action.dart';
@@ -119,8 +118,8 @@ class _LoginScreenState extends State<LoginScreen> {
                       print("LOGIN BUTTON PRESSED");
 
                       final success = await login(
-                        email: "majed11@email.com",
-                        password: "123456789",
+                        email: "majd_test@email.com",
+                        password: "12345678",
                       );
                       if (success) {
                         SnackBarHelper.showSuccess(

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 class AppColor {
+  static const Color primary = Color(0xFFB2F7EF);
+
   static const Color white = Color(0xffFFFFFF);
   static const Color black = Color(0xff333333);
   static const Color bottomIcons = Color(0xff183E78);

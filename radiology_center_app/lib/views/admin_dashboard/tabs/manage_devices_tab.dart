@@ -1,75 +1,110 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:radiology_center_app/models/device_model.dart';
+import 'package:radiology_center_app/views/admin_dashboard/controller/device_state.dart';
+import 'package:radiology_center_app/views/admin_dashboard/controller/devices_cubit.dart';
 import '../../../../core/constant/app_color.dart';
-import '../../../../core/constant/text_style.dart';
-import '../widgets/user_account_tile.dart';
 
-class ManageAccountsTab extends StatelessWidget {
-  const ManageAccountsTab({super.key});
+class ManageDevicesTab extends StatelessWidget {
+  const ManageDevicesTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 20.w),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(height: 20.h),
-          Text(
-            "Account Management",
-            style: AppTextStyles.textStyle24.copyWith(
-              color: AppColor.black,
-              fontWeight: FontWeight.bold,
+    return BlocProvider(
+      create: (context) => DevicesCubit()..fetchDevices(),
+      child: Builder(
+        builder: (context) {
+          return Scaffold(
+            backgroundColor: Colors.transparent,
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: AppColor.primary,
+              onPressed: () => _showAddDeviceDialog(context),
+              child: const Icon(Icons.add, color: Colors.white),
             ),
-          ),
-          Text(
-            "Search, edit or remove user accounts",
-            style: AppTextStyles.textStyle14.copyWith(
-              color: AppColor.subtitleColor,
-            ),
-          ),
-          SizedBox(height: 20.h),
-
-          // قائمة الحسابات (UI تجريبي)
-          Expanded(
-            child: ListView.builder(
-              itemCount: 8,
-              itemBuilder: (context, index) {
-                return UserAccountTile(
-                  name: "User Full Name $index",
-                  email: "user.email$index@example.com",
-                  onEdit: () => print("Edit User $index"),
-                  onDelete: () => _showDeleteDialog(context),
-                );
+            body: BlocBuilder<DevicesCubit, DevicesState>(
+              builder: (context, state) {
+                if (state is DevicesLoading)
+                  return const Center(child: CircularProgressIndicator());
+                if (state is DevicesFailure)
+                  return Center(child: Text(state.errorMessage));
+                if (state is DevicesSuccess) {
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(20),
+                    itemCount: state.devices.length,
+                    itemBuilder: (context, index) {
+                      final device = state.devices[index];
+                      return Card(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                        child: ListTile(
+                          title: Text(
+                            device.name,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Text(
+                            "${device.specialty} - ⭐ ${device.rating}",
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () => context
+                                .read<DevicesCubit>()
+                                .deleteDevice(device.id!),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }
+                return const SizedBox();
               },
             ),
-          ),
-        ],
+          );
+        },
       ),
     );
   }
 
-  // ديالوج تأكيد الحذف
-  void _showDeleteDialog(BuildContext context) {
+  void _showAddDeviceDialog(BuildContext context) {
+    final nameController = TextEditingController();
+    final specController = TextEditingController();
+    final rateController = TextEditingController();
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: Text("Confirm Delete", style: AppTextStyles.textStyle18),
-        content: Text(
-          "Are you sure you want to delete this account?",
-          style: AppTextStyles.textStyle14,
+      builder: (dContext) => AlertDialog(
+        title: const Text("إضافة جهاز"),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: "الاسم"),
+            ),
+            TextField(
+              controller: specController,
+              decoration: const InputDecoration(labelText: "التخصص"),
+            ),
+            TextField(
+              controller: rateController,
+              decoration: const InputDecoration(labelText: "التقييم"),
+              keyboardType: TextInputType.number,
+            ),
+          ],
         ),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text("Cancel"),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: const Text(
-              "Delete",
-              style: TextStyle(color: AppColor.xIcon),
-            ),
+          ElevatedButton(
+            onPressed: () {
+              final device = DeviceModel(
+                name: nameController.text,
+                specialty: specController.text,
+                description: "New Device",
+                rating: double.tryParse(rateController.text) ?? 0.0,
+              );
+              context.read<DevicesCubit>().addDevice(device);
+              Navigator.pop(dContext);
+            },
+            child: const Text("إضافة"),
           ),
         ],
       ),

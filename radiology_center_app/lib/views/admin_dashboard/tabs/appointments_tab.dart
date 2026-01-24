@@ -1,6 +1,9 @@
 // lib/views/admin_dashboard/tabs/appointments_tab.dart
+
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import '../controller/appointments_cubit.dart';
+import '../controller/appointments_state.dart';
 import '../../../../core/constant/app_color.dart';
 import '../../../../core/constant/text_style.dart';
 
@@ -9,45 +12,104 @@ class AppointmentsTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(25.r),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            "All Appointments",
-            style: AppTextStyles.textStyle24.copyWith(
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 20.h),
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: AppColor.white,
-                borderRadius: BorderRadius.circular(15.r),
-              ),
-              child: ListView.separated(
-                itemCount: 15,
-                separatorBuilder: (context, index) =>
-                    Divider(color: AppColor.silver, height: 1),
-                itemBuilder: (context, index) => ListTile(
-                  title: Text(
-                    "Appointment ID #880$index",
-                    style: AppTextStyles.textStyle14.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  subtitle: Text(
-                    "Date: 2024-05-12 | Time: 02:00 PM",
-                    style: AppTextStyles.textStyle12,
-                  ),
-                  trailing: Icon(Icons.info_outline, color: AppColor.iconblue),
+    return BlocProvider(
+      // إنشاء الـ Cubit واستدعاء دالة الجلب فوراً
+      create: (context) => AppointmentsCubit()..fetchBookedAppointments(),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: BlocBuilder<AppointmentsCubit, AppointmentsState>(
+          builder: (context, state) {
+            if (state is AppointmentsLoading) {
+              return const Center(
+                child: CircularProgressIndicator(
+                  color: AppColor.buttonBackground,
                 ),
-              ),
-            ),
-          ),
-        ],
+              );
+            } else if (state is AppointmentsSuccess) {
+              if (state.appointments.isEmpty) {
+                return const Center(
+                  child: Text("لا توجد مواعيد محجوزة حالياً"),
+                );
+              }
+
+              return ListView.builder(
+                padding: const EdgeInsets.all(20),
+                itemCount: state.appointments.length,
+                itemBuilder: (context, index) {
+                  final appointment = state.appointments[index];
+                  return Card(
+                    elevation: 2,
+                    margin: const EdgeInsets.only(bottom: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 10,
+                      ),
+                      leading: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: AppColor.buttonBackground.withOpacity(0.1),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.calendar_today,
+                          color: AppColor.buttonBackground,
+                        ),
+                      ),
+                      title: Text(
+                        "المريض: ${appointment.bookedByName}",
+                        style: AppTextStyles
+                            .textStyle16, // تأكد من تعريف الـ Style أو استخدم TextStyle عادي
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 5),
+                          Text("التاريخ: ${appointment.date}"),
+                          Text("الوقت: ${appointment.time}"),
+                        ],
+                      ),
+                      trailing: const Icon(
+                        Icons.arrow_forward_ios,
+                        size: 16,
+                        color: Colors.grey,
+                      ),
+                      onTap: () {
+                        // يمكنك إضافة عرض تفاصيل الموعد هنا
+                      },
+                    ),
+                  );
+                },
+              );
+            } else if (state is AppointmentsError) {
+              return Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(
+                      Icons.error_outline,
+                      color: Colors.red,
+                      size: 40,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(state.message, textAlign: TextAlign.center),
+                    TextButton(
+                      onPressed: () => context
+                          .read<AppointmentsCubit>()
+                          .fetchBookedAppointments(),
+                      child: const Text("إعادة المحاولة"),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            return const SizedBox.shrink();
+          },
+        ),
       ),
     );
   }
