@@ -2,7 +2,6 @@
 
 import 'package:flutter/material.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
-import 'package:radiology_center_app/core/services/api/api_services.dart';
 import 'package:radiology_center_app/core/services/auth_service.dart';
 import 'package:radiology_center_app/views/auth/login/login_header.dart';
 import 'package:radiology_center_app/views/auth/login/loginbottom.dart';
@@ -23,14 +22,15 @@ class _LoginScreenState extends State<LoginScreen> {
   bool ischecked = false;
   bool obscureText = true;
 
-  final ApiServices api = ApiServices();
- Future<void> login({required String email, required String password}) async{
-  try {
-    
-  } catch (e) {
-    
+  // 🔥 تعريف AuthService
+  final AuthService _authService = AuthService();
+
+  // 🔥 دالة لطباعة التوكن
+  void _printToken() async {
+    final token = await _authService.getAccessToken();
+    print("TOKEN = $token");
   }
- }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -107,13 +107,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   Loginbottom(
                     onLogin: () async {
                       print("LOGIN BUTTON PRESSED");
-                      // Debug
 
                       if (formkey.currentState!.validate()) {
                         final success = await _authService.login(
-                          username: emailcontroller.text.trim(),
+                          email: emailcontroller.text.trim(),
                           password: passwordcontroller.text.trim(),
                         );
+
                         print("LOGIN RESULT = $success");
 
                         if (success) {

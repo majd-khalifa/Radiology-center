@@ -7,25 +7,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 class AuthService {
   final String baseUrl = "http://10.0.2.2:8000/api/accounts";
 
-  Future<bool> login({
-    required String username,
-    required String password,
-  }) async {
+  Future<bool> login({required String email, required String password}) async {
     final response = await http.post(
       Uri.parse("$baseUrl/login/"),
       headers: {"Content-Type": "application/json"},
-      body: jsonEncode({"username": username, "password": password}),
+      body: jsonEncode({"email": email, "password": password}),
     );
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
 
-      final accessToken = data["access"];
-      final refreshToken = data["refresh"];
-
+      final token = data["data"]["token"];
       final prefs = await SharedPreferences.getInstance();
-      await prefs.setString("access_token", accessToken);
-      await prefs.setString("refresh_token", refreshToken);
+      await prefs.setString("access_token", token);
 
       return true;
     } else {
@@ -37,11 +31,5 @@ class AuthService {
   Future<String?> getAccessToken() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getString("access_token");
-  }
-
-  Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove("access_token");
-    await prefs.remove("refresh_token");
   }
 }
