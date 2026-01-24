@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:radiology_center_app/views/admin_dashboard/controller/overview_cubit.dart';
-import '../../../../core/constant/app_color.dart';
 
 class OverviewTab extends StatelessWidget {
   const OverviewTab({super.key});

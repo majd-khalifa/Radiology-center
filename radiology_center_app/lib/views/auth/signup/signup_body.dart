@@ -42,7 +42,7 @@ class _SignupScreenState extends State<SignupScreen> {
           "password": passwordcontroller.text,
         },
       );
-
+    print('Login response: $response');
       SnackBarHelper.showSuccess(context, "Account created successfully");
 
       // توجيه المستخدم إلى شاشة Login بعد التسجيل

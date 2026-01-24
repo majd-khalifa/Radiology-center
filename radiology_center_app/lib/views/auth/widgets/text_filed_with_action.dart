@@ -11,6 +11,8 @@ class TextFiledWithAction extends StatefulWidget {
   final IconData secondicon;
   final TextEditingController controller;
   final String? Function(String?)? validator;
+  final void Function(String)? onChanged; // ✅ أضفنا onChanged
+
   const TextFiledWithAction({
     super.key,
     required this.hinttext,
@@ -20,6 +22,7 @@ class TextFiledWithAction extends StatefulWidget {
     required this.secondicon,
     required this.widget,
     required this.obscureText,
+    this.onChanged,
   });
 
   @override
@@ -36,6 +39,7 @@ class _PasswordFieldState extends State<TextFiledWithAction> {
       child: Opacity(
         opacity: 0.6,
         child: TextFormField(
+          onChanged: widget.onChanged, // ✅ تمرير التغيير
           obscuringCharacter: '●',
           validator: widget.validator,
           controller: widget.controller,
