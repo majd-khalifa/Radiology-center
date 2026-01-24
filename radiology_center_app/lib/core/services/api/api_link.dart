@@ -6,46 +6,36 @@ class ApiLink {
   // ==================================================
 
   /// POST: login
-  static const String login =
-      "${baseUrl}accounts/login/";
+  static const String login = "${baseUrl}accounts/login/";
 
   /// POST: register
-  static const String register =
-      "${baseUrl}accounts/register/";
+  static const String register = "${baseUrl}accounts/register/";
 
   /// POST / PUT: profile setup
-  static const String profileSetup =
-      "${baseUrl}accounts/profile/";
-
+  static const String profileSetup = "${baseUrl}accounts/profile/";
 
   // ==================================================
   // =================== Users ========================
   // ==================================================
 
   /// GET: get all users
-  static const String getAllUsers =
-      "${baseUrl}accounts/users/";
+  static const String getAllUsers = "${baseUrl}accounts/users/";
 
   /// PUT / PATCH: edit user
-  static String editUser(int userId) =>
-      "${baseUrl}accounts/users/$userId/";
+  static String editUser(int userId) => "${baseUrl}accounts/users/$userId/";
 
   /// DELETE: delete user
-  static String deleteUser(int userId) =>
-      "${baseUrl}accounts/users/$userId/";
-
+  static String deleteUser(int userId) => "${baseUrl}accounts/users/$userId/";
 
   // ==================================================
   // ================= Radiology ======================
   // ==================================================
 
   /// GET: get all devices
-  static const String devices =
-      "${baseUrl}radiology/devices/";
+  static const String devices = "${baseUrl}radiology/devices/";
 
   /// POST: create device
-  static const String postDevice =
-      "${baseUrl}radiology/devices/";
+  static const String postDevice = "${baseUrl}radiology/devices/";
 
   /// GET: device appointments
   static String deviceAppointments(int deviceId) =>
@@ -54,7 +44,6 @@ class ApiLink {
   /// GET: booked appointments
   static const String bookedAppointments =
       "${baseUrl}radiology/booked-appointments/";
-
 
   // ==================================================
   // ================= Appointments ===================
