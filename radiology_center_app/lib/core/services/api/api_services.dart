@@ -51,7 +51,7 @@ class ApiServices {
     try {
       final finalHeaders = {...?headers};
       if (token != null && token.isNotEmpty) {
-        finalHeaders['Authorization'] = 'Bearer $token';
+        finalHeaders['Authorization'] = 'Token $token';
       }
 
       final response = await _dio.get(
@@ -83,9 +83,9 @@ class ApiServices {
         ...?headers,
       };
 
-      // 🔥 إصلاح التوكن هنا أيضًا
+      
       if (token != null && token.isNotEmpty) {
-        finalHeaders['Authorization'] = 'Bearer $token';
+        finalHeaders['Authorization'] = 'Token $token';
       }
 
       final response = await _dio.post(
@@ -117,12 +117,45 @@ class ApiServices {
 
       // 🔥 هذا كان سبب الـ 401 — تم إصلاحه
       if (token != null && token.isNotEmpty) {
-        finalHeaders['Authorization'] = 'Bearer $token';
+        finalHeaders['Authorization'] = 'Token $token';
       }
 
       final response = await _dio.put(
         url,
         data: body,
+        options: Options(headers: finalHeaders),
+      );
+
+      if ([200, 201, 204].contains(response.statusCode)) {
+        return response.data;
+      } else {
+        throw ServerFailure.fromResponse(response.statusCode);
+      }
+    } on DioException catch (e) {
+      throw ServerFailure.fromDioError(e);
+    }
+  }
+
+  /// DELETE
+  Future deleteData({
+    required String url,
+    Map<String, String>? headers,
+    String? token,
+  }) async {
+    try {
+      final finalHeaders = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        ...?headers,
+      };
+
+      if (token != null && token.isNotEmpty) {
+        finalHeaders['Authorization'] =
+            'Token $token'; // استخدمنا Token بناءً على ملف البوستمان
+      }
+
+      final response = await _dio.delete(
+        url,
         options: Options(headers: finalHeaders),
       );
 

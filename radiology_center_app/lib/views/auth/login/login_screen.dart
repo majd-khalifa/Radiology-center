@@ -2,9 +2,14 @@
 
 import 'package:flutter/material.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
+import 'package:radiology_center_app/core/constant/constant.dart';
+import 'package:radiology_center_app/core/enums/user_role.dart';
 import 'package:radiology_center_app/core/helper/snack_bar_helper.dart';
 import 'package:radiology_center_app/core/services/api/api_link.dart';
 import 'package:radiology_center_app/core/services/api/api_services.dart';
+import 'package:radiology_center_app/core/services/services.dart';
+import 'package:radiology_center_app/models/user_model.dart';
+import 'package:radiology_center_app/views/admin_dashboard/admin_dashboard_screen.dart';
 import 'package:radiology_center_app/views/auth/login/login_header.dart';
 import 'package:radiology_center_app/views/auth/login/loginbottom.dart';
 import 'package:radiology_center_app/views/auth/widgets/text_filed_with_action.dart';
@@ -24,19 +29,43 @@ class _LoginScreenState extends State<LoginScreen> {
   final formkey = GlobalKey<FormState>();
   bool ischecked = false;
   bool obscureText = true;
-
+  bool isLoading = false;
+  final SharedPreferencesService prefs = SharedPreferencesService();
   final ApiServices api = ApiServices();
-  Future<bool> login({required String email, required String password}) async {
+  Future<UserRole> login({
+    required String email,
+    required String password,
+  }) async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       final response = await api.postData(
         url: ApiLink.login,
         body: {'email': email, 'password': password},
       );
-      print("success");
-      return true;
+      print('Login response: $response');
+
+      final data = response['data'];
+      final token = data['token'];
+      final userJson = data['user'];
+      final user = UserModel.fromJson(userJson);
+
+      // حفظ البيانات في SharedPreferences
+      await prefs.saveStringValue("user_name", user.username);
+      await prefs.saveStringValue("user_id", user.id.toString());
+      await prefs.saveUserEmail(user.id.toString());
+      await prefs.saveTokenUser(token);
+      ConstantData.tokenValue = token;
+      ConstantData.idValue = user.id.toString();
+      print("LOGIN TOKEN SAVED IN MEMORY: ${ConstantData.tokenValue}");
+      print("LOGIN ID SAVED IN MEMORY: ${ConstantData.idValue}");
+
+      return user.role;
     } catch (e) {
-      print("faild");
-      return false;
+      throw Exception("Invalid email or password");
+    } finally {
+      if (mounted) setState(() => isLoading = false);
     }
   }
 
@@ -114,26 +143,47 @@ class _LoginScreenState extends State<LoginScreen> {
 
                   /// Login Button
                   Loginbottom(
+                    isLoading: isLoading,
                     onLogin: () async {
-                      print("LOGIN BUTTON PRESSED");
+                      if (!formkey.currentState!.validate()) return;
 
-                      final success = await login(
-                        email: emailcontroller.text,
-                        password: passwordcontroller.text,
-                      );
-                      if (success) {
+                      setState(() => isLoading = true);
+
+                      try {
+                        final role = await login(
+                          email: emailcontroller.text,
+                          password: passwordcontroller.text,
+                        );
+
                         SnackBarHelper.showSuccess(
                           context,
-                          "تم تسجيل الدخول بنجاح",
+                          "Login successfully",
                         );
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const HomeScreen(),
-                          ),
-                        );
-                      } else {
-                        SnackBarHelper.showError(context, "فشل تسجيل الدخول");
+
+                        // ⬇️⬇️⬇️ هنا بالضبط
+                        switch (role) {
+                          case UserRole.user:
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const HomeScreen(),
+                              ),
+                            );
+                            break;
+
+                          case UserRole.admin:
+                            Navigator.pushReplacement(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const AdminDashboardScreen(),
+                              ),
+                            );
+                            break;
+                        }
+                      } catch (e) {
+                        SnackBarHelper.showError(context, e.toString());
+                      } finally {
+                        if (mounted) setState(() => isLoading = false);
                       }
                     },
                   ),
