@@ -11,36 +11,42 @@ from django.db import IntegrityError
 from .serializers import UserSerializer
 
 
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_view(request):
     email = request.data.get('email')
     password = request.data.get('password')
-    print("Login attempt:", email)
+
     if not email or not password:
         return Response({"message": "Email and password are required"}, status=400)
 
-    user = authenticate(username=email, password=password)
-    
-    if user:
-        print("User authenticated:", user)
-        print("AuthToken class:", AuthToken)
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        return Response({"message": "Invalid email or password"}, status=401)
 
-        token, _ = AuthToken.objects.get_or_create(user=user)
-        return Response({
-            "data": {
-                "user": {
-                    "id": user.id, 
-                    "name": user.first_name,
-                    "email": user.email,
-                    "role": "user"
-                },
-                "token": token.key
+    if not user.check_password(password):
+        return Response({"message": "Invalid email or password"}, status=401)
+
+    token, _ = AuthToken.objects.get_or_create(user=user)
+
+    return Response({
+        "data": {
+            "user": {
+                "id": user.id,
+                "name": user.first_name,
+                "email": user.email,
+                "role": "admin" if user.is_superuser else "user"
             },
-            "message": "Login successfully"
-        }, status=200)
-    
-    return Response({"message": "Invalid email or password"}, status=401)
+            "token": token.key
+        },
+        "message": "Login successfully"
+    }, status=200)
+
 
 
 @api_view(['POST'])

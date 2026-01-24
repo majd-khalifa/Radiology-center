@@ -57,4 +57,19 @@ class DevicesCubit extends Cubit<DevicesState> {
       emit(DevicesFailure("فشل حذف الجهاز: ${e.toString()}"));
     }
   }
+
+  // أضف هذه الدالة داخل class DevicesCubit
+
+Future<void> editDevice(int id, Map<String, dynamic> updatedData) async {
+  try {
+    await _apiServices.putData(
+      url: "${baseUrl}$id/", // الرابط بناءً على Log السيرفر
+      body: updatedData,
+      token: ConstantData.tokenValue,
+    );
+    fetchDevices(); // تحديث الواجهة فوراً
+  } catch (e) {
+    emit(DevicesFailure("فشل تعديل الجهاز: $e"));
+  }
+}
 }
