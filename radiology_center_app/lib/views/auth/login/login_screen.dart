@@ -28,6 +28,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final ApiServices api = ApiServices();
   Future<bool> login({required String email, required String password}) async {
     try {
+      // ignore: unused_local_variable
       final response = await api.postData(
         url: ApiLink.login,
         body: {'email': email, 'password': password},

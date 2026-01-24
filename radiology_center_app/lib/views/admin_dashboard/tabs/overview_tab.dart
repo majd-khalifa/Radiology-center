@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:radiology_center_app/views/admin_dashboard/controller/overview_cubit.dart';
-import '../../../../core/constant/app_color.dart';
 
 class OverviewTab extends StatelessWidget {
   const OverviewTab({super.key});
@@ -15,6 +14,7 @@ class OverviewTab extends StatelessWidget {
         body: BlocBuilder<OverviewCubit, OverviewState>(
           builder: (context, state) {
             if (state.isLoading)
+              // ignore: curly_braces_in_flow_control_structures
               return const Center(child: CircularProgressIndicator());
             return Padding(
               padding: const EdgeInsets.all(25.0),

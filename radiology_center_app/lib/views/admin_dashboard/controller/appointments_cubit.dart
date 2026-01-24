@@ -38,32 +38,32 @@ class AppointmentsCubit extends Cubit<AppointmentsState> {
   // أضف هذه الدوال داخل class AppointmentsCubit في ملف appointments_cubit.dart
 
   // 1. حذف موعد
-  Future<void> cancelAppointment(int appointmentId) async {
+  Future<void> cancelAppointment(int appointmentId, String date) async {
     try {
       await _apiServices.deleteData(
         url: ApiLink.deleteAppointment(appointmentId),
-        token: ConstantData.tokenValue,
-      );
-      fetchBookedAppointments(); // إعادة جلب المواعيد لتحديث القائمة
-    } catch (e) {
-      emit(AppointmentsError("فشل حذف الموعد: $e"));
-    }
-  }
-
-  // 2. تعديل موعد (مثلاً تغيير الوقت أو التاريخ)
-  Future<void> updateAppointment(
-    int appointmentId,
-    Map<String, dynamic> newData,
-  ) async {
-    try {
-      await _apiServices.putData(
-        url: ApiLink.updateAppointment(appointmentId),
-        body: newData,
+        body: {"date": date}, // إرسال التاريخ كما هو موجود في Postman
         token: ConstantData.tokenValue,
       );
       fetchBookedAppointments();
     } catch (e) {
-      emit(AppointmentsError("فشل تعديل الموعد: $e"));
+      emit(AppointmentsError("فشل الحذف: $e"));
+    }
+  }
+
+  // 2. تعديل موعد (مثلاً تغيير الوقت أو التاريخ)
+  Future<void> updateAppointment(int appointmentId, String newDate) async {
+    try {
+      await _apiServices.putData(
+        url: ApiLink.updateAppointment(appointmentId),
+        body: {"date": newDate},
+        token: ConstantData.tokenValue,
+      );
+      await fetchBookedAppointments();
+    } catch (e) {
+      // هنا نميز إذا كان الخطأ بسبب تضارب المواعيد
+      String errorMessage = "عذراً، هذا الموعد محجوز مسبقاً أو غير متاح.";
+      emit(AppointmentsError(errorMessage));
     }
   }
 }

@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_brace_in_string_interps
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:radiology_center_app/core/constant/constant.dart';
 import 'package:radiology_center_app/core/services/api/api_services.dart';
@@ -60,16 +62,16 @@ class DevicesCubit extends Cubit<DevicesState> {
 
   // أضف هذه الدالة داخل class DevicesCubit
 
-Future<void> editDevice(int id, Map<String, dynamic> updatedData) async {
-  try {
-    await _apiServices.putData(
-      url: "${baseUrl}$id/", // الرابط بناءً على Log السيرفر
-      body: updatedData,
-      token: ConstantData.tokenValue,
-    );
-    fetchDevices(); // تحديث الواجهة فوراً
-  } catch (e) {
-    emit(DevicesFailure("فشل تعديل الجهاز: $e"));
+  Future<void> editDevice(int id, Map<String, dynamic> updatedData) async {
+    try {
+      await _apiServices.putData(
+        url: "${baseUrl}$id/", // الرابط بناءً على Log السيرفر
+        body: updatedData,
+        token: ConstantData.tokenValue,
+      );
+      fetchDevices(); // تحديث الواجهة فوراً
+    } catch (e) {
+      emit(DevicesFailure("فشل تعديل الجهاز: $e"));
+    }
   }
-}
 }
