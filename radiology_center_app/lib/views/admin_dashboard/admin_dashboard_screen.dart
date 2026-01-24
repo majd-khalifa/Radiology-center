@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
+import 'package:radiology_center_app/views/admin_dashboard/tabs/overview_tab.dart';
 import 'package:radiology_center_app/views/admin_dashboard/widgets/side_menu.dart';
 import 'package:radiology_center_app/views/admin_dashboard/tabs/manage_accounts_tab.dart';
 import 'package:radiology_center_app/views/admin_dashboard/tabs/appointments_tab.dart';
@@ -19,9 +20,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   // 2. تحديث قائمة الـ Tabs لاستبدال النصوص الثابتة بالكلاسات الفعلية
   final List<Widget> _tabs = [
-    const Center(
-      child: Text("Overview Content"),
-    ), // سنضع هنا OverviewTab لاحقاً
+    const OverviewTab(),
     const ManageAccountsTab(),
     const ManageDevicesTab(), // تم استبدال النص الثابت بالكلاس الجديد للأجهزة
     const AppointmentsTab(),

@@ -13,7 +13,7 @@ class AppointmentsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      // إنشاء الـ Cubit واستدعاء دالة الجلب فوراً
+      // إنشاء الـ Cubit وجلب البيانات عند الدخول للتبويب
       create: (context) => AppointmentsCubit()..fetchBookedAppointments(),
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -61,25 +61,30 @@ class AppointmentsTab extends StatelessWidget {
                       ),
                       title: Text(
                         "المريض: ${appointment.bookedByName}",
-                        style: AppTextStyles
-                            .textStyle16, // تأكد من تعريف الـ Style أو استخدم TextStyle عادي
+                        style: AppTextStyles.textStyle16.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       subtitle: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 5),
-                          Text("التاريخ: ${appointment.date}"),
-                          Text("الوقت: ${appointment.time}"),
+                          Text(
+                            "📧 $appointment.bookedByEmail",
+                          ), // إضافة الإيميل من الموديل
+                          Text("📅 التاريخ: ${appointment.date}"),
+                          Text("⏰ الوقت: ${appointment.time}"),
                         ],
                       ),
-                      trailing: const Icon(
-                        Icons.arrow_forward_ios,
-                        size: 16,
-                        color: Colors.grey,
+                      trailing: IconButton(
+                        icon: const Icon(
+                          Icons.delete_sweep_rounded, // أيقونة حذف احترافية
+                          color: AppColor.xIcon,
+                        ),
+                        // تم التعديل هنا لاستخدام appointmentId بدلاً من id
+                        onPressed: () =>
+                            _confirmCancel(context, appointment.appointmentId),
                       ),
-                      onTap: () {
-                        // يمكنك إضافة عرض تفاصيل الموعد هنا
-                      },
                     ),
                   );
                 },
@@ -106,10 +111,39 @@ class AppointmentsTab extends StatelessWidget {
                 ),
               );
             }
-
             return const SizedBox.shrink();
           },
         ),
+      ),
+    );
+  }
+
+  // نافذة تأكيد الإلغاء للأدمن
+  void _confirmCancel(BuildContext context, int appointmentId) {
+    final cubit = context.read<AppointmentsCubit>();
+
+    showDialog(
+      context: context,
+      builder: (dContext) => AlertDialog(
+        title: const Text("إلغاء الموعد"),
+        content: const Text("هل أنت متأكد من حذف هذا الحجز نهائياً من النظام؟"),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dContext),
+            child: const Text("تراجع"),
+          ),
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+            onPressed: () {
+              cubit.cancelAppointment(appointmentId);
+              Navigator.pop(dContext);
+            },
+            child: const Text(
+              "تأكيد الحذف",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
       ),
     );
   }

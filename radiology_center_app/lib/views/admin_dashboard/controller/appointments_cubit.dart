@@ -35,4 +35,35 @@ class AppointmentsCubit extends Cubit<AppointmentsState> {
       emit(AppointmentsError("Failed to fetch appointments: $e"));
     }
   }
+  // أضف هذه الدوال داخل class AppointmentsCubit في ملف appointments_cubit.dart
+
+  // 1. حذف موعد
+  Future<void> cancelAppointment(int appointmentId) async {
+    try {
+      await _apiServices.deleteData(
+        url: ApiLink.deleteAppointment(appointmentId),
+        token: ConstantData.tokenValue,
+      );
+      fetchBookedAppointments(); // إعادة جلب المواعيد لتحديث القائمة
+    } catch (e) {
+      emit(AppointmentsError("فشل حذف الموعد: $e"));
+    }
+  }
+
+  // 2. تعديل موعد (مثلاً تغيير الوقت أو التاريخ)
+  Future<void> updateAppointment(
+    int appointmentId,
+    Map<String, dynamic> newData,
+  ) async {
+    try {
+      await _apiServices.putData(
+        url: ApiLink.updateAppointment(appointmentId),
+        body: newData,
+        token: ConstantData.tokenValue,
+      );
+      fetchBookedAppointments();
+    } catch (e) {
+      emit(AppointmentsError("فشل تعديل الموعد: $e"));
+    }
+  }
 }
