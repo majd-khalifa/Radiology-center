@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:radiology_center_app/views/admin_dashboard/admin_dashboard_screen.dart';
 import 'package:radiology_center_app/views/auth/login/login_screen.dart';
 import 'package:radiology_center_app/views/auth/signup/signup_body.dart';
 import 'package:radiology_center_app/views/patient_dashboard/on_boarding/on_boarding_screen.dart';
 import 'package:radiology_center_app/views/patient_dashboard/appointment/appointment_screen.dart';
 import 'package:radiology_center_app/views/patient_dashboard/home/home_screen.dart';
 import 'package:radiology_center_app/views/patient_dashboard/profile/profile_screen.dart';
-import 'package:radiology_center_app/views/patient_details/patient_details.dart';
+import 'package:radiology_center_app/views/patient_dashboard/patient_details/patient_details.dart';
 
 class AppRoute {
   static const String home = '/home';
@@ -15,7 +16,7 @@ class AppRoute {
   static const String profile = '/profile';
   static const String appointment = '/appointment';
   static const String patientDetails = '/patientDetails';
-
+  static const String adminDashboard = '/adminDashboard';
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
@@ -32,7 +33,9 @@ class AppRoute {
       case appointment:
         return MaterialPageRoute(builder: (_) => const AppointmentScreen());
       case patientDetails:
-        return MaterialPageRoute(builder: (_) =>  PatientDetails());
+        return MaterialPageRoute(builder: (_) => PatientDetails());
+      case adminDashboard:
+        return MaterialPageRoute(builder: (_) => const AdminDashboardScreen());
 
       default:
         return MaterialPageRoute(

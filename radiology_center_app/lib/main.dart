@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:radiology_center_app/core/constant/app_font.dart';
 import 'package:radiology_center_app/core/constant/app_route.dart';
-import 'package:radiology_center_app/views/patient_details/patient_details.dart';
+import 'package:radiology_center_app/views/patient_dashboard/patient_details/patient_details.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
 
-          initialRoute: AppRoute.login,
+          initialRoute: AppRoute.adminDashboard,
         );
       },
       child: PatientDetails(),
