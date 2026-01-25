@@ -1,6 +1,7 @@
 // lib/views/admin_dashboard/tabs/manage_accounts_tab.dart
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:radiology_center_app/core/constant/text_style.dart';
 import '../controller/admin_cubit.dart';
 import '../controller/admin_state.dart';
 import '../widgets/user_account_tile.dart';
@@ -36,7 +37,9 @@ class ManageAccountsTab extends StatelessWidget {
                 },
               );
             } else if (state is AdminError) {
-              return Center(child: Text(state.message));
+              return Center(
+                child: Text(state.message, style: AppTextStyles.textStyle14),
+              );
             }
             return const SizedBox.shrink();
           },

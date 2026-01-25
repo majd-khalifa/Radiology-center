@@ -11,7 +11,6 @@ class AppointmentsSuccess extends AppointmentsState {
   AppointmentsSuccess(this.appointments);
 }
 
-// هذا هو الكلاس الذي كان ينقصك ويسبب الخطأ
 class AppointmentsError extends AppointmentsState {
   final String message;
   AppointmentsError(this.message);

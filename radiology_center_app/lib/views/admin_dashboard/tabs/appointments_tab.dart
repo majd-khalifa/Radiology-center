@@ -1,5 +1,7 @@
 // lib/views/admin_dashboard/tabs/appointments_tab.dart
 
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:radiology_center_app/models/appointment_model.dart';
@@ -111,7 +113,11 @@ class AppointmentsTab extends StatelessWidget {
                       size: 40,
                     ),
                     const SizedBox(height: 10),
-                    Text(state.message, textAlign: TextAlign.center),
+                    Text(
+                      state.message,
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.textStyle14,
+                    ),
                     TextButton(
                       onPressed: () => context
                           .read<AppointmentsCubit>()
