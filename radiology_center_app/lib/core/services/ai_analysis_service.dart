@@ -4,7 +4,7 @@ import 'dart:convert';
 
 class AiService {
   // 1. تأكد من وضع توكن جديد كلياً بصلاحية READ
-  static const String _token = "hf_ضع_التوكن_الجديد_هنا";
+  static const String _token = "";
 
   // 2. الرابط المحدث للموديل الشغال حالياً
   static const String _modelUrl =
