@@ -7,24 +7,39 @@ import 'package:radiology_center_app/views/auth/signup/signup_body.dart';
 import 'package:radiology_center_app/core/widgets/green_button.dart';
 
 class Loginbottom extends StatelessWidget {
-  final VoidCallback onLogin;
+  final VoidCallback? onLogin;
+  final bool isLoading;
 
-  const Loginbottom({super.key, required this.onLogin});
+  const Loginbottom({
+    super.key,
+    required this.onLogin,
+    required this.isLoading,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         GreenButton(
-          widget: Text(
-            "Login",
-            style: AppTextStyles.textStyle18.copyWith(
-              color: AppColor.white,
-              letterSpacing: -0.3,
-            ),
-          ),
-          onPressed: onLogin,
+          onPressed: isLoading ? null : onLogin,
+          widget: isLoading
+              ? const SizedBox(
+                  width: 22,
+                  height: 22,
+                  child: CircularProgressIndicator(
+                    color: Colors.white,
+                    strokeWidth: 2,
+                  ),
+                )
+              : Text(
+                  "Login",
+                  style: AppTextStyles.textStyle18.copyWith(
+                    color: AppColor.white,
+                    letterSpacing: -0.3,
+                  ),
+                ),
         ),
+
         const SizedBox(height: 19),
         Center(
           child: InkWell(

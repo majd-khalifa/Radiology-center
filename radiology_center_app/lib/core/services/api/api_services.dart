@@ -90,7 +90,13 @@ Map<String, String> _getHeaders(String? token, Map<String, String>? extraHeaders
     String? token,
   }) async {
     try {
-      final finalHeaders = {...?headers};
+      final finalHeaders = {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        ...?headers,
+      };
+
+      
       if (token != null && token.isNotEmpty) {
         finalHeaders['Authorization'] = 'Token $token';
       }

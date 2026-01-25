@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
 import 'package:radiology_center_app/core/constant/text_style.dart';
-import 'package:radiology_center_app/views/auth/login/login_screen.dart';
-import 'package:radiology_center_app/views/auth/signup/signupheader.dart';
-
-import 'package:radiology_center_app/views/auth/widgets/my_text_field.dart';
-import 'package:radiology_center_app/views/auth/widgets/text_filed_with_action.dart';
-
+import 'package:radiology_center_app/core/helper/snack_bar_helper.dart';
+import 'package:radiology_center_app/core/services/api/api_link.dart';
+import 'package:radiology_center_app/core/services/api/api_services.dart';
 import 'package:radiology_center_app/core/widgets/background_image.dart';
 import 'package:radiology_center_app/core/widgets/green_button.dart';
+import 'package:radiology_center_app/views/auth/login/login_screen.dart'
+    show LoginScreen;
+import 'package:radiology_center_app/views/auth/signup/signupheader.dart';
+import 'package:radiology_center_app/views/auth/widgets/my_text_field.dart';
+import 'package:radiology_center_app/views/auth/widgets/text_filed_with_action.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -24,8 +26,38 @@ class _SignupScreenState extends State<SignupScreen> {
   final usernamcontroller = TextEditingController();
   final emailcontroller = TextEditingController();
   final passwordcontroller = TextEditingController();
+  final ApiServices api = ApiServices();
+  bool isLoading = false;
+  bool obscureText = true;
 
-  bool obscureText = false;
+  Future<void> signup() async {
+    setState(() => isLoading = true);
+
+    try {
+      final response = await api.postData(
+        url: ApiLink.register,
+        body: {
+          "name": usernamcontroller.text,
+          "email": emailcontroller.text,
+          "password": passwordcontroller.text,
+        },
+      );
+    print('Login response: $response');
+      SnackBarHelper.showSuccess(context, "Account created successfully");
+
+      // توجيه المستخدم إلى شاشة Login بعد التسجيل
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => const LoginScreen()),
+      );
+    } catch (e) {
+      // عرض الخطأ في SnackBar
+      SnackBarHelper.showError(context, e.toString());
+    } finally {
+      if (mounted) setState(() => isLoading = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,7 +70,7 @@ class _SignupScreenState extends State<SignupScreen> {
               child: Column(
                 children: [
                   SizedBox(height: 152.h),
-                  Signupheader(),
+                  const Signupheader(),
                   SizedBox(height: 67),
                   SizedBox(
                     width: 1.sw,
@@ -53,7 +85,6 @@ class _SignupScreenState extends State<SignupScreen> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your name';
                             }
-
                             return null;
                           },
                         ),
@@ -65,7 +96,6 @@ class _SignupScreenState extends State<SignupScreen> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your email';
                             }
-
                             return null;
                           },
                         ),
@@ -78,7 +108,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               return "please enter a password";
                             }
                             if (value.length < 6) {
-                              return "please enter a srtonger password";
+                              return "please enter a stronger password";
                             }
                             return null;
                           },
@@ -103,16 +133,28 @@ class _SignupScreenState extends State<SignupScreen> {
                   ),
                   SizedBox(height: 54),
                   GreenButton(
-                    widget: Text(
-                      "Sign up",
-                      style: AppTextStyles.textStyle18.copyWith(
-                        color: AppColor.white,
-                        letterSpacing: -0.3,
-                      ),
-                    ),
-                    onPressed: () {
-                      if (!formKey.currentState!.validate()) return;
-                    },
+                    onPressed: isLoading
+                        ? null
+                        : () {
+                            if (!formKey.currentState!.validate()) return;
+                            signup();
+                          },
+                    widget: isLoading
+                        ? const SizedBox(
+                            width: 22,
+                            height: 22,
+                            child: CircularProgressIndicator(
+                              color: Colors.white,
+                              strokeWidth: 2,
+                            ),
+                          )
+                        : Text(
+                            "Sign up",
+                            style: AppTextStyles.textStyle18.copyWith(
+                              color: AppColor.white,
+                              letterSpacing: -0.3,
+                            ),
+                          ),
                   ),
                   SizedBox(height: 17),
                   Center(
@@ -125,7 +167,7 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                         children: <TextSpan>[
                           TextSpan(
-                            text: "Log in",
+                            text: " Log in",
                             style: AppTextStyles.textStyle14.copyWith(
                               color: AppColor.buttonBackground,
                               letterSpacing: -0.3,
@@ -135,7 +177,7 @@ class _SignupScreenState extends State<SignupScreen> {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) => LoginScreen(),
+                                    builder: (context) => const LoginScreen(),
                                   ),
                                 );
                               },
