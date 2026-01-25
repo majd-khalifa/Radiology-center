@@ -1,11 +1,15 @@
 // lib/data/models/user_model.dart
+import 'package:radiology_center_app/core/enums/user_role.dart';
+
 class UserModel {
   final int? id;
   final String username;
   final String email;
   final String? fullName;
+  final UserRole role;
 
   UserModel({
+    required this.role,
     this.id,
     required this.username,
     required this.email,
@@ -14,6 +18,7 @@ class UserModel {
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
+      role: json['role'] == 'admin' ? UserRole.admin : UserRole.user,
       id: json['id'],
       username: json['username'] ?? "",
       email: json['email'] ?? "",
@@ -25,7 +30,7 @@ class UserModel {
     return {
       "username": username,
       "email": email,
-      if (fullName != null) "full_name": fullName,
+      if (fullName != null) "full_name": "fullName",
     };
   }
 }
