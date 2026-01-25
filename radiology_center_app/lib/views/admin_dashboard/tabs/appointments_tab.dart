@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:radiology_center_app/models/appointment_model.dart';
 import '../controller/appointments_cubit.dart';
 import '../controller/appointments_state.dart';
 import '../../../../core/constant/app_color.dart';
@@ -13,7 +14,6 @@ class AppointmentsTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      // إنشاء الـ Cubit وجلب البيانات عند الدخول للتبويب
       create: (context) => AppointmentsCubit()..fetchBookedAppointments(),
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -69,21 +69,32 @@ class AppointmentsTab extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           const SizedBox(height: 5),
-                          Text(
-                            "📧 $appointment.bookedByEmail",
-                          ), // إضافة الإيميل من الموديل
+                          Text("📧 ${appointment.bookedByEmail}"),
                           Text("📅 التاريخ: ${appointment.date}"),
                           Text("⏰ الوقت: ${appointment.time}"),
                         ],
                       ),
-                      trailing: IconButton(
-                        icon: const Icon(
-                          Icons.delete_sweep_rounded, // أيقونة حذف احترافية
-                          color: AppColor.xIcon,
-                        ),
-                        // تم التعديل هنا لاستخدام appointmentId بدلاً من id
-                        onPressed: () =>
-                            _confirmCancel(context, appointment.appointmentId),
+                      // تم إضافة Row ليحتوي على التعديل والحذف معاً
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          IconButton(
+                            icon: const Icon(
+                              Icons.edit_calendar,
+                              color: Colors.blueAccent,
+                            ),
+                            onPressed: () =>
+                                _showEditDialog(context, appointment),
+                          ),
+                          IconButton(
+                            icon: const Icon(
+                              Icons.delete_sweep_rounded,
+                              color: AppColor.xIcon,
+                            ),
+                            onPressed: () =>
+                                _confirmCancel(context, appointment),
+                          ),
+                        ],
                       ),
                     ),
                   );
@@ -118,8 +129,47 @@ class AppointmentsTab extends StatelessWidget {
     );
   }
 
-  // نافذة تأكيد الإلغاء للأدمن
-  void _confirmCancel(BuildContext context, int appointmentId) {
+  // نافذة تعديل التاريخ (كما هو مطلوب في البوستمان)
+  // في ملف appointments_tab.dart
+  void _showEditDialog(BuildContext context, AppointmentModel appointment) {
+    final dateController = TextEditingController(text: appointment.date);
+    final cubit = context.read<AppointmentsCubit>();
+
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("تعديل تاريخ الموعد"),
+        content: TextField(
+          controller: dateController,
+          decoration: const InputDecoration(
+            labelText: "التاريخ الجديد (YYYY-MM-DD)",
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text("إلغاء"),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // التعديل هنا: نرسل النص مباشرة وليس Map
+              cubit.updateAppointment(
+                appointment.appointmentId,
+                dateController.text, // إرسال String فقط
+              );
+              Navigator.pop(context);
+            },
+            child: const Text("تحديث"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // نافذة تأكيد الإلغاء
+  // في ملف appointments_tab.dart ابحث عن دالة _confirmCancel وحدثها كالتالي:
+
+  void _confirmCancel(BuildContext context, AppointmentModel appointment) {
     final cubit = context.read<AppointmentsCubit>();
 
     showDialog(
@@ -135,7 +185,11 @@ class AppointmentsTab extends StatelessWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
             onPressed: () {
-              cubit.cancelAppointment(appointmentId);
+              // الحل: تمرير المعرف والتاريخ معاً كما يطلبه السيرفر
+              cubit.cancelAppointment(
+                appointment.appointmentId,
+                appointment.date,
+              );
               Navigator.pop(dContext);
             },
             child: const Text(

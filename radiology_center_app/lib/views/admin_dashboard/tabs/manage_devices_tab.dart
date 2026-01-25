@@ -25,6 +25,7 @@ class ManageDevicesTab extends StatelessWidget {
         body: BlocBuilder<DevicesCubit, DevicesState>(
           builder: (context, state) {
             if (state is DevicesLoading)
+              // ignore: curly_braces_in_flow_control_structures
               return const Center(child: CircularProgressIndicator());
             if (state is DevicesSuccess) {
               return ListView.builder(

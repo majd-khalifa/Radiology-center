@@ -37,6 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<UserRole?> login() async {
     setState(() => isLoading = true);
     try {
+      // ignore: unused_local_variable
       final response = await api.postData(
         url: ApiLink.login,
         body: {

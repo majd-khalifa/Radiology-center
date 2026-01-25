@@ -14,6 +14,7 @@ class OverviewTab extends StatelessWidget {
         body: BlocBuilder<OverviewCubit, OverviewState>(
           builder: (context, state) {
             if (state.isLoading)
+              // ignore: curly_braces_in_flow_control_structures
               return const Center(child: CircularProgressIndicator());
             return Padding(
               padding: const EdgeInsets.all(25.0),

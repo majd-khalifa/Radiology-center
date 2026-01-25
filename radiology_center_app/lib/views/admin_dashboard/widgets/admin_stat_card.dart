@@ -1,4 +1,6 @@
 // lib/views/admin_dashboard/widgets/admin_stat_card.dart
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/constant/app_color.dart';
