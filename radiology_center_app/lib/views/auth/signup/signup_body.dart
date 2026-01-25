@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print, use_build_context_synchronously
+
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -42,7 +44,7 @@ class _SignupScreenState extends State<SignupScreen> {
           "password": passwordcontroller.text,
         },
       );
-    print('Login response: $response');
+      print('Login response: $response');
       SnackBarHelper.showSuccess(context, "Account created successfully");
 
       // توجيه المستخدم إلى شاشة Login بعد التسجيل

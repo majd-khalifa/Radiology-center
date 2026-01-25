@@ -47,8 +47,8 @@ class BottomNavBar extends StatelessWidget {
     return GestureDetector(
       onTap: () => onTap(index),
       child: Icon(
-        Icons.home,
-        size: 24,
+        Icons.home_filled,
+        size: 30,
         color: isSelected ? const Color(0xFF183E78) : AppColor.white,
       ),
     );
@@ -60,8 +60,8 @@ class BottomNavBar extends StatelessWidget {
       onTap: () => onTap(index),
       child: SvgPicture.asset(
         'assets/icons/$assetName',
-        width: 24,
-        height: 24,
+        width: 30,
+        height: 30,
         colorFilter: ColorFilter.mode(
           isSelected ? const Color(0xFF183E78) : AppColor.grey,
           BlendMode.srcIn,
@@ -81,7 +81,7 @@ class BottomNavBar extends StatelessWidget {
           shape: BoxShape.circle,
         ),
         child: const Center(
-          child: Icon(Icons.add, color: Colors.white, size: 28),
+          child: Icon(Icons.add, color: Colors.white, size: 30),
         ),
       ),
     );
