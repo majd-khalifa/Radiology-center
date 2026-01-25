@@ -6,6 +6,7 @@ from .models import PatientProfile
 class PatientProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = PatientProfile
+        exclude = ['user'] 
         # هذه الحقول مطابقة تماماً لشاشة Patient Details (صورة 34) وشاشة Profile (صورة 39)
         fields = [
             'user_id',
