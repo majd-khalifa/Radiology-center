@@ -1,20 +1,23 @@
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate
+
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny, IsAdminUser
-from rest_framework.authtoken.models import Token as AuthToken
-from rest_framework import viewsets
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAdminUser
+from rest_framework.authtoken.models import Token
+from rest_framework import status, viewsets
 
-from django.contrib.auth import authenticate
-from django.contrib.auth.models import User
-from django.db import IntegrityError
+from .serializers import (
+    UserSerializer,
+    RegisterSerializer,
+    PatientProfileSerializer
+)
+from .models import PatientProfile
 
-from .serializers import UserSerializer
 
-
-from django.contrib.auth import get_user_model
-
-User = get_user_model()
-
+# ===========================
+# Login
+# ===========================
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login_view(request):
@@ -22,57 +25,117 @@ def login_view(request):
     password = request.data.get('password')
 
     if not email or not password:
-        return Response({"message": "Email and password are required"}, status=400)
+        return Response(
+            {"message": "Email and password are required"},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
-    try:
-        user = User.objects.get(email=email)
-    except User.DoesNotExist:
-        return Response({"message": "Invalid email or password"}, status=401)
+    user = authenticate(
+        username=email,
+        password=password
+    )
 
-    if not user.check_password(password):
-        return Response({"message": "Invalid email or password"}, status=401)
+    if not user:
+        return Response(
+            {"message": "Invalid email or password"},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
 
-    token, _ = AuthToken.objects.get_or_create(user=user)
+    # إعادة إنشاء التوكن
+    Token.objects.filter(user=user).delete()
+    token = Token.objects.create(user=user)
 
     return Response({
+        "message": "Login successfully",
         "data": {
-            "user": {
-                "id": user.id,
-                "name": user.first_name,
-                "email": user.email,
-                "role": "admin" if user.is_superuser else "user"
-            },
+            "user": UserSerializer(user).data,
             "token": token.key
-        },
-        "message": "Login successfully"
-    }, status=200)
+        }
+    }, status=status.HTTP_200_OK)
 
 
-
+# ===========================
+# Register
+# ===========================
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register_user(request):
-    email = request.data.get('email')
-    password = request.data.get('password')
-    name = request.data.get('name')
+    serializer = RegisterSerializer(data=request.data)
 
-    if User.objects.filter(email=email).exists():
-        return Response({"message": "هذا الحساب مسجل مسبقاً"}, status=400)
-
-    try:
-        user = User.objects.create_user(username=email, email=email, password=password)
-        user.first_name = name
-        user.save()
+    if serializer.is_valid():
+        user = serializer.save()
+        token = Token.objects.create(user=user)
 
         return Response({
-            "data": {"id": user.id},
-            "message": "User created successfully. Please login to get your token."
-        }, status=201)
-    except Exception as e:
-        return Response({"message": str(e)}, status=400)
+            "message": "User created successfully",
+            "data": {
+                "user": UserSerializer(user).data,
+                "token": token.key
+            }
+        }, status=status.HTTP_201_CREATED)
+
+    return Response(
+        serializer.errors,
+        status=status.HTTP_400_BAD_REQUEST
+    )
 
 
+# ===========================
+# Logout
+# ===========================
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def logout_view(request):
+    if request.auth:
+        request.auth.delete()
+
+    return Response(
+        {"message": "Logged out successfully"},
+        status=status.HTTP_200_OK
+    )
+
+
+# ===========================
+# Profile (GET / PATCH)
+# ===========================
+@api_view(['GET', 'PATCH'])
+@permission_classes([IsAuthenticated])
+def profile_view(request):
+    profile, _ = PatientProfile.objects.get_or_create(
+        user=request.user,
+        defaults={"full_name": request.user.first_name}
+    )
+
+    if request.method == 'GET':
+        serializer = PatientProfileSerializer(profile)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    serializer = PatientProfileSerializer(
+        profile,
+        data=request.data,
+        partial=True
+    )
+
+    if serializer.is_valid():
+        serializer.save()
+        return Response({
+            "message": "Profile updated successfully",
+            "data": serializer.data
+        }, status=status.HTTP_200_OK)
+
+    return Response(
+        serializer.errors,
+        status=status.HTTP_400_BAD_REQUEST
+    )
+
+
+# ===========================
+# Admin – User Management
+# ===========================
 class UserManagementViewSet(viewsets.ModelViewSet):
+    """
+    CRUD للمستخدمين (Admin فقط)
+    """
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAdminUser]

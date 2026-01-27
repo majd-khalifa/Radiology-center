@@ -2,50 +2,89 @@ from rest_framework import serializers
 from django.contrib.auth.models import User
 from .models import PatientProfile
 
-# 1. سيرياليزر البروفايل (يجب أن يكون في الأعلى)
+
 class PatientProfileSerializer(serializers.ModelSerializer):
+    """
+    Serializer خاص ببروفايل المريض
+    يدعم GET و PATCH ومتوافق مع الموديل الحالي
+    """
+
     class Meta:
         model = PatientProfile
-        exclude = ['user'] 
-        # هذه الحقول مطابقة تماماً لشاشة Patient Details (صورة 34) وشاشة Profile (صورة 39)
         fields = [
-            'user_id',
-            'full_name', 
-            'birth_day', 
-            'birth_month', 
-            'birth_year', 
-            'gender', 
+            'full_name',
+            'birth_day',     # تم التعديل هنا
+            'birth_month',   # تم التعديل هنا
+            'birth_year',    # تم التعديل هنا
+            'gender',
             'description',
-            'contact_number', 
-            'patient_email', 
-            'location', 
-            'profile_image'
+            'contact_number',
+            'patient_email',
+            'location',
+            'profile_image',
         ]
 
-# 2. سيرياليزر المستخدم الأساسي
+
 class UserSerializer(serializers.ModelSerializer):
-    profile = PatientProfileSerializer(read_only=True)
+    # تغيير اسم الحقل ليظهر كـ name بدلاً من username
+    name = serializers.CharField(source='username')
+    # إضافة حقل الـ role بناءً على صلاحيات المستخدم
+    role = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ['id', 'username', 'email', 'profile']
+        fields = [
+            'id',
+            'name',
+            'email',
+            'role'
+        ]
 
-# 3. سيرياليزر التسجيل
+    def get_role(self, obj):
+        # إذا كان مستخدم فائق أو موظف نعتبره admin
+        if obj.is_superuser or obj.is_staff:
+            return "admin"
+        return "user"
+
+
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(write_only=True)
+    """
+    Serializer خاص بتسجيل المستخدم
+    """
+
+    password = serializers.CharField(
+        write_only=True,
+        min_length=8,
+        style={'input_type': 'password'}
+    )
 
     class Meta:
         model = User
-        fields = ('username', 'email', 'password')
+        fields = [
+            'email',
+            'password',
+            'first_name'
+        ]
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError(
+                "هذا البريد الإلكتروني مستخدم بالفعل"
+            )
+        return value
 
     def create(self, validated_data):
-       
-        # استخدام create_user هو ما يضمن تشفير الباسورد
         user = User.objects.create_user(
-            username=validated_data['username'],
+            username=validated_data['email'],  # الإيميل هو username
             email=validated_data['email'],
-            password=validated_data['password']
+            password=validated_data['password'],
+            first_name=validated_data.get('first_name', '')
         )
-        # إنشاء بروفايل فارغ تلقائياً بمجرد التسجيل ليتم ملؤه لاحقاً في شاشة Step 1/4
-        PatientProfile.objects.create(user=user)
+
+        # إنشاء بروفايل تلقائي
+        PatientProfile.objects.create(
+            user=user,
+            full_name=user.first_name
+        )
+
         return user
