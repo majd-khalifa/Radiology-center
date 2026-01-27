@@ -20,8 +20,10 @@ class CxrScreen extends StatefulWidget {
 class _CxrScreenState extends State<CxrScreen> {
   File? _image;
   Uint8List? _webImageBytes;
-  String? _result;
-  double? _confidence;
+
+  double? _xrayConfidence;
+  Map<String, double>? _findings;
+
   bool _loading = false;
 
   final ImagePicker _picker = ImagePicker();
@@ -35,15 +37,15 @@ class _CxrScreenState extends State<CxrScreen> {
         setState(() {
           _webImageBytes = bytes;
           _image = null;
-          _result = null;
-          _confidence = null;
+          _findings = null;
+          _xrayConfidence = null;
         });
       } else {
         setState(() {
           _image = File(picked.path);
           _webImageBytes = null;
-          _result = null;
-          _confidence = null;
+          _findings = null;
+          _xrayConfidence = null;
         });
       }
     }
@@ -55,15 +57,21 @@ class _CxrScreenState extends State<CxrScreen> {
 
     setState(() {
       _loading = true;
-      _result = null;
-      _confidence = null;
+      _findings = null;
+      _xrayConfidence = null;
     });
 
     try {
-      final response = await CxrApiService.analyzeXray(imageSource);
+      final result = await CxrApiService.analyzeXray(imageSource);
+
       setState(() {
-        _result = response['prediction'];
-        _confidence = response['confidence']?.toDouble();
+        _xrayConfidence = result["confidence"] != null
+            ? (result["confidence"] as num).toDouble()
+            : null;
+
+        _findings = result["findings"] != null
+            ? Map<String, double>.from(result["findings"])
+            : null;
       });
     } catch (e) {
       SnackBarHelper.showError(context, 'خطأ في التحليل: $e');
@@ -75,48 +83,77 @@ class _CxrScreenState extends State<CxrScreen> {
   }
 
   Widget _buildImagePreview() {
-    if (kIsWeb && _webImageBytes != null) {
-      return Image.memory(_webImageBytes!, fit: BoxFit.contain);
-    } else if (_image != null) {
-      return Image.file(_image!, fit: BoxFit.contain);
-    } else {
+    if (_webImageBytes == null && _image == null) {
       return Center(
         child: Text('اختر صورة أشعة للبدء', style: AppTextStyles.textStyle16),
       );
     }
+
+    return Card(
+      elevation: 6,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: kIsWeb
+            ? Image.memory(_webImageBytes!, fit: BoxFit.cover)
+            : Image.file(_image!, fit: BoxFit.cover),
+      ),
+    );
   }
 
   Widget _buildResultBox() {
-    if (_result == null || _loading) return const SizedBox();
+    if (_findings == null || _loading) return const SizedBox();
 
-    final isNormal = _result == 'NORMAL';
-    final bgColor = isNormal
-        ? AppColor.gradientGreen
-        : AppColor.buttonBackground;
-    final textColor = isNormal ? AppColor.buttonBackground : AppColor.xIcon;
-
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(16),
-      margin: const EdgeInsets.only(top: 16),
-      decoration: BoxDecoration(
-        color: bgColor,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        children: [
-          Text(
-            'النتيجة: $_result',
-            style: AppTextStyles.textStyle20.copyWith(color: textColor),
-          ),
-          if (_confidence != null)
+    return Card(
+      elevation: 4,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (_xrayConfidence != null) ...[
+              Text(
+                'نسبة التأكد أن الصورة X-ray:',
+                style: AppTextStyles.textStyle18.copyWith(
+                  color: AppColor.titleColor,
+                ),
+              ),
+              Text(
+                '${_xrayConfidence!.toStringAsFixed(1)}%',
+                style: AppTextStyles.textStyle20.copyWith(
+                  color: Colors.green,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
             Text(
-              'نسبة الثقة: ${_confidence!.toStringAsFixed(1)}%',
-              style: AppTextStyles.textStyle16.copyWith(
-                color: AppColor.subtitleColor,
+              'الأمراض المكتشفة:',
+              style: AppTextStyles.textStyle20.copyWith(
+                color: AppColor.titleColor,
               ),
             ),
-        ],
+            const SizedBox(height: 12),
+            ..._findings!.entries.map(
+              (entry) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: 6),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(entry.key, style: AppTextStyles.textStyle16),
+                    Text(
+                      '${entry.value.toStringAsFixed(1)}%',
+                      style: AppTextStyles.textStyle16.copyWith(
+                        color: AppColor.subtitleColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -129,14 +166,15 @@ class _CxrScreenState extends State<CxrScreen> {
           children: [
             const CustomAppBar(title: 'تحليل صورة أشعة الصدر'),
             Expanded(
-              child: Padding(
+              child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    Expanded(child: _buildImagePreview()),
+                    _buildImagePreview(),
+                    const SizedBox(height: 20),
                     if (_loading) const CircularProgressIndicator(),
                     _buildResultBox(),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: 20),
                     GreenButton(
                       widget: const Text(
                         'اختيار صورة',
@@ -155,6 +193,7 @@ class _CxrScreenState extends State<CxrScreen> {
                           ? null
                           : _analyze,
                     ),
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),

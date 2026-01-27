@@ -22,17 +22,33 @@ class CxrApiService {
     }
 
     var response = await request.send();
+    var body = await response.stream.bytesToString();
+    var jsonData = json.decode(body);
 
-    if (response.statusCode == 200) {
-      var body = await response.stream.bytesToString();
-      var jsonData = json.decode(body);
-
-      return {
-        "prediction": jsonData["prediction"],
-        "confidence": jsonData["confidence"],
-      };
-    } else {
-      throw Exception('فشل التحليل: ${response.statusCode}');
+    // حالة الصورة ليست X-ray
+    if (response.statusCode == 422) {
+      throw Exception(jsonData["error"] ?? "الصورة ليست أشعة صدر");
     }
+
+    // حالة خطأ بالسيرفر
+    if (response.statusCode == 500) {
+      throw Exception(jsonData["error"] ?? "خطأ داخلي في السيرفر");
+    }
+
+    // حالة نجاح
+    if (response.statusCode == 200 &&
+        jsonData["success"] == true &&
+        jsonData["positive_findings"] != null) {
+      return {
+        "confidence": (jsonData["xray_confidence"] as num).toDouble(),
+        "findings": Map<String, double>.from(
+          (jsonData["positive_findings"] as Map).map(
+            (key, value) => MapEntry(key.toString(), (value as num).toDouble()),
+          ),
+        ),
+      };
+    }
+
+    throw Exception("فشل التحليل");
   }
 }
