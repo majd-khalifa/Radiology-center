@@ -16,7 +16,12 @@ import 'package:radiology_center_app/views/patient_dashboard/appointment/widgets
 import 'package:radiology_center_app/views/patient_dashboard/patient_details/widgets/custom_text.dart';
 
 class AppointmentScreen extends StatefulWidget {
-  const AppointmentScreen({super.key});
+  final int deviceId; // 🔥 أضفنا هذا
+
+  const AppointmentScreen({
+    super.key,
+    required this.deviceId, // 🔥 أضفنا هذا
+  });
 
   @override
   State<AppointmentScreen> createState() => _AppointmentScreenState();
@@ -34,10 +39,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
   SlotModel? selectedSlot;
   bool isBooking = false;
   late List<DateTime> dates;
+
   String getDateTitle(DateTime date, int index) {
     if (index == 0) return "Today";
     if (index == 1) return "Tomorrow";
-
     return "${date.day}/${date.month}";
   }
 
@@ -47,20 +52,17 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     setState(() => isBooking = true);
 
     try {
-      final url = ApiLink.bookAppointment(
-        selectedSlot!.id,
-      ); // 🔥 استخدم الرابط الجديد
+      final url = ApiLink.bookAppointment(selectedSlot!.id);
 
       final response = await api.postData(
         url: url,
-        body: {}, // غالبًا لا يحتاج body حسب الـ API
+        body: {},
         token: ConstantData.tokenValue,
       );
 
       if (response != null && response['message'] != null) {
         SnackBarHelper.showSuccess(context, response['message']);
 
-        // إزالة السلوت المحجوز من القوائم
         setState(() {
           morningSlots.remove(selectedSlot);
           afternoonSlots.remove(selectedSlot);
@@ -68,7 +70,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
         });
       }
     } catch (e) {
-      debugPrint(e.toString());
       SnackBarHelper.showError(context, "Failed to book appointment");
     } finally {
       setState(() => isBooking = false);
@@ -84,35 +85,19 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
     try {
       final slots = await api.getDeviceSlots(
-        deviceId: 1, // 🔴 غيّرها حسب الجهاز
+        deviceId: widget.deviceId, // 🔥 استخدمنا الـ deviceId الحقيقي
         token: ConstantData.tokenValue,
       );
-      //       final now = DateTime.now();
-
-      // final filtered = slots.where((slot) {
-      //   // slot.date هو DateTime من API
-      //   final slotDateTime = DateTime(
-      //     slot.date.year,
-      //     slot.date.month,
-      //     slot.date.day,
-      //     int.parse(slot.time.split(':')[0]),
-      //     int.parse(slot.time.split(':')[1]),
-      //   );
-
-      //   return slot.isAvailable && slotDateTime.isAfter(now);
-      // });
 
       final selectedDateStr = selectedDate.toIso8601String().split('T').first;
 
       final filtered = slots.where((slot) {
         final slotDate = slot.date.toIso8601String().split('T').first;
-
         return slotDate == selectedDateStr && slot.isAvailable;
       });
 
       for (final slot in filtered) {
         final hour = int.parse(slot.time.split(':')[0]);
-
         if (hour < 12) {
           morningSlots.add(slot);
         } else {
@@ -131,7 +116,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       7,
       (index) => DateTime.now().add(Duration(days: index)),
     );
-
     selectedDate = dates[0];
   }
 
@@ -179,7 +163,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                                     selectedSlot = null;
                                   });
 
-                                  loadSlots(); // 🔥 هون الربط
+                                  loadSlots();
                                 },
                               ),
                             ),
@@ -198,13 +182,12 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                         ),
                       ),
                       SizedBox(height: 20.h),
-                      // مكان سابق لـ slots
-                      if (isLoadingSlots) ...[
-                        const Center(child: CircularProgressIndicator()),
-                      ] else ...[
-                        // Morning slots
+
+                      if (isLoadingSlots)
+                        const Center(child: CircularProgressIndicator())
+                      else ...[
                         if (morningSlots.isNotEmpty) ...[
-                          CustomText(text: "morning"),
+                          CustomText(text: "Morning"),
                           SizedBox(height: 10.h),
                           Wrap(
                             spacing: 10.w,
@@ -225,7 +208,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
 
                         SizedBox(height: 20.h),
 
-                        // Afternoon slots
                         if (afternoonSlots.isNotEmpty) ...[
                           CustomText(text: "Afternoon"),
                           SizedBox(height: 10.h),
@@ -246,7 +228,6 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           ),
                         ],
 
-                        // لا توجد slots
                         if (morningSlots.isEmpty && afternoonSlots.isEmpty)
                           const Center(
                             child: CustomText(text: "No slots available"),
@@ -270,7 +251,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                     : CustomText(text: "Book"),
                 onPressed: (selectedSlot == null || isBooking)
                     ? null
-                    : bookSelectedSlot, // 🔥 دالة الحجز الجديدة
+                    : bookSelectedSlot,
               ),
             ],
           ),

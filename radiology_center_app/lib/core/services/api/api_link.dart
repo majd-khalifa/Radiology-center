@@ -47,6 +47,9 @@ class ApiLink {
   static const String bookedAppointments =
       "${baseUrl}/api/radiology/booked-appointments/";
 
+  /// GET: my appointments for logged-in user
+  static const String myAppointments = "${baseUrl}radiology/my-appointments/";
+
   // ==================================================
   // ================= Appointments ===================
   // ==================================================
