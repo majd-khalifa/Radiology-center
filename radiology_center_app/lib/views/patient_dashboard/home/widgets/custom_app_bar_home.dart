@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:radiology_center_app/core/constant/app_color.dart';
 
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget leftWidget;
@@ -13,29 +11,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          SizedBox(width: 42, height: 42, child: leftWidget),
-          Container(
-            margin: const EdgeInsets.only(top: 8),
-            width: 42,
-            height: 42,
-            decoration: BoxDecoration(
-              color: AppColor.silver,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Center(
-              child: SvgPicture.asset(
-                'assets/icons/bell.svg',
-                width: 24,
-                height: 24,
-                colorFilter: const ColorFilter.mode(
-                  AppColor.black,
-                  BlendMode.srcIn,
-                ),
-              ),
-            ),
-          ),
-        ],
+        children: [SizedBox(width: 42, height: 42, child: leftWidget)],
       ),
     );
   }

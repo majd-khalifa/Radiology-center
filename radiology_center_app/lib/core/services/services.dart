@@ -31,14 +31,14 @@ class SharedPreferencesService {
 
   // حفظ التوكن
   Future<void> saveTokenUser(String token) async {
-  await saveStringValue(ConstantData.usertoken, token);
-  ConstantData.tokenValue = token;
-}
+    await saveStringValue(ConstantData.usertoken, token);
+    ConstantData.tokenValue = token;
+  }
 
-Future<void> saveUserEmail(String id) async {
-  await saveStringValue(ConstantData.userid, id);
-  ConstantData.idValue = id;
-}
+  Future<void> saveUserEmail(String id) async {
+    await saveStringValue(ConstantData.userid, id);
+    ConstantData.idValue = id;
+  }
 
   // حذف كل البيانات
   Future<void> removeAllData() async {
@@ -47,6 +47,4 @@ Future<void> saveUserEmail(String id) async {
     removeData(ConstantData.usertoken);
     removeData(ConstantData.userid);
   }
-
-
 }

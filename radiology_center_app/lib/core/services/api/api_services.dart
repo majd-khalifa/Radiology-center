@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:radiology_center_app/core/errors/failur_request.dart';
 import 'package:radiology_center_app/core/services/api/api_link.dart';
+import 'package:radiology_center_app/models/my_appointment_model.dart';
 import 'package:radiology_center_app/models/slots_model.dart';
 
 class ApiServices {
@@ -173,5 +174,17 @@ class ApiServices {
     );
 
     return (data as List).map((e) => SlotModel.fromJson(e)).toList();
+  }
+
+  Future<List<MyAppointmentModel>> getMyAppointments(String token) async {
+    final data = await getData(url: ApiLink.myAppointments, token: token);
+
+    return (data as List).map((e) => MyAppointmentModel.fromJson(e)).toList();
+  }
+
+  Future<Map<String, dynamic>> getProfile(String token) async {
+    final data = await getData(url: ApiLink.profileSetup, token: token);
+
+    return data;
   }
 }
