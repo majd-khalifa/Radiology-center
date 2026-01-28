@@ -26,6 +26,7 @@ class HomeScreen extends StatelessWidget {
                   backgroundImage: AssetImage('assets/images/profile.png'),
                   radius: 21,
                 ),
+                title: '',
               ),
               DashboardHeader(),
               HomeBody(),

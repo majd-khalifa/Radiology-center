@@ -23,7 +23,7 @@ class HomeBody extends StatelessWidget {
           ),
         ),
         child: Column(
-          children: const [
+          children: [
             ServicesSection(),
             SizedBox(height: 19),
             AppointmentSection(),

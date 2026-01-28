@@ -11,12 +11,14 @@ import 'package:radiology_center_app/core/services/api/api_services.dart';
 import 'package:radiology_center_app/core/services/services.dart';
 import 'package:radiology_center_app/core/widgets/background_image.dart';
 import 'package:radiology_center_app/core/widgets/green_button.dart';
+import 'package:radiology_center_app/models/patient_profile_model.dart';
 import 'package:radiology_center_app/models/user_model.dart';
 import 'package:radiology_center_app/views/admin_dashboard/admin_dashboard_screen.dart';
 import 'package:radiology_center_app/views/auth/login/login_header.dart';
 import 'package:radiology_center_app/views/auth/signup/signup_body.dart';
 import 'package:radiology_center_app/views/auth/widgets/text_filed_with_action.dart';
 import 'package:radiology_center_app/views/patient_dashboard/home/home_screen.dart';
+import 'package:radiology_center_app/views/patient_dashboard/patient_details/patient_details.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -35,6 +37,15 @@ class _LoginScreenState extends State<LoginScreen> {
   bool obscureText = true;
   bool isLoading = false;
   bool isChecked = false; // لتحديث أيقونة البريد
+  bool isProfileComplete(PatientProfileModel profile) {
+    return profile.fullName != null &&
+        profile.fullName!.isNotEmpty &&
+        profile.birthDay != null &&
+        profile.birthMonth != null &&
+        profile.birthYear != null &&
+        profile.contactNumber != null &&
+        profile.contactNumber!.isNotEmpty;
+  }
 
   Future<UserRole?> login() async {
     setState(() => isLoading = true);
@@ -160,12 +171,28 @@ class _LoginScreenState extends State<LoginScreen> {
 
                               switch (role) {
                                 case UserRole.user:
-                                  Navigator.pushReplacement(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (_) => const HomeScreen(),
-                                    ),
+                                  final profile = await api.getMyProfile(
+                                    token: ConstantData.tokenValue,
                                   );
+
+                                  if (profile == null ||
+                                      !isProfileComplete(profile)) {
+                                    // ❌ بروفايل ناقص أو غير موجود
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => const PatientDetails(),
+                                      ),
+                                    );
+                                  } else {
+                                    // ✅ بروفايل جاهز
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => const HomeScreen(),
+                                      ),
+                                    );
+                                  }
                                   break;
                                 case UserRole.admin:
                                   Navigator.pushReplacement(

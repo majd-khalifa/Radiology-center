@@ -7,20 +7,23 @@ import 'package:radiology_center_app/core/constant/text_style.dart';
 
 class CustomTextFormField extends StatelessWidget {
   final String? label;
-  final String hintText;
+  final String? hintText;
   final TextEditingController? controller;
   final bool hasEditIcon;
   final TextInputType keyboardType;
   final VoidCallback? onEditPressed;
-
+  final bool? readOnly;
+  final Function()? onTap;
   const CustomTextFormField({
     super.key,
     this.label,
-    required this.hintText,
+    this.hintText,
     this.controller,
     this.hasEditIcon = false,
     this.keyboardType = TextInputType.text,
     this.onEditPressed,
+    this.readOnly,
+    this.onTap,
   });
 
   @override
@@ -41,12 +44,14 @@ class CustomTextFormField extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  label??" ",
+                  label ?? " ",
                   style: AppTextStyles.textStyle12.copyWith(
                     color: AppColor.buttonBackground,
                   ),
                 ),
                 TextFormField(
+                  onTap: onTap,
+                  readOnly: readOnly ?? false,
                   controller: controller,
                   keyboardType: keyboardType,
                   style: AppTextStyles.textStyle16.copyWith(
