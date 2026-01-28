@@ -48,7 +48,7 @@ class _OnBoarding3State extends State<OnBoarding3> {
                   height: 70.h,
                   child: Text(
                     textAlign: TextAlign.center,
-                    "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of it over 2000 years old.",
+                    "We make booking easy, so you can focus on your health.",
                     style: AppTextStyles.textStyle14.copyWith(
                       color: AppColor.subtitleColor,
                       letterSpacing: -0.3,

@@ -5,7 +5,7 @@ import 'package:radiology_center_app/core/constant/app_color.dart';
 class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   final Widget leftWidget;
 
-  const CustomAppBar({super.key, required this.leftWidget});
+  const CustomAppBar({super.key, required this.leftWidget, required String title});
 
   @override
   Widget build(BuildContext context) {

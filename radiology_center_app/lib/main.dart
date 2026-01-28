@@ -31,7 +31,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
 
-          initialRoute: AppRoute.appointment,
+          initialRoute: AppRoute.signup,
         );
       },
       child: PatientDetails(),

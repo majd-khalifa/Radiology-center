@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
+import 'package:radiology_center_app/core/constant/constant.dart';
 import 'package:radiology_center_app/core/constant/text_style.dart';
 import 'package:radiology_center_app/core/helper/snack_bar_helper.dart';
 import 'package:radiology_center_app/core/services/api/api_link.dart';
@@ -53,8 +54,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       final response = await api.postData(
         url: url,
         body: {}, // غالبًا لا يحتاج body حسب الـ API
-        token:
-            "baa64c0e501dc632a908100f3ac9e01f9a77f1d4", // استبدل بالتوكن الحقيقي
+        token: ConstantData.tokenValue,
       );
 
       if (response != null && response['message'] != null) {
@@ -85,7 +85,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     try {
       final slots = await api.getDeviceSlots(
         deviceId: 1, // 🔴 غيّرها حسب الجهاز
-        token: "baa64c0e501dc632a908100f3ac9e01f9a77f1d4",
+        token: ConstantData.tokenValue,
       );
       //       final now = DateTime.now();
 
