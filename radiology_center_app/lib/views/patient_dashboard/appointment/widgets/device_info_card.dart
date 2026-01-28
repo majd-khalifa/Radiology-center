@@ -70,12 +70,13 @@ class TimeSlotItem extends StatelessWidget {
   final String time;
   final bool isSelected;
   final VoidCallback onTap;
-
+  // final bool isDisabled; // ✅ هنا تضيف الخاصية
   const TimeSlotItem({
     super.key,
     required this.time,
     required this.isSelected,
     required this.onTap,
+    // required this.isDisabled,
   });
 
   @override
