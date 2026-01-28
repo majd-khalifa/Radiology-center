@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:radiology_center_app/core/errors/failur_request.dart';
 import 'package:radiology_center_app/core/services/api/api_link.dart';
+import 'package:radiology_center_app/models/slots_model.dart';
 
 class ApiServices {
   final Dio _dio =
@@ -40,18 +41,21 @@ class ApiServices {
           ),
         );
 
-// تأكد أن هذه الدالة داخل ApiServices هي التي تخدم جميع الطلبات
-Map<String, String> _getHeaders(String? token, Map<String, String>? extraHeaders) {
-  final headers = <String, String>{
-    'Accept': 'application/json',
-    'Content-Type': 'application/json',
-    ...?extraHeaders,
-  };
-  if (token != null && token.isNotEmpty) {
-    headers['Authorization'] = 'Token $token'; // الحرف T كبير في Token
+  // تأكد أن هذه الدالة داخل ApiServices هي التي تخدم جميع الطلبات
+  Map<String, String> _getHeaders(
+    String? token,
+    Map<String, String>? extraHeaders,
+  ) {
+    final headers = <String, String>{
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+      ...?extraHeaders,
+    };
+    if (token != null && token.isNotEmpty) {
+      headers['Authorization'] = 'Token $token'; // الحرف T كبير في Token
+    }
+    return headers;
   }
-  return headers;
-}
 
   /// GET
   Future getData({
@@ -96,7 +100,6 @@ Map<String, String> _getHeaders(String? token, Map<String, String>? extraHeaders
         ...?headers,
       };
 
-      
       if (token != null && token.isNotEmpty) {
         finalHeaders['Authorization'] = 'Token $token';
       }
@@ -158,5 +161,17 @@ Map<String, String> _getHeaders(String? token, Map<String, String>? extraHeaders
     } on DioException catch (e) {
       throw ServerFailure.fromDioError(e);
     }
+  }
+
+  Future<List<SlotModel>> getDeviceSlots({
+    required int deviceId,
+    required String token,
+  }) async {
+    final data = await getData(
+      url: ApiLink.deviceAppointments(deviceId),
+      token: token,
+    );
+
+    return (data as List).map((e) => SlotModel.fromJson(e)).toList();
   }
 }
