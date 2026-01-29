@@ -131,7 +131,7 @@ class _PatientDetailsState extends State<PatientDetails> {
                               CustomText(text: "Patient’s Name"),
                               SizedBox(height: 9),
                               Mytextfield(
-                                text: 'Abdullah Mamun',
+                                text: 'Full Name',
                                 controller: patientNameController,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -201,7 +201,7 @@ class _PatientDetailsState extends State<PatientDetails> {
                               CustomText(text: "Mobile Number"),
                               SizedBox(height: 9),
                               Mytextfield(
-                                text: "+8801000000000",
+                                text: "+963123456789",
                                 controller: phoneNumeberController,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
@@ -214,7 +214,7 @@ class _PatientDetailsState extends State<PatientDetails> {
                               CustomText(text: "Email"),
                               SizedBox(height: 9),
                               Mytextfield(
-                                text: "itsmemamun1@gmail.com",
+                                text: "name@email.com",
                                 controller: emailController,
                                 validator: (value) {
                                   if (value != null && value.isNotEmpty) {

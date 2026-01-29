@@ -13,9 +13,9 @@ class PatientProfileSerializer(serializers.ModelSerializer):
         model = PatientProfile
         fields = [
             'full_name',
-            'birth_day',     # تم التعديل هنا
-            'birth_month',   # تم التعديل هنا
-            'birth_year',    # تم التعديل هنا
+            'birth_day',
+            'birth_month',
+            'birth_year',
             'gender',
             'description',
             'contact_number',
@@ -61,6 +61,7 @@ class RegisterSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = [
+            'username',   # صار مستقل
             'email',
             'password',
             'first_name'
@@ -75,7 +76,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user = User.objects.create_user(
-            username=validated_data['email'],  # الإيميل هو username
+            username=validated_data['username'],   # صار منفصل عن الإيميل
             email=validated_data['email'],
             password=validated_data['password'],
             first_name=validated_data.get('first_name', '')
