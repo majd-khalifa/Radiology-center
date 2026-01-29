@@ -20,7 +20,7 @@ class LoginHeader extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
         Text(
-          "You can search c ourse, apply course and\nfind scholarship for abroad studies",
+          "Book radiology appointments, view your results,\nand manage your medical information.",
           textAlign: TextAlign.center,
           style: AppTextStyles.textStyle14.copyWith(
             color: AppColor.subtitleColor,

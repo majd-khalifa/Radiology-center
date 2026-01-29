@@ -1,5 +1,7 @@
+// ignore_for_file: unnecessary_brace_in_string_interps
+
 class ApiLink {
-  static const String baseUrl = "http://10.0.2.2:8000";
+  static const String baseUrl = "http://192.168.1.5:8000";
 
   // ==================================================
   // =================== Auth =========================
@@ -11,7 +13,7 @@ class ApiLink {
   /// POST: register
   static const String register = "${baseUrl}/api/accounts/register/";
 
-  /// POST / PUT: profile setup
+  /// POST / PUT / GET: profile setup
   static const String profileSetup = "${baseUrl}/api/accounts/profile/";
 
   // ==================================================
@@ -48,7 +50,8 @@ class ApiLink {
       "${baseUrl}/api/radiology/booked-appointments/";
 
   /// GET: my appointments for logged-in user
-  static const String myAppointments = "${baseUrl}radiology/my-appointments/";
+  static const String myAppointments =
+      "${baseUrl}/api/radiology/my-appointments/";
 
   // ==================================================
   // ================= Appointments ===================
@@ -65,4 +68,7 @@ class ApiLink {
   /// DELETE: delete appointment
   static String deleteAppointment(int appointmentId) =>
       "${baseUrl}/api/radiology/appointments/$appointmentId/delete/";
+
+  static String getdevicebyid(int deviceId) =>
+      "${baseUrl}/api/radiology/devices/$deviceId";
 }

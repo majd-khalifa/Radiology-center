@@ -26,7 +26,7 @@ class Signupheader extends StatelessWidget {
           SizedBox(height: 15),
           Text(
             textAlign: TextAlign.center,
-            "You can search course, apply course and find scholarship for abroad studies",
+            "Book radiology appointments, view your results,\nand manage your medical information.",
             style: AppTextStyles.textStyle14.copyWith(
               color: AppColor.subtitleColor,
               letterSpacing: -0.3,

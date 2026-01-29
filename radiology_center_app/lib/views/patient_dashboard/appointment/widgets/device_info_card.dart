@@ -1,13 +1,15 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, curly_braces_in_flow_control_structures
 
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
 import 'package:radiology_center_app/core/constant/text_style.dart';
+import 'package:radiology_center_app/models/device_model.dart';
 
-// 1. بطاقة الجهاز (X-Ray Card)
 class DeviceInfoCard extends StatelessWidget {
-  const DeviceInfoCard({super.key});
+  final DeviceModel device;
+
+  const DeviceInfoCard({super.key, required this.device});
 
   @override
   Widget build(BuildContext context) {
@@ -26,22 +28,26 @@ class DeviceInfoCard extends StatelessWidget {
       ),
       child: Row(
         children: [
+          // صورة الجهاز (ثابتة أو من API)
           ClipRRect(
             borderRadius: BorderRadius.circular(8.r),
             child: Image.asset(
-              'assets/images/xray_machine.webp',
+              _getDeviceImage(device.name),
               width: 80.w,
               height: 80.h,
               fit: BoxFit.cover,
             ),
           ),
+
           SizedBox(width: 15.w),
+
+          // معلومات الجهاز
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  "X-Ray Scan",
+                  device.name,
                   style: AppTextStyles.textStyle16.copyWith(
                     fontWeight: FontWeight.bold,
                     color: AppColor.black,
@@ -49,10 +55,23 @@ class DeviceInfoCard extends StatelessWidget {
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  "High resolution digital imaging for chest and lungs.",
+                  device.description,
                   style: AppTextStyles.textStyle12.copyWith(
                     color: AppColor.subtitleColor,
                   ),
+                ),
+                SizedBox(height: 6.h),
+                Row(
+                  children: [
+                    Icon(Icons.star, color: Colors.amber, size: 18.sp),
+                    SizedBox(width: 4.w),
+                    Text(
+                      device.rating.toString(),
+                      style: AppTextStyles.textStyle14.copyWith(
+                        color: AppColor.black,
+                      ),
+                    ),
+                  ],
                 ),
               ],
             ),
@@ -61,45 +80,14 @@ class DeviceInfoCard extends StatelessWidget {
       ),
     );
   }
-}
 
-// 2. ويدجيت اختيار اليوم (Date Item)
-
-// 3. ويدجيت الوقت المفرد (Time Slot)
-class TimeSlotItem extends StatelessWidget {
-  final String time;
-  final bool isSelected;
-  final VoidCallback onTap;
-  // final bool isDisabled; // ✅ هنا تضيف الخاصية
-  const TimeSlotItem({
-    super.key,
-    required this.time,
-    required this.isSelected,
-    required this.onTap,
-    // required this.isDisabled,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? AppColor.buttonBackground
-              : AppColor.buttonBackground.withOpacity(0.05),
-          borderRadius: BorderRadius.circular(10.r),
-        ),
-        child: Text(
-          time,
-          style: AppTextStyles.textStyle14.copyWith(
-            color: isSelected ? AppColor.white : AppColor.buttonBackground,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ),
-    );
+  // 🔥 اختيار صورة مناسبة حسب اسم الجهاز
+  String _getDeviceImage(String name) {
+    if (name.toLowerCase().contains("x"))
+      return 'assets/images/xray_machine.webp';
+    if (name.toLowerCase().contains("ultra"))
+      return 'assets/images/ultrasound.webp';
+    if (name.toLowerCase().contains("mri")) return 'assets/images/mri.jpg';
+    return 'assets/images/onboarding1.png';
   }
 }

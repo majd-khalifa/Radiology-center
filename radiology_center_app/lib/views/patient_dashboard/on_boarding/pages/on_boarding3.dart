@@ -21,38 +21,39 @@ class _OnBoarding3State extends State<OnBoarding3> {
 
           Positioned(
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-
               children: [
-                SizedBox(height: 91),
+                SizedBox(height: 91.h),
+
                 Center(
-                  child: SizedBox(
-                    width: 380.w,
-                    height: 380.h,
-                    child: CircleAvatar(
-                      radius: 1.sw,
-                      child: Image.asset("assets/images/onboaredingimage.png"),
+                  child: CircleAvatar(
+                    radius: 180.r,
+                    backgroundColor: Colors.white,
+                    backgroundImage: const AssetImage(
+                      "assets/images/onboarding3.jpg",
                     ),
                   ),
                 ),
-                SizedBox(height: 85),
+
+                SizedBox(height: 85.h),
+
                 Text(
-                  "Easy Appointments",
+                  "Get Accurate Results Faster",
                   style: AppTextStyles.textStyle28.copyWith(
                     color: AppColor.titleColor,
                   ),
                 ),
-                SizedBox(height: 11),
+
+                SizedBox(height: 11.h),
+
                 SizedBox(
                   width: 289.w,
-                  height: 70.h,
                   child: Text(
                     textAlign: TextAlign.center,
-                    "We make booking easy, so you can focus on your health.",
+                    "Receive clear imaging reports and benefit from smart AI analysis designed to support better diagnosis.",
                     style: AppTextStyles.textStyle14.copyWith(
                       color: AppColor.subtitleColor,
                       letterSpacing: -0.3,
-                      height: 1.656,
+                      height: 1.6,
                     ),
                   ),
                 ),

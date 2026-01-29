@@ -1,10 +1,14 @@
+// ignore_for_file: use_build_context_synchronously, deprecated_member_use
+
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
 import 'package:radiology_center_app/core/constant/text_style.dart';
+import 'package:radiology_center_app/core/services/api/api_link.dart';
 import 'package:radiology_center_app/views/patient_dashboard/home/widgets/category_item.dart';
 import 'package:radiology_center_app/views/patient_dashboard/appointment/appointment_screen.dart';
-import 'package:radiology_center_app/core/services/api/api_services.dart';
 import 'package:radiology_center_app/core/constant/constant.dart';
+import 'package:radiology_center_app/core/services/api/api_services.dart';
 import 'package:radiology_center_app/models/my_appointment_model.dart';
 
 class HomeBody extends StatelessWidget {
@@ -12,23 +16,83 @@ class HomeBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      child: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(23),
-            topRight: Radius.circular(23),
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(23.r),
+          topRight: Radius.circular(23.r),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 20.h),
+
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: Text(
+              "Our Services",
+              style: AppTextStyles.textStyle16.copyWith(color: AppColor.black),
+            ),
           ),
-        ),
-        child: Column(
-          children: [
-            ServicesSection(),
-            SizedBox(height: 19),
-            AppointmentSection(),
-          ],
-        ),
+
+          SizedBox(height: 16.h),
+
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => AppointmentScreen(deviceId: 5),
+                      ),
+                    );
+                  },
+                  child: const CategoryItem(
+                    "X-Ray",
+                    'assets/icons/skeleton.svg',
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => AppointmentScreen(deviceId: 6),
+                      ),
+                    );
+                  },
+                  child: const CategoryItem(
+                    "UltraSound",
+                    'assets/icons/ultrasound.svg',
+                  ),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => AppointmentScreen(deviceId: 1),
+                      ),
+                    );
+                  },
+                  child: const CategoryItem("MRI", 'assets/icons/mri.svg'),
+                ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: 20.h),
+
+          /// هنا فقط نضع Expanded واحد
+          Expanded(child: AppointmentSection()),
+        ],
       ),
     );
   }
@@ -42,13 +106,15 @@ class ServicesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        SizedBox(height: 20.h),
         Padding(
-          padding: const EdgeInsets.all(20),
+          padding: EdgeInsets.symmetric(horizontal: 16.w),
           child: Text(
             "Our Services",
             style: AppTextStyles.textStyle16.copyWith(color: AppColor.black),
           ),
         ),
+
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
@@ -63,10 +129,7 @@ class ServicesSection extends StatelessWidget {
                     ),
                   );
                 },
-                child: const CategoryItem(
-                  "X-Ray",
-                  'assets/icons/consultation.svg',
-                ),
+                child: const CategoryItem("X-Ray", 'assets/icons/skeleton.svg'),
               ),
               GestureDetector(
                 onTap: () {
@@ -77,7 +140,10 @@ class ServicesSection extends StatelessWidget {
                     ),
                   );
                 },
-                child: const CategoryItem("CTI", 'assets/icons/medicines.svg'),
+                child: const CategoryItem(
+                  "UltraSound",
+                  'assets/icons/ultrasound.svg',
+                ),
               ),
               GestureDetector(
                 onTap: () {
@@ -88,7 +154,7 @@ class ServicesSection extends StatelessWidget {
                     ),
                   );
                 },
-                child: const CategoryItem("MRI", 'assets/icons/ambulance.svg'),
+                child: const CategoryItem("MRI", 'assets/icons/mri.svg'),
               ),
             ],
           ),
@@ -118,10 +184,7 @@ class _AppointmentSectionState extends State<AppointmentSection> {
     final api = ApiServices();
     final token = ConstantData.tokenValue;
 
-    final data = await api.getData(
-      url: "http://10.0.2.2:8000/api/radiology/my-appointments/",
-      token: token,
-    );
+    final data = await api.getData(url: ApiLink.myAppointments, token: token);
 
     return (data as List).map((e) => MyAppointmentModel.fromJson(e)).toList();
   }
@@ -131,10 +194,7 @@ class _AppointmentSectionState extends State<AppointmentSection> {
     final token = ConstantData.tokenValue;
 
     try {
-      await api.deleteData(
-        url: "http://10.0.2.2:8000/api/radiology/appointments/$id/delete/",
-        token: token,
-      );
+      await api.deleteData(url: ApiLink.deleteAppointment(id), token: token);
 
       setState(() {
         _appointmentsFuture = fetchUserAppointments();
@@ -152,60 +212,61 @@ class _AppointmentSectionState extends State<AppointmentSection> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                "Appointment",
-                style: AppTextStyles.textStyle16.copyWith(
-                  color: AppColor.black,
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 16),
-        SizedBox(
-          height: 255, // ارتفاع مناسب داخل الصفحة
-          child: FutureBuilder<List<MyAppointmentModel>>(
-            future: _appointmentsFuture,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CircularProgressIndicator());
-              }
-
-              if (snapshot.hasError) {
-                return const Center(
-                  child: Text(
-                    "Error loading appointments",
-                    style: TextStyle(color: Colors.red),
+    return SizedBox.expand(
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Appointments",
+                  style: AppTextStyles.textStyle16.copyWith(
+                    color: AppColor.black,
                   ),
-                );
-              }
-
-              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                return const Center(child: Text("No appointments found"));
-              }
-
-              return ListView.builder(
-                padding: const EdgeInsets.only(bottom: 12),
-                itemCount: snapshot.data!.length,
-                itemBuilder: (context, index) {
-                  final appt = snapshot.data![index];
-                  return AppointmentCard(
-                    appt: appt,
-                    onDelete: deleteAppointment,
-                  );
-                },
-              );
-            },
+                ),
+              ],
+            ),
           ),
-        ),
-      ],
+          SizedBox(height: 16.h),
+          Expanded(
+            child: FutureBuilder<List<MyAppointmentModel>>(
+              future: _appointmentsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError) {
+                  return const Center(
+                    child: Text(
+                      "Error loading appointments",
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  );
+                }
+
+                if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Center(child: Text("No appointments found"));
+                }
+
+                return ListView.builder(
+                  padding: EdgeInsets.only(bottom: 12.h),
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    final appt = snapshot.data![index];
+                    return AppointmentCard(
+                      appt: appt,
+                      onDelete: deleteAppointment,
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -285,13 +346,13 @@ class AppointmentCard extends StatelessWidget {
                     decoration: BoxDecoration(
                       color: appt.isAvailable
                           ? Colors.green.withOpacity(0.15)
-                          : Colors.red.withOpacity(0.15),
+                          : Colors.green.withOpacity(0.15),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
                       appt.isAvailable ? "Available" : "Booked",
                       style: TextStyle(
-                        color: appt.isAvailable ? Colors.green : Colors.red,
+                        color: appt.isAvailable ? Colors.green : Colors.green,
                         fontSize: 12,
                         fontWeight: FontWeight.w600,
                       ),

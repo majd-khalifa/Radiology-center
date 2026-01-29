@@ -1,4 +1,6 @@
 // views/patient_dashboard/appointment/appointment_screen.dart
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
@@ -10,18 +12,17 @@ import 'package:radiology_center_app/core/services/api/api_services.dart';
 import 'package:radiology_center_app/core/widgets/background_image.dart';
 import 'package:radiology_center_app/core/widgets/custom_app_bar.dart';
 import 'package:radiology_center_app/core/widgets/green_button.dart';
+import 'package:radiology_center_app/models/device_model.dart';
 import 'package:radiology_center_app/models/slots_model.dart';
 import 'package:radiology_center_app/views/patient_dashboard/appointment/widgets/appointment_date_item.dart';
 import 'package:radiology_center_app/views/patient_dashboard/appointment/widgets/device_info_card.dart';
+import 'package:radiology_center_app/views/patient_dashboard/appointment/widgets/time_slot_item.dart';
 import 'package:radiology_center_app/views/patient_dashboard/patient_details/widgets/custom_text.dart';
 
 class AppointmentScreen extends StatefulWidget {
-  final int deviceId; // 🔥 أضفنا هذا
+  final int deviceId;
 
-  const AppointmentScreen({
-    super.key,
-    required this.deviceId, // 🔥 أضفنا هذا
-  });
+  const AppointmentScreen({super.key, required this.deviceId});
 
   @override
   State<AppointmentScreen> createState() => _AppointmentScreenState();
@@ -29,22 +30,74 @@ class AppointmentScreen extends StatefulWidget {
 
 class _AppointmentScreenState extends State<AppointmentScreen> {
   final ApiServices api = ApiServices();
-  List<SlotModel> allSlots = [];
+
+  DeviceModel? device;
+  bool isLoadingDevice = true;
+
   List<SlotModel> morningSlots = [];
   List<SlotModel> afternoonSlots = [];
-
   bool isLoadingSlots = false;
+
   DateTime selectedDate = DateTime.now();
   int selectedDateIndex = 0;
   SlotModel? selectedSlot;
   bool isBooking = false;
+
   late List<DateTime> dates;
 
-  String getDateTitle(DateTime date, int index) {
-    if (index == 0) return "Today";
-    if (index == 1) return "Tomorrow";
-    return "${date.day}/${date.month}";
+  // ---------------- DEVICE INFO ----------------
+
+  Future<void> loadDeviceInfo() async {
+    try {
+      device = await api.getDeviceInfo(
+        widget.deviceId,
+        ConstantData.tokenValue,
+      );
+    } catch (e) {
+      debugPrint("Error loading device info: $e");
+    }
+
+    setState(() => isLoadingDevice = false);
   }
+
+  // ---------------- SLOTS ----------------
+
+  Future<void> loadSlots() async {
+    setState(() {
+      isLoadingSlots = true;
+      morningSlots.clear();
+      afternoonSlots.clear();
+    });
+
+    try {
+      final slots = await api.getDeviceSlots(
+        deviceId: widget.deviceId,
+        token: ConstantData.tokenValue,
+      );
+
+      final selectedDateStr = selectedDate.toIso8601String().split('T').first;
+
+      final filtered = slots.where((slot) {
+        final slotDate = slot.date.toIso8601String().split('T').first;
+        return slotDate == selectedDateStr && slot.isAvailable;
+      });
+
+      for (final slot in filtered) {
+        final hour = int.parse(slot.time.split(':')[0]);
+        if (hour < 12) {
+          morningSlots.add(slot);
+        } else {
+          afternoonSlots.add(slot);
+        }
+      }
+    } catch (e) {
+      debugPrint(e.toString());
+    }
+
+    setState(() => isLoadingSlots = false);
+  }
+
+  // ---------------- BOOKING ----------------
 
   Future<void> bookSelectedSlot() async {
     if (selectedSlot == null) return;
@@ -76,40 +129,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     }
   }
 
-  Future<void> loadSlots() async {
-    setState(() {
-      isLoadingSlots = true;
-      morningSlots.clear();
-      afternoonSlots.clear();
-    });
-
-    try {
-      final slots = await api.getDeviceSlots(
-        deviceId: widget.deviceId, // 🔥 استخدمنا الـ deviceId الحقيقي
-        token: ConstantData.tokenValue,
-      );
-
-      final selectedDateStr = selectedDate.toIso8601String().split('T').first;
-
-      final filtered = slots.where((slot) {
-        final slotDate = slot.date.toIso8601String().split('T').first;
-        return slotDate == selectedDateStr && slot.isAvailable;
-      });
-
-      for (final slot in filtered) {
-        final hour = int.parse(slot.time.split(':')[0]);
-        if (hour < 12) {
-          morningSlots.add(slot);
-        } else {
-          afternoonSlots.add(slot);
-        }
-      }
-    } catch (e) {
-      debugPrint(e.toString());
-    }
-
-    setState(() => isLoadingSlots = false);
-  }
+  // ---------------- DATES ----------------
 
   void generateDates() {
     dates = List.generate(
@@ -119,32 +139,48 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
     selectedDate = dates[0];
   }
 
+  String getDateTitle(DateTime date, int index) {
+    if (index == 0) return "Today";
+    if (index == 1) return "Tomorrow";
+    return "${date.day}/${date.month}";
+  }
+
+  // ---------------- INIT ----------------
+
   @override
   void initState() {
     super.initState();
     generateDates();
     loadSlots();
+    loadDeviceInfo();
   }
+
+  // ---------------- UI ----------------
 
   @override
   Widget build(BuildContext context) {
     return Backgroundimage(
       child: Scaffold(
-        backgroundColor: AppColor.gradientWhite,
+        backgroundColor: const Color(0xFFF3FFF8),
+
         body: SafeArea(
           child: Column(
             children: [
               const CustomAppBar(title: "Select Time"),
+
               Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const DeviceInfoCard(),
+                      device == null
+                          ? const Center(child: CircularProgressIndicator())
+                          : DeviceInfoCard(device: device!),
+
                       SizedBox(height: 25.h),
 
-                      // اختيار التاريخ
+                      // ---------------- DATE SELECTOR ----------------
                       SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         child: Row(
@@ -172,6 +208,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                       ),
 
                       SizedBox(height: 25.h),
+
                       Center(
                         child: Text(
                           getDateTitle(selectedDate, selectedDateIndex),
@@ -181,8 +218,10 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                           ),
                         ),
                       ),
+
                       SizedBox(height: 20.h),
 
+                      // ---------------- SLOTS ----------------
                       if (isLoadingSlots)
                         const Center(child: CircularProgressIndicator())
                       else ...[
@@ -237,7 +276,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
                   ),
                 ),
               ),
+
               SizedBox(height: 20.h),
+
               GreenButton(
                 widget: isBooking
                     ? const SizedBox(

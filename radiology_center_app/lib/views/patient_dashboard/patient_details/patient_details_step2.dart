@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
+
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
@@ -181,8 +183,7 @@ class _PatientDetailsStep2State extends State<PatientDetailsStep2> {
                     try {
                       await api.createOrUpdateProfileMultipart(
                         profile: widget.profile,
-                        token:
-                           ConstantData.tokenValue, // نفس التوكن
+                        token: ConstantData.tokenValue, // نفس التوكن
                       );
 
                       SnackBarHelper.showSuccess(

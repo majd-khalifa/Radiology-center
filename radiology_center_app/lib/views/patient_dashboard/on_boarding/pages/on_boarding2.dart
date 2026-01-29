@@ -20,43 +20,44 @@ class _OnBoarding2State extends State<OnBoarding2> {
           Positioned(top: -20, left: 175, child: Backgroundgreencircle()),
 
           Positioned(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
+            child: Column(
+              children: [
+                SizedBox(height: 91.h),
 
-                children: [
-                  SizedBox(height: 91),
-                  SizedBox(
-                    width: 380.w,
-                    height: 380.h,
-                    child: CircleAvatar(
-                      radius: 1.sw,
-                      child: Image.asset("assets/images/onboaredingimage.png"),
+                Center(
+                  child: CircleAvatar(
+                    radius: 180.r,
+                    backgroundColor: Colors.white,
+                    backgroundImage: const AssetImage(
+                      "assets/images/onboarding2.webp",
                     ),
                   ),
-                  SizedBox(height: 85),
-                  Text(
-                    "Choose Best Doctors",
-                    style: AppTextStyles.textStyle28.copyWith(
-                      color: AppColor.titleColor,
+                ),
+
+                SizedBox(height: 85.h),
+
+                Text(
+                  "Book Your Scan Easily",
+                  style: AppTextStyles.textStyle28.copyWith(
+                    color: AppColor.titleColor,
+                  ),
+                ),
+
+                SizedBox(height: 11.h),
+
+                SizedBox(
+                  width: 289.w,
+                  child: Text(
+                    textAlign: TextAlign.center,
+                    "Schedule X‑Ray, MRI, or Ultrasound appointments in seconds with a smooth and simple booking experience.",
+                    style: AppTextStyles.textStyle14.copyWith(
+                      color: AppColor.subtitleColor,
+                      letterSpacing: -0.3,
+                      height: 1.6,
                     ),
                   ),
-                  SizedBox(height: 11.h),
-                  SizedBox(
-                    width: 289,
-                    height: 70,
-                    child: Text(
-                      textAlign: TextAlign.center,
-                      "Your health is our priority — every scan tells a story.",
-                      style: AppTextStyles.textStyle14.copyWith(
-                        color: AppColor.subtitleColor,
-                        letterSpacing: -0.3,
-                        height: 1.656,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ],

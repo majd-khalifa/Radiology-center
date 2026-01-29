@@ -76,7 +76,7 @@ class _CxrScreenState extends State<CxrScreen> {
             : null;
       });
     } catch (e) {
-      SnackBarHelper.showError(context, 'خطأ في التحليل: $e');
+      SnackBarHelper.showError(context, 'Analysis error: $e');
     } finally {
       setState(() {
         _loading = false;
@@ -87,7 +87,10 @@ class _CxrScreenState extends State<CxrScreen> {
   Widget _buildImagePreview() {
     if (_webImageBytes == null && _image == null) {
       return Center(
-        child: Text('اختر صورة أشعة للبدء', style: AppTextStyles.textStyle16),
+        child: Text(
+          'Select an X-ray image to begin',
+          style: AppTextStyles.textStyle16,
+        ),
       );
     }
 
@@ -116,7 +119,7 @@ class _CxrScreenState extends State<CxrScreen> {
           children: [
             if (_xrayConfidence != null) ...[
               Text(
-                'نسبة التأكد أن الصورة X-ray:',
+                'Confidence that the image is an X-ray:',
                 style: AppTextStyles.textStyle18.copyWith(
                   color: AppColor.titleColor,
                 ),
@@ -131,7 +134,7 @@ class _CxrScreenState extends State<CxrScreen> {
               const SizedBox(height: 20),
             ],
             Text(
-              'الأمراض المكتشفة:',
+              'Detected Findings:',
               style: AppTextStyles.textStyle20.copyWith(
                 color: AppColor.titleColor,
               ),
@@ -163,10 +166,11 @@ class _CxrScreenState extends State<CxrScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF3FFF8),
       body: SafeArea(
         child: Column(
           children: [
-            const CustomAppBar(title: 'تحليل صورة أشعة الصدر'),
+            const CustomAppBar(title: 'Chest X-ray Analysis'),
             Expanded(
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
@@ -179,7 +183,7 @@ class _CxrScreenState extends State<CxrScreen> {
                     const SizedBox(height: 20),
                     GreenButton(
                       widget: const Text(
-                        'اختيار صورة',
+                        'Choose Image',
                         style: TextStyle(color: Colors.white),
                       ),
                       onPressed: _pickImage,
@@ -187,7 +191,7 @@ class _CxrScreenState extends State<CxrScreen> {
                     const SizedBox(height: 12),
                     GreenButton(
                       widget: const Text(
-                        'تحليل',
+                        'Analyze',
                         style: TextStyle(color: Colors.white),
                       ),
                       onPressed:

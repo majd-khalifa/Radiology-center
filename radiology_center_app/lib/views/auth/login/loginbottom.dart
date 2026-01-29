@@ -70,6 +70,7 @@ class Loginbottom extends StatelessWidget {
                   ),
                   recognizer: TapGestureRecognizer()
                     ..onTap = () {
+                      FocusScope.of(context).unfocus();
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) => SignupScreen()),

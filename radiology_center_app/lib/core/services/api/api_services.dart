@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:radiology_center_app/core/errors/failur_request.dart';
 import 'package:radiology_center_app/core/services/api/api_link.dart';
+import 'package:radiology_center_app/models/device_model.dart';
 import 'package:radiology_center_app/models/patient_profile_model.dart';
 import 'package:radiology_center_app/models/my_appointment_model.dart';
 import 'package:radiology_center_app/models/slots_model.dart';
@@ -178,47 +179,47 @@ class ApiServices {
   }
 
   Future createOrUpdateProfileMultipart({
-  required PatientProfileModel profile,
-  required String token,
-}) async {
-  try {
-    final formData = FormData.fromMap({
-      'full_name': profile.fullName,
-      'birth_day': profile.birthDay,
-      'birth_month': profile.birthMonth,
-      'birth_year': profile.birthYear,
-      'gender': profile.gender,
-      'contact_number': profile.contactNumber,
-      'patient_email': profile.patientEmail,
-      'location': profile.location,
-      'description': profile.description,
+    required PatientProfileModel profile,
+    required String token,
+  }) async {
+    try {
+      final formData = FormData.fromMap({
+        'full_name': profile.fullName,
+        'birth_day': profile.birthDay,
+        'birth_month': profile.birthMonth,
+        'birth_year': profile.birthYear,
+        'gender': profile.gender,
+        'contact_number': profile.contactNumber,
+        'patient_email': profile.patientEmail,
+        'location': profile.location,
+        'description': profile.description,
 
-      // ✅ الصورة (اختيارية)
-      if (profile.profileImageFile != null)
-        'profile_image': await MultipartFile.fromFile(
-          profile.profileImageFile!.path,
-          filename: profile.profileImageFile!.path.split('/').last,
+        // ✅ الصورة (اختيارية)
+        if (profile.profileImageFile != null)
+          'profile_image': await MultipartFile.fromFile(
+            profile.profileImageFile!.path,
+            filename: profile.profileImageFile!.path.split('/').last,
+          ),
+      });
+
+      final response = await _dio.patch(
+        ApiLink.profileSetup,
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Token $token',
+            'Accept': 'application/json',
+          },
         ),
-    });
+      );
 
-    final response = await _dio.patch(
-      ApiLink.profileSetup,
-      data: formData,
-      options: Options(
-        headers: {
-          'Authorization': 'Token $token',
-          'Accept': 'application/json',
-        
-        },
-      ),
-    );
-
-    return response.data;
-  } on DioException catch (e) {
-    throw ServerFailure.fromDioError(e);
+      return response.data;
+    } on DioException catch (e) {
+      throw ServerFailure.fromDioError(e);
+    }
   }
-}
- Future<PatientProfileModel> updateProfile({
+
+  Future<PatientProfileModel> updateProfile({
     required PatientProfileModel profile,
     required String token,
   }) async {
@@ -270,29 +271,28 @@ class ApiServices {
       throw ServerFailure.fromDioError(e);
     }
   }
-  Future<PatientProfileModel?> getMyProfile({
-  required String token,
-}) async {
-  try {
-    final response = await _dio.get(
-      ApiLink.profileSetup,
-      options: Options(
-        headers: {
-          'Authorization': 'Token $token',
-          'Accept': 'application/json',
-        },
-      ),
-    );
 
-    return PatientProfileModel.fromJson(response.data);
-  } on DioException catch (e) {
-    // لو ما في بروفايل (404 مثلاً)
-    if (e.response?.statusCode == 404) {
-      return null;
+  Future<PatientProfileModel?> getMyProfile({required String token}) async {
+    try {
+      final response = await _dio.get(
+        ApiLink.profileSetup,
+        options: Options(
+          headers: {
+            'Authorization': 'Token $token',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+
+      return PatientProfileModel.fromJson(response.data);
+    } on DioException catch (e) {
+      // لو ما في بروفايل (404 مثلاً)
+      if (e.response?.statusCode == 404) {
+        return null;
+      }
+      rethrow;
     }
-    rethrow;
   }
-}
 
   Future<List<MyAppointmentModel>> getMyAppointments(String token) async {
     final data = await getData(url: ApiLink.myAppointments, token: token);
@@ -304,5 +304,14 @@ class ApiServices {
     final data = await getData(url: ApiLink.profileSetup, token: token);
 
     return data;
+  }
+
+  Future<DeviceModel> getDeviceInfo(int deviceId, String token) async {
+    final data = await getData(
+      url: ApiLink.getdevicebyid(deviceId),
+      token: token,
+    );
+
+    return DeviceModel.fromJson(data);
   }
 }

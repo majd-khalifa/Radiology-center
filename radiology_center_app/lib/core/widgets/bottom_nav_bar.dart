@@ -32,11 +32,11 @@ class BottomNavBar extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          _buildHomeIcon(0),
-          _buildIcon("appointment.svg", 1),
-          _buildPlusButton(),
-          _buildIcon("chat.svg", 2),
-          _buildIcon("profile.svg", 3),
+          _buildHomeIcon(0), // Home
+          _buildIcon("appointment.svg", 1), // My Appointments
+          _buildPlusButton(2), // Our Services (Always Blue)
+          _buildIcon("chat.svg", 3), // AI Analysis
+          _buildIcon("profile.svg", 4), // Profile
         ],
       ),
     );
@@ -49,7 +49,7 @@ class BottomNavBar extends StatelessWidget {
       child: Icon(
         Icons.home_filled,
         size: 30,
-        color: isSelected ? const Color(0xFF183E78) : AppColor.white,
+        color: isSelected ? const Color(0xFF7FCB96) : AppColor.grey,
       ),
     );
   }
@@ -63,25 +63,28 @@ class BottomNavBar extends StatelessWidget {
         width: 30,
         height: 30,
         colorFilter: ColorFilter.mode(
-          isSelected ? const Color(0xFF183E78) : AppColor.grey,
+          isSelected ? const Color(0xFF7FCB96) : AppColor.grey,
           BlendMode.srcIn,
         ),
       ),
     );
   }
 
-  Widget _buildPlusButton() {
-    return Transform.translate(
-      offset: const Offset(0, -10),
-      child: Container(
-        width: 48,
-        height: 48,
-        decoration: const BoxDecoration(
-          color: Color(0xFF183E78),
-          shape: BoxShape.circle,
-        ),
-        child: const Center(
-          child: Icon(Icons.add, color: Colors.white, size: 30),
+  Widget _buildPlusButton(int index) {
+    return GestureDetector(
+      onTap: () => onTap(index),
+      child: Transform.translate(
+        offset: const Offset(0, -10),
+        child: Container(
+          width: 48,
+          height: 48,
+          decoration: const BoxDecoration(
+            color: Color(0xFF7FCB96), // Always Blue
+            shape: BoxShape.circle,
+          ),
+          child: const Center(
+            child: Icon(Icons.add, color: Colors.white, size: 30),
+          ),
         ),
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:radiology_center_app/core/constant/app_font.dart';
 import 'package:radiology_center_app/core/constant/app_route.dart';
 import 'package:radiology_center_app/views/auth/signup/signup_body.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -30,7 +31,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
 
-          initialRoute: AppRoute.signup,
+          initialRoute: AppRoute.login,
         );
       },
       child: SignupScreen(),
