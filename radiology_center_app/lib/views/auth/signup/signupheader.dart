@@ -16,7 +16,7 @@ class Signupheader extends StatelessWidget {
         children: [
           Text(
             textAlign: TextAlign.center,
-            "Join us to start searching",
+            "Create your account",
             style: AppTextStyles.textStyle24.copyWith(
               color: AppColor.black,
               letterSpacing: -0.3,

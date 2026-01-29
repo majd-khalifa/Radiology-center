@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:radiology_center_app/core/constant/app_color.dart';
+import 'package:radiology_center_app/core/services/services.dart';
 import 'package:radiology_center_app/views/admin_dashboard/tabs/overview_tab.dart';
 import 'package:radiology_center_app/views/admin_dashboard/widgets/side_menu.dart';
 import 'package:radiology_center_app/views/admin_dashboard/tabs/manage_accounts_tab.dart';
@@ -9,6 +10,7 @@ import 'package:radiology_center_app/views/admin_dashboard/tabs/appointments_tab
 
 // 1. أضف الـ Import الخاص بتابة الأجهزة الجديدة
 import 'package:radiology_center_app/views/admin_dashboard/tabs/manage_devices_tab.dart';
+import 'package:radiology_center_app/views/auth/login/login_screen.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -36,9 +38,17 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         children: [
           SideMenu(
             selectedIndex: _selectedIndex,
-            onItemSelected: (index) {
+            onItemSelected: (index) async {
               if (index == -1) {
-                print("Logout clicked");
+                // مسح كل البيانات
+                await SharedPreferencesService().removeAllData();
+
+                // العودة لشاشة تسجيل الدخول
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (_) => const LoginScreen()),
+                  (route) => false,
+                );
               } else {
                 setState(() {
                   _selectedIndex = index;

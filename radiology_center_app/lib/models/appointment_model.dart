@@ -20,7 +20,7 @@ class AppointmentModel {
       date: json['date'] ?? "",
       time: json['time'] ?? "",
       // الوصول لبيانات المستخدم المحجوز باسمه من داخل كائن booked_by
-      bookedByName: json['booked_by']?['name'] ?? "Unknown",
+      bookedByName: json['booked_by']?['username'] ?? "username",
       bookedByEmail: json['booked_by']?['email'] ?? "",
     );
   }
