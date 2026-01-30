@@ -65,7 +65,7 @@ class _LoginScreenState extends State<LoginScreen> {
       final user = UserModel.fromJson(userJson);
 
       // حفظ البيانات
-      await prefs.saveStringValue("user_name", user.username);
+      await prefs.saveStringValue("user_name", user.name);
       await prefs.saveStringValue("user_id", user.id.toString());
       await prefs.saveUserEmail(user.email);
       await prefs.saveTokenUser(token);

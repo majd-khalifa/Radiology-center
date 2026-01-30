@@ -6,9 +6,17 @@ class AppointmentsInitial extends AppointmentsState {}
 
 class AppointmentsLoading extends AppointmentsState {}
 
-class AppointmentsSuccess extends AppointmentsState {
+class AppointmentsLoadSuccess extends AppointmentsState {
   final List<AppointmentModel> appointments;
-  AppointmentsSuccess(this.appointments);
+  AppointmentsLoadSuccess(this.appointments);
+}
+
+class AppointmentOperationLoading extends AppointmentsState {}
+
+class AppointmentOperationSuccess extends AppointmentsState {
+  final String message;
+  final List<AppointmentModel> appointments;
+  AppointmentOperationSuccess(this.message, this.appointments);
 }
 
 class AppointmentsError extends AppointmentsState {

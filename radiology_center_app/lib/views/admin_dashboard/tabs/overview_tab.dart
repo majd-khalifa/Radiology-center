@@ -1,87 +1,107 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:radiology_center_app/views/admin_dashboard/controller/overview_cubit.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../controller/overview_cubit.dart';
+import '../controller/overview_state.dart';
+import '../widgets/admin_stat_card.dart';
+import '../widgets/recent_appointments_list.dart';
+import '../../../../core/constant/app_color.dart';
+import '../../../../core/constant/text_style.dart';
 
 class OverviewTab extends StatelessWidget {
   const OverviewTab({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => OverviewCubit()..fetchStats(),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: BlocBuilder<OverviewCubit, OverviewState>(
-          builder: (context, state) {
-            if (state.isLoading)
-              // ignore: curly_braces_in_flow_control_structures
-              return const Center(child: CircularProgressIndicator());
-            return Padding(
-              padding: const EdgeInsets.all(25.0),
-              child: GridView.count(
-                crossAxisCount: 3,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20,
+    return BlocBuilder<OverviewCubit, OverviewState>(
+      builder: (context, state) {
+        if (state.isLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (state.isError) {
+          return Center(
+            child: Text(
+              "Failed to load dashboard data",
+              style: AppTextStyles.textStyle16.copyWith(color: AppColor.xIcon),
+            ),
+          );
+        }
+
+        return SingleChildScrollView(
+          padding: EdgeInsets.all(20.r),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // -------------------------------
+              // Stats Cards
+              // -------------------------------
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildStatCard(
-                    "الأجهزة",
-                    state.totalDevices.toString(),
-                    Icons.biotech,
-                    Colors.blue,
+                  Expanded(
+                    child: AdminStatCard(
+                      title: "Devices",
+                      value: state.totalDevices.toString(),
+                      icon: Icons.biotech_rounded,
+                      color: Colors.blue,
+                    ),
                   ),
-                  _buildStatCard(
-                    "المواعيد المحجوزة",
-                    state.totalAppointments.toString(),
-                    Icons.event_available,
-                    Colors.green,
+                  SizedBox(width: 15.w),
+                  Expanded(
+                    child: AdminStatCard(
+                      title: "Users",
+                      value: state.totalUsers.toString(),
+                      icon: Icons.people_alt_rounded,
+                      color: Colors.green,
+                    ),
                   ),
-                  _buildStatCard(
-                    "المستخدمين",
-                    state.totalUsers.toString(),
-                    Icons.people,
-                    Colors.orange,
+                  SizedBox(width: 15.w),
+                  Expanded(
+                    child: AdminStatCard(
+                      title: "Appointments",
+                      value: state.totalAppointments.toString(),
+                      icon: Icons.calendar_month_rounded,
+                      color: Colors.orange,
+                    ),
+                  ),
+                  SizedBox(width: 15.w),
+                  Expanded(
+                    child: AdminStatCard(
+                      title: "Today",
+                      value: state.todayAppointments.toString(),
+                      icon: Icons.today_rounded,
+                      color: Colors.purple,
+                    ),
                   ),
                 ],
               ),
-            );
-          },
-        ),
-      ),
-    );
-  }
 
-  Widget _buildStatCard(
-    String title,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
-    return Container(
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 10)],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 50, color: color),
-          const SizedBox(height: 15),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              SizedBox(height: 30.h),
+
+              // -------------------------------
+              // Recent Appointments Title
+              // -------------------------------
+              Text(
+                "Recent Appointments",
+                style: AppTextStyles.textStyle20.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: AppColor.black,
+                ),
+              ),
+              SizedBox(height: 15.h),
+
+              // -------------------------------
+              // Recent Appointments List
+              // -------------------------------
+              const RecentAppointmentsList(),
+            ],
           ),
-          Text(
-            value,
-            style: TextStyle(
-              fontSize: 30,
-              fontWeight: FontWeight.w900,
-              color: color,
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

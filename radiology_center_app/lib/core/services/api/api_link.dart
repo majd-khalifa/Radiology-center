@@ -7,68 +7,80 @@ class ApiLink {
   // =================== Auth =========================
   // ==================================================
 
-  /// POST: login
-  static const String login = "${baseUrl}/api/accounts/login/";
-
-  /// POST: register
-  static const String register = "${baseUrl}/api/accounts/register/";
-
-  /// POST / PUT / GET: profile setup
-  static const String profileSetup = "${baseUrl}/api/accounts/profile/";
+  static const String login = "$baseUrl/api/accounts/login/";
+  static const String register = "$baseUrl/api/accounts/register/";
+  static const String profileSetup = "$baseUrl/api/accounts/profile/";
 
   // ==================================================
   // =================== Users ========================
   // ==================================================
 
-  /// GET: get all users
-  static const String getAllUsers = "${baseUrl}/api/accounts/users/";
+  static const String getAllUsers = "$baseUrl/api/accounts/users/";
 
-  /// PUT / PATCH: edit user
-  static String editUser(int userId) =>
-      "${baseUrl}/api/accounts/users/$userId/";
+  static String getUser(int userId) => "$baseUrl/api/accounts/users/$userId/";
 
-  /// DELETE: delete user
+  static String createUser = "$baseUrl/api/accounts/users/";
+
+  static String editUser(int userId) => "$baseUrl/api/accounts/users/$userId/";
+
   static String deleteUser(int userId) =>
-      "${baseUrl}/api/accounts/users/$userId/";
+      "$baseUrl/api/accounts/users/$userId/";
 
   // ==================================================
   // ================= Radiology ======================
   // ==================================================
 
-  /// GET: get all devices
-  static const String devices = "${baseUrl}/api/radiology/devices/";
+  static const String devices = "$baseUrl/api/radiology/devices/";
 
-  /// POST: create device
-  static const String postDevice = "${baseUrl}/api/radiology/devices/";
+  static const String postDevice = "$baseUrl/api/radiology/devices/";
 
-  /// GET: device appointments
+  static String getDeviceById(int deviceId) =>
+      "$baseUrl/api/radiology/devices/$deviceId/";
+
+  static String updateDevice(int deviceId) =>
+      "$baseUrl/api/radiology/devices/$deviceId/";
+
+  static String deleteDevice(int deviceId) =>
+      "$baseUrl/api/radiology/devices/$deviceId/";
+
   static String deviceAppointments(int deviceId) =>
-      "${baseUrl}/api/radiology/devices/$deviceId/appointments/";
-
-  /// GET: booked appointments
-  static const String bookedAppointments =
-      "${baseUrl}/api/radiology/booked-appointments/";
-
-  /// GET: my appointments for logged-in user
-  static const String myAppointments =
-      "${baseUrl}/api/radiology/my-appointments/";
+      "$baseUrl/api/radiology/devices/$deviceId/appointments/";
 
   // ==================================================
   // ================= Appointments ===================
   // ==================================================
 
-  /// POST: book appointment
+  static const String allAppointments = "$baseUrl/api/radiology/appointments/";
+
+  static const String bookedAppointments =
+      "$baseUrl/api/radiology/booked-appointments/";
+
+  static const String myAppointments =
+      "$baseUrl/api/radiology/my-appointments/";
+
+  static String createAppointment = "$baseUrl/api/radiology/appointments/";
+
   static String bookAppointment(int appointmentId) =>
-      "${baseUrl}/api/radiology/appointments/$appointmentId/book/";
+      "$baseUrl/api/radiology/appointments/$appointmentId/book/";
 
-  /// PUT / PATCH: update appointment
   static String updateAppointment(int appointmentId) =>
-      "${baseUrl}/api/radiology/appointments/$appointmentId/update/";
+      "$baseUrl/api/radiology/appointments/$appointmentId/update/";
 
-  /// DELETE: delete appointment
   static String deleteAppointment(int appointmentId) =>
-      "${baseUrl}/api/radiology/appointments/$appointmentId/delete/";
+      "$baseUrl/api/radiology/appointments/$appointmentId/delete/";
 
-  static String getdevicebyid(int deviceId) =>
-      "${baseUrl}/api/radiology/devices/$deviceId";
+  // ==================================================
+  // ================= X-ray Analysis =================
+  // ==================================================
+
+  static const String analyzeXray = "$baseUrl/analyze-xray";
+
+  static String adminCreateAppointment =
+      "$baseUrl/api/radiology/appointments/create/";
+
+  static String adminUpdateAppointment(int id) =>
+      "$baseUrl/api/radiology/appointments/$id/admin-update/";
+
+  static String adminDeleteAppointment(int id) =>
+      "$baseUrl/api/radiology/appointments/$id/admin-delete/";
 }

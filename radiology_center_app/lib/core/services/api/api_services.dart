@@ -69,7 +69,7 @@ class ApiServices {
     BuildContext? context,
   }) async {
     try {
-      final finalHeaders = {...?headers};
+      final finalHeaders = _getHeaders(token, headers);
       if (token != null && token.isNotEmpty) {
         finalHeaders['Authorization'] =
             'Token $token'; // تم التغيير لـ Token حسب نظام Django عندك
@@ -132,7 +132,7 @@ class ApiServices {
     String? token,
   }) async {
     try {
-      final finalHeaders = {...?headers};
+      final finalHeaders = _getHeaders(token, headers);
       if (token != null && token.isNotEmpty) {
         finalHeaders['Authorization'] = 'Token $token';
       }
@@ -153,6 +153,54 @@ class ApiServices {
     }
   }
 
+  Future putRequest({required String url, Map? body, String? token}) async {
+    try {
+      final response = await _dio.put(
+        url,
+        data: body,
+        options: Options(headers: _getHeaders(token, null)),
+      );
+      return response.data;
+    } on DioException catch (e) {
+      throw ServerFailure.fromDioError(e);
+    }
+  }
+
+  Future patchRequest({required String url, Map? body, String? token}) async {
+    try {
+      final response = await _dio.patch(
+        url,
+        data: body,
+        options: Options(headers: _getHeaders(token, null)),
+      );
+      return response.data;
+    } on DioException catch (e) {
+      throw ServerFailure.fromDioError(e);
+    }
+  }
+
+  Future postMultipart({
+    required String url,
+    required FormData formData,
+    String? token,
+  }) async {
+    try {
+      final response = await _dio.post(
+        url,
+        data: formData,
+        options: Options(
+          headers: {
+            'Authorization': 'Token $token',
+            'Accept': 'application/json',
+          },
+        ),
+      );
+      return response.data;
+    } on DioException catch (e) {
+      throw ServerFailure.fromDioError(e);
+    }
+  }
+
   /// DELETE
   Future deleteData({required String url, Map? body, String? token}) async {
     try {
@@ -161,6 +209,10 @@ class ApiServices {
         data: body,
         options: Options(headers: _getHeaders(token, null)),
       );
+      if (![200, 201, 204].contains(response.statusCode)) {
+        throw ServerFailure.fromResponse(response.statusCode);
+      }
+
       return response.data;
     } on DioException catch (e) {
       throw ServerFailure.fromDioError(e);
@@ -309,7 +361,7 @@ class ApiServices {
 
   Future<DeviceModel> getDeviceInfo(int deviceId, String token) async {
     final data = await getData(
-      url: ApiLink.getdevicebyid(deviceId),
+      url: ApiLink.getDeviceById(deviceId),
       token: token,
     );
 

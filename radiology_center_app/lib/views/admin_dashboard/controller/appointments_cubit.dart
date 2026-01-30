@@ -2,7 +2,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:radiology_center_app/core/services/api/api_services.dart';
 import 'package:radiology_center_app/core/constant/constant.dart';
 import 'package:radiology_center_app/models/appointment_model.dart';
-import 'appointments_state.dart'; // تأكد من وجود هذا الاستيراد
+import 'appointments_state.dart';
 import '../../../../core/services/api/api_link.dart';
 
 class AppointmentsCubit extends Cubit<AppointmentsState> {
@@ -10,60 +10,107 @@ class AppointmentsCubit extends Cubit<AppointmentsState> {
 
   AppointmentsCubit() : super(AppointmentsInitial());
 
-  Future<void> fetchBookedAppointments() async {
+  // ============================================================
+  // 1) جلب كل المواعيد
+  // ============================================================
+  Future<void> fetchAllAppointments() async {
     emit(AppointmentsLoading());
     try {
       final response = await _apiServices.getData(
         url: ApiLink.bookedAppointments,
-        token: ConstantData.tokenValue, // التوكن مطلوب كما في بوستمان
-      );
-
-      // الدخول إلى مفتاح "data" لأن السيرفر يعيد قائمة بداخل مفتاح
-      if (response != null && response['data'] != null) {
-        List rawData = response['data'];
-
-        List<AppointmentModel> appointments = rawData
-            .map((e) => AppointmentModel.fromJson(e))
-            .toList();
-
-        emit(AppointmentsSuccess(appointments));
-      } else {
-        emit(AppointmentsSuccess([]));
-      }
-    } catch (e) {
-      // الآن سيعمل هذا السطر لأن AppointmentsError أصبحت معرفة
-      emit(AppointmentsError("Failed to fetch appointments: $e"));
-    }
-  }
-  // أضف هذه الدوال داخل class AppointmentsCubit في ملف appointments_cubit.dart
-
-  // 1. حذف موعد
-  Future<void> cancelAppointment(int appointmentId, String date) async {
-    try {
-      await _apiServices.deleteData(
-        url: ApiLink.deleteAppointment(appointmentId),
-        body: {"date": date}, // إرسال التاريخ كما هو موجود في Postman
         token: ConstantData.tokenValue,
       );
-      fetchBookedAppointments();
+
+      List<AppointmentModel> appointments = (response["data"] as List)
+          .map((e) => AppointmentModel.fromJson(e))
+          .toList();
+
+      emit(AppointmentsLoadSuccess(appointments));
     } catch (e) {
-      emit(AppointmentsError("فشل الحذف: $e"));
+      emit(AppointmentsError("فشل جلب المواعيد: $e"));
     }
   }
 
-  // 2. تعديل موعد (مثلاً تغيير الوقت أو التاريخ)
-  Future<void> updateAppointment(int appointmentId, String newDate) async {
+  // ============================================================
+  // 2) إنشاء موعد جديد (بدون إعادة تحميل ثقيل)
+  // ============================================================
+  Future<void> createAppointment(Map<String, dynamic> data) async {
+    final currentState = state;
+    if (currentState is! AppointmentsLoadSuccess) return;
+
+    emit(AppointmentOperationLoading());
+    try {
+      final created = await _apiServices.postData(
+        url: ApiLink.adminCreateAppointment,
+        body: data,
+        token: ConstantData.tokenValue,
+      );
+
+      final newAppt = AppointmentModel.fromJson(created);
+
+      final updatedList = [...currentState.appointments, newAppt];
+
+      emit(AppointmentsLoadSuccess(updatedList));
+    } catch (e) {
+      emit(AppointmentsError("فشل إنشاء الموعد: $e"));
+    }
+  }
+
+  // ============================================================
+  // 3) تعديل موعد (بدون fetchAllAppointments)
+  // ============================================================
+  Future<void> updateAppointment(int id, Map<String, dynamic> data) async {
+    final currentState = state;
+    if (currentState is! AppointmentsLoadSuccess) return;
+
+    emit(AppointmentOperationLoading());
     try {
       await _apiServices.putData(
-        url: ApiLink.updateAppointment(appointmentId),
-        body: {"date": newDate},
+        url: ApiLink.adminUpdateAppointment(id),
+        body: data,
         token: ConstantData.tokenValue,
       );
-      await fetchBookedAppointments();
+
+      final updatedList = currentState.appointments.map((appt) {
+        if (appt.id == id) {
+          return appt.copyWith(
+            date: data["date"],
+            time: data["time"],
+            bookedByName: data["booked_by_name"],
+            bookedByEmail: data["booked_by_email"],
+          );
+        }
+        return appt;
+      }).toList();
+
+      emit(AppointmentsLoadSuccess(updatedList));
     } catch (e) {
-      // هنا نميز إذا كان الخطأ بسبب تضارب المواعيد
-      String errorMessage = "عذراً، هذا الموعد محجوز مسبقاً أو غير متاح.";
-      emit(AppointmentsError(errorMessage));
+      emit(AppointmentsError("فشل تعديل الموعد: $e"));
+    }
+  }
+
+  // ============================================================
+  // 4) حذف موعد (بدون fetchAllAppointments)
+  // ============================================================
+  Future<void> deleteAppointment(int id, String date) async {
+    final currentState = state;
+    if (currentState is! AppointmentsLoadSuccess) return;
+
+    emit(AppointmentOperationLoading());
+    try {
+      await _apiServices.deleteData(
+        url: ApiLink.adminDeleteAppointment(id),
+        body: {"date": date},
+        token: ConstantData.tokenValue,
+      );
+
+      final updatedList = currentState.appointments
+          .where((appt) => appt.id != id)
+          .toList();
+
+      emit(AppointmentsLoadSuccess(updatedList));
+    } catch (e) {
+      emit(AppointmentsError("فشل حذف الموعد: $e"));
     }
   }
 }
