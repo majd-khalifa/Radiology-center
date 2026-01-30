@@ -1,16 +1,17 @@
-// ignore_for_file: deprecated_member_use, avoid_print
+// ignore_for_file: deprecated_member_use
 
 import 'package:flutter/material.dart';
-import 'package:radiology_center_app/core/constant/app_color.dart';
-import 'package:radiology_center_app/core/services/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:radiology_center_app/views/admin_dashboard/controller/admin_cubit.dart';
+import 'package:radiology_center_app/views/admin_dashboard/controller/appointments_cubit.dart';
+import 'package:radiology_center_app/views/admin_dashboard/controller/devices_cubit.dart';
+import 'package:radiology_center_app/views/admin_dashboard/controller/overview_cubit.dart';
+import 'package:radiology_center_app/views/admin_dashboard/tabs/appointments_tab.dart';
+import 'package:radiology_center_app/views/admin_dashboard/tabs/manage_accounts_tab.dart';
+import 'package:radiology_center_app/views/admin_dashboard/tabs/manage_devices_tab.dart';
 import 'package:radiology_center_app/views/admin_dashboard/tabs/overview_tab.dart';
 import 'package:radiology_center_app/views/admin_dashboard/widgets/side_menu.dart';
-import 'package:radiology_center_app/views/admin_dashboard/tabs/manage_accounts_tab.dart';
-import 'package:radiology_center_app/views/admin_dashboard/tabs/appointments_tab.dart';
-
-// 1. أضف الـ Import الخاص بتابة الأجهزة الجديدة
-import 'package:radiology_center_app/views/admin_dashboard/tabs/manage_devices_tab.dart';
-import 'package:radiology_center_app/views/auth/login/login_screen.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
   const AdminDashboardScreen({super.key});
@@ -20,53 +21,52 @@ class AdminDashboardScreen extends StatefulWidget {
 }
 
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
-  int _selectedIndex = 0;
+  int selectedIndex = 0;
 
-  // 2. تحديث قائمة الـ Tabs لاستبدال النصوص الثابتة بالكلاسات الفعلية
-  final List<Widget> _tabs = [
-    const OverviewTab(),
-    const ManageAccountsTab(),
-    const ManageDevicesTab(), // تم استبدال النص الثابت بالكلاس الجديد للأجهزة
-    const AppointmentsTab(),
+  final List<Widget> tabs = const [
+    OverviewTab(),
+    ManageAccountsTab(),
+    ManageDevicesTab(),
+    AppointmentsTab(),
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColor.silver.withOpacity(0.3),
-      body: Row(
-        children: [
-          SideMenu(
-            selectedIndex: _selectedIndex,
-            onItemSelected: (index) async {
-              if (index == -1) {
-                // مسح كل البيانات
-                await SharedPreferencesService().removeAllData();
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => OverviewCubit()..fetchStats()),
+        BlocProvider(create: (_) => AdminCubit()..fetchAllUsers()),
+        BlocProvider(create: (_) => DevicesCubit()..fetchDevices()),
+        BlocProvider(
+          create: (_) => AppointmentsCubit()..fetchAllAppointments(),
+        ),
+      ],
+      child: Scaffold(
+        backgroundColor: Colors.grey.shade100,
+        body: Row(
+          children: [
+            // SIDE MENU
+            SideMenu(
+              selectedIndex: selectedIndex,
+              onItemSelected: (index) {
+                if (index == -1) {
+                  // Logout
+                  // TODO: Add logout logic
+                  return;
+                }
+                setState(() => selectedIndex = index);
+              },
+            ),
 
-                // العودة لشاشة تسجيل الدخول
-                Navigator.pushAndRemoveUntil(
-                  context,
-                  MaterialPageRoute(builder: (_) => const LoginScreen()),
-                  (route) => false,
-                );
-              } else {
-                setState(() {
-                  _selectedIndex = index;
-                });
-              }
-            },
-          ),
-          VerticalDivider(width: 1, color: AppColor.silver),
-          Expanded(
-            child: AnimatedSwitcher(
-              duration: const Duration(milliseconds: 300),
-              child: Container(
-                key: ValueKey<int>(_selectedIndex),
-                child: _tabs[_selectedIndex],
+            // MAIN CONTENT
+            Expanded(
+              child: Padding(
+                padding: EdgeInsets.all(20.r),
+                child: IndexedStack(index: selectedIndex, children: tabs),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

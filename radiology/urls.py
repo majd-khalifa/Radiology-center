@@ -7,10 +7,19 @@ from .views import (
     UpdateAppointmentView, 
     DeleteAppointmentView,
     get_booked_appointments,
-    my_appointments
+    my_appointments,
+    AdminCreateAppointmentView,
+    AdminUpdateAppointmentView,
+    AdminDeleteAppointmentView
 )
+from .views import AllAppointmentsView
 
 urlpatterns = [
+    path('appointments/', AllAppointmentsView.as_view()),
+    path('appointments/create/', AdminCreateAppointmentView.as_view()),
+    path('appointments/<int:appointment_id>/admin-update/', AdminUpdateAppointmentView.as_view()),
+    path('appointments/<int:appointment_id>/admin-delete/', AdminDeleteAppointmentView.as_view()),
+
     path('devices/', DeviceListView.as_view()),
     path('devices/<int:device_id>/', DeviceDetailView.as_view()),
     path('devices/<int:device_id>/appointments/', GetAvailableAppointmentsView.as_view()),

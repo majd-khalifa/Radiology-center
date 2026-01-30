@@ -117,6 +117,49 @@ class GetAvailableAppointmentsView(APIView):
         serializer = AppointmentSerializer(appointments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+class AllAppointmentsView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        appointments = Appointment.objects.all().order_by('date', 'time')
+        serializer = AppointmentSerializer(appointments, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class AdminCreateAppointmentView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def post(self, request):
+        serializer = AppointmentSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+class AdminUpdateAppointmentView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def put(self, request, appointment_id):
+        appointment = get_object_or_404(Appointment, id=appointment_id)
+        serializer = AppointmentSerializer(
+            appointment,
+            data=request.data,
+            partial=True
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=200)
+        return Response(serializer.errors, status=400)
+
+class AdminDeleteAppointmentView(APIView):
+    permission_classes = [IsAdminUser]
+
+    def delete(self, request, appointment_id):
+        appointment = get_object_or_404(Appointment, id=appointment_id)
+        appointment.delete()
+        return Response({"message": "Deleted"}, status=204)
+
+
 
 class BookAppointmentView(APIView):
     """
