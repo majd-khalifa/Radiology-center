@@ -33,7 +33,7 @@ class ApiServices {
               handler.next(options);
             },
             onResponse: (response, handler) {
-              // print("Response: ${response.data}");
+              print("Response: ${response.data}");
               // handler.next(response);
               handler.next(response);
             },

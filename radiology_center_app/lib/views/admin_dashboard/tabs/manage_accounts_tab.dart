@@ -102,9 +102,9 @@ class ManageAccountsTab extends StatelessWidget {
   }
 
   void showEditUserDialog(BuildContext context, UserModel user) {
-    final nameController = TextEditingController(text: user.fullName);
+    final nameController = TextEditingController(text: user.name);
     final emailController = TextEditingController(text: user.email);
-    final fullNameController = TextEditingController(text: user.fullName ?? "");
+    final fullNameController = TextEditingController(text: user.name);
     UserRole selectedRole = user.role;
 
     showDialog(
@@ -265,7 +265,7 @@ class ManageAccountsTab extends StatelessWidget {
                     final user = users[index];
 
                     return UserAccountTile(
-                      name: user.fullName ?? "Unknown",
+                      name: user.name,
                       email: user.email,
                       onEdit: () {
                         showEditUserDialog(context, user);

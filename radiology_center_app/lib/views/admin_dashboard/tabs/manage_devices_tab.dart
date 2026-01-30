@@ -250,14 +250,14 @@ class ManageDevicesTab extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  device.name ?? "Unknown Device",
+                                  device.name ,
                                   style: AppTextStyles.textStyle16.copyWith(
                                     color: AppColor.black,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 Text(
-                                  device.description ?? "No description",
+                                  device.description,
                                   style: AppTextStyles.textStyle12.copyWith(
                                     color: AppColor.subtitleColor,
                                   ),
