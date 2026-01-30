@@ -24,10 +24,10 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   // 2. تحديث قائمة الـ Tabs لاستبدال النصوص الثابتة بالكلاسات الفعلية
   final List<Widget> _tabs = [
-    const OverviewTab(),
-    const ManageAccountsTab(),
-    const ManageDevicesTab(), // تم استبدال النص الثابت بالكلاس الجديد للأجهزة
-    const AppointmentsTab(),
+    OverviewTab(),
+    ManageAccountsTab(),
+    ManageDevicesTab(), // تم استبدال النص الثابت بالكلاس الجديد للأجهزة
+    AppointmentsTab(),
   ];
 
   @override
