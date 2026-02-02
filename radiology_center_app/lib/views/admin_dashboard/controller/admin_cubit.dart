@@ -1,77 +1,120 @@
-// lib/views/admin_dashboard/controller/admin_cubit.dart
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:radiology_center_app/models/user_model.dart';
+import 'package:radiology_center_app/core/constant/constant.dart';
+import 'package:radiology_center_app/core/services/api/api_link.dart';
+import 'package:radiology_center_app/core/services/api/api_services.dart';
+import 'package:radiology_center_app/core/services/services.dart';
+
 import 'admin_state.dart';
 import '../../../../data/repository/admin_repository.dart';
+import '../../../../models/user_model.dart';
 
 class AdminCubit extends Cubit<AdminState> {
   final AdminRepository _repository = AdminRepository();
+  final ApiServices _apiServices = ApiServices();
+  final SharedPreferencesService token = SharedPreferencesService();
 
   AdminCubit() : super(AdminInitial());
 
-  Future<void> createUser(Map<String, dynamic> data) async {
-    final currentState = state;
-
-    emit(AdminOperationLoading());
-    try {
-      await _repository.createUser(data);
-
-      // بعد الإنشاء، نعيد جلب كل المستخدمين
-      final users = await _repository.getAllUsers();
-
-      emit(AdminOperationSuccess("User created successfully", users));
-    } catch (e) {
-      emit(AdminError("Failed to create user: $e"));
-
-      // نرجع آخر حالة ناجحة إذا كانت موجودة
-      if (currentState is AdminLoadSuccess) {
-        emit(currentState);
-      }
-    }
-  }
-
+  // ========================
+  // جلب كل المستخدمين
+  // ========================
   Future<void> fetchAllUsers() async {
     emit(AdminLoading());
     try {
-      final users = await _repository.getAllUsers();
+      final List<UserModel> users = await _repository.getAllUsers();
       emit(AdminLoadSuccess(users));
     } catch (e) {
       emit(AdminError("Failed to fetch users: $e"));
     }
   }
 
-  Future<void> deleteUser(int id) async {
+  // ========================
+  // إضافة مستخدم
+  // ========================
+  Future<void> createUser(Map<String, dynamic> data) async {
     final currentState = state;
-    if (currentState is! AdminLoadSuccess) return;
+    List<UserModel> currentUsers = [];
 
-    emit(AdminOperationLoading());
+    if (currentState is AdminLoadSuccess) {
+      currentUsers = currentState.users;
+    } else if (currentState is AdminOperationSuccess) {
+      currentUsers = currentState.users;
+    }
+
+    emit(AdminOperationLoading(users: currentUsers));
+
     try {
-      await _repository.deleteUserAccount(id);
-      final updated = List<UserModel>.from(currentState.users)
-        ..removeWhere((u) => u.id == id);
-      emit(AdminOperationSuccess("User deleted successfully", updated));
+      await _repository.createUser(data);
+
+      // إعادة جلب المستخدمين بعد الإضافة
+      final users = await _repository.getAllUsers();
+      emit(AdminOperationSuccess("User created successfully", users));
     } catch (e) {
-      emit(AdminError("Failed to delete user: $e"));
-      emit(currentState); // نرجع آخر حالة ناجحة
+      emit(AdminError("Failed to create user: $e"));
+      emit(AdminLoadSuccess(currentUsers));
     }
   }
 
+  // ========================
+  // حذف مستخدم
+  // ========================
+  Future<void> deleteUser(int id) async {
+    final currentState = state;
+    List<UserModel> currentUsers = [];
+
+    if (currentState is AdminLoadSuccess) {
+      currentUsers = currentState.users;
+    } else if (currentState is AdminOperationSuccess) {
+      currentUsers = currentState.users;
+    } else {
+      return; // لا يوجد بيانات للحذف
+    }
+
+    emit(AdminOperationLoading(users: currentUsers));
+
+    try {
+      await _apiServices.deleteData(
+        url: ApiLink.deleteUser(id),
+        token: ConstantData.tokenValue,
+      );
+
+      // تحديث القائمة بعد الحذف
+      final updatedUsers =
+          currentUsers.where((user) => user.id != id).toList();
+
+      emit(AdminOperationSuccess("User deleted successfully", updatedUsers));
+    } catch (e) {
+      emit(AdminError("Failed to delete user: $e"));
+      emit(AdminLoadSuccess(currentUsers));
+    }
+  }
+
+  // ========================
+  // تعديل مستخدم
+  // ========================
   Future<void> updateUser(int id, Map<String, dynamic> newData) async {
     final currentState = state;
-    if (currentState is! AdminLoadSuccess) return;
+    List<UserModel> currentUsers = [];
 
-    emit(AdminOperationLoading());
+    if (currentState is AdminLoadSuccess) {
+      currentUsers = currentState.users;
+    } else if (currentState is AdminOperationSuccess) {
+      currentUsers = currentState.users;
+    } else {
+      return; // لا يوجد بيانات للتعديل
+    }
+
+    emit(AdminOperationLoading(users: currentUsers));
+
     try {
       await _repository.updateUser(id, newData);
 
-      // خيار 1: نعيد جلب الكل من السيرفر
+      // إعادة جلب المستخدمين بعد التعديل
       final users = await _repository.getAllUsers();
       emit(AdminOperationSuccess("User updated successfully", users));
-
-      // خيار 2 (لو عندك copyWith): نحدّث محلياً بدون طلب جديد
     } catch (e) {
       emit(AdminError("Failed to update user: $e"));
-      emit(currentState);
+      emit(AdminLoadSuccess(currentUsers));
     }
   }
 }

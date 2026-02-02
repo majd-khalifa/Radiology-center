@@ -34,6 +34,7 @@ class ApiServices {
             },
             onResponse: (response, handler) {
               print("Response: ${response.data}");
+              // handler.next(response);
               handler.next(response);
             },
             onError: (error, handler) {
@@ -136,7 +137,7 @@ class ApiServices {
         finalHeaders['Authorization'] = 'Token $token';
       }
 
-      final response = await _dio.patch(
+      final response = await _dio.put(
         url,
         data: body,
         options: Options(headers: finalHeaders),

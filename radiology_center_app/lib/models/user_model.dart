@@ -19,7 +19,7 @@ class UserModel {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id'] ?? 0,
-      name: json['full_name'] ?? "",
+      name: json['name'] ?? "",
       email: json['email'] ?? "",
       fullName: json['full_name'],
       role: json['role'] == "admin" ? UserRole.admin : UserRole.user,

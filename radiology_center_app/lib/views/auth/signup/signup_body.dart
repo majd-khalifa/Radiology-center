@@ -39,7 +39,7 @@ class _SignupScreenState extends State<SignupScreen> {
       final response = await api.postData(
         url: ApiLink.register,
         body: {
-          "name": usernamcontroller.text,
+          "username": usernamcontroller.text,
           "email": emailcontroller.text,
           "password": passwordcontroller.text,
         },

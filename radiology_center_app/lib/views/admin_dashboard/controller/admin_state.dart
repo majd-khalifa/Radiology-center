@@ -6,12 +6,15 @@ class AdminInitial extends AdminState {}
 
 class AdminLoading extends AdminState {}
 
+class AdminOperationLoading extends AdminState {
+  final List<UserModel> users;
+  AdminOperationLoading({required this.users});
+}
+
 class AdminLoadSuccess extends AdminState {
   final List<UserModel> users;
   AdminLoadSuccess(this.users);
 }
-
-class AdminOperationLoading extends AdminState {} // أثناء حذف/تعديل/إضافة
 
 class AdminOperationSuccess extends AdminState {
   final String message;

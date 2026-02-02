@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:radiology_center_app/core/services/api/api_services.dart';
 import 'package:radiology_center_app/core/constant/constant.dart';
@@ -84,8 +85,16 @@ class AppointmentsCubit extends Cubit<AppointmentsState> {
       }).toList();
 
       emit(AppointmentsLoadSuccess(updatedList));
-    } catch (e) {
-      emit(AppointmentsError("فشل تعديل الموعد: $e"));
+    } on DioError catch (e) {
+      if (e.response?.statusCode == 400) {
+        emit(
+          AppointmentsError(
+            e.response?.data['error'] ?? "Time slot unavailable",
+          ),
+        );
+      } else {
+        emit(AppointmentsError("فشل تعديل الموعد: ${e.message}"));
+      }
     }
   }
 
