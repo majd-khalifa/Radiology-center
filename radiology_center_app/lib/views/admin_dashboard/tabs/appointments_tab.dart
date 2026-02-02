@@ -14,6 +14,8 @@ class AppointmentsTab extends StatelessWidget {
   const AppointmentsTab({super.key});
 
   void showAddAppointmentDialog(BuildContext context) {
+    final appointmentsCubit = context.read<AppointmentsCubit>();
+
     final nameController = TextEditingController();
     final emailController = TextEditingController();
     final dateController = TextEditingController();
@@ -21,7 +23,7 @@ class AppointmentsTab extends StatelessWidget {
 
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
@@ -53,7 +55,7 @@ class AppointmentsTab extends StatelessWidget {
                   decoration: const InputDecoration(labelText: "Date"),
                   onTap: () async {
                     final picked = await showDatePicker(
-                      context: context,
+                      context: dialogContext,
                       initialDate: DateTime.now(),
                       firstDate: DateTime(2020),
                       lastDate: DateTime(2030),
@@ -71,7 +73,7 @@ class AppointmentsTab extends StatelessWidget {
                   decoration: const InputDecoration(labelText: "Time"),
                   onTap: () async {
                     final picked = await showTimePicker(
-                      context: context,
+                      context: dialogContext,
                       initialTime: TimeOfDay.now(),
                     );
                     if (picked != null) {
@@ -85,7 +87,7 @@ class AppointmentsTab extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogContext),
               child: const Text("Cancel"),
             ),
             ElevatedButton(
@@ -97,8 +99,8 @@ class AppointmentsTab extends StatelessWidget {
                   "booked_by_email": emailController.text,
                 };
 
-                context.read<AppointmentsCubit>().createAppointment(data);
-                Navigator.pop(context);
+                appointmentsCubit.createAppointment(data);
+                Navigator.pop(dialogContext);
               },
               child: const Text("Create"),
             ),
@@ -109,6 +111,8 @@ class AppointmentsTab extends StatelessWidget {
   }
 
   void showEditAppointmentDialog(BuildContext context, AppointmentModel appt) {
+    final appointmentsCubit = context.read<AppointmentsCubit>();
+
     final nameController = TextEditingController(text: appt.bookedByName);
     final emailController = TextEditingController(text: appt.bookedByEmail);
     final dateController = TextEditingController(text: appt.date);
@@ -116,7 +120,7 @@ class AppointmentsTab extends StatelessWidget {
 
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
@@ -148,7 +152,7 @@ class AppointmentsTab extends StatelessWidget {
                   decoration: const InputDecoration(labelText: "Date"),
                   onTap: () async {
                     final picked = await showDatePicker(
-                      context: context,
+                      context: dialogContext,
                       initialDate:
                           DateTime.tryParse(appt.date) ?? DateTime.now(),
                       firstDate: DateTime(2020),
@@ -167,7 +171,7 @@ class AppointmentsTab extends StatelessWidget {
                   decoration: const InputDecoration(labelText: "Time"),
                   onTap: () async {
                     final picked = await showTimePicker(
-                      context: context,
+                      context: dialogContext,
                       initialTime: TimeOfDay(
                         hour: int.parse(appt.time.split(":")[0]),
                         minute: int.parse(appt.time.split(":")[1]),
@@ -184,7 +188,7 @@ class AppointmentsTab extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogContext),
               child: const Text("Cancel"),
             ),
             ElevatedButton(
@@ -192,14 +196,13 @@ class AppointmentsTab extends StatelessWidget {
                 final updatedData = {
                   "date": dateController.text,
                   "time": timeController.text,
+                  "booked_by_name": nameController.text,
+                  "booked_by_email": emailController.text,
                 };
 
-                context.read<AppointmentsCubit>().updateAppointment(
-                  appt.id,
-                  updatedData,
-                );
+                appointmentsCubit.updateAppointment(appt.id, updatedData);
 
-                Navigator.pop(context);
+                Navigator.pop(dialogContext);
               },
               child: const Text("Update"),
             ),
@@ -244,9 +247,7 @@ class AppointmentsTab extends StatelessWidget {
                     color: AppColor.black,
                   ),
                 ),
-
                 SizedBox(height: 20.h),
-
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -278,9 +279,7 @@ class AppointmentsTab extends StatelessWidget {
                               color: AppColor.buttonBackground,
                             ),
                           ),
-
                           SizedBox(width: 15.w),
-
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -301,7 +300,6 @@ class AppointmentsTab extends StatelessWidget {
                               ],
                             ),
                           ),
-
                           IconButton(
                             icon: const Icon(
                               Icons.edit_note,
@@ -311,7 +309,6 @@ class AppointmentsTab extends StatelessWidget {
                               showEditAppointmentDialog(context, appt);
                             },
                           ),
-
                           IconButton(
                             icon: const Icon(
                               Icons.delete_sweep,

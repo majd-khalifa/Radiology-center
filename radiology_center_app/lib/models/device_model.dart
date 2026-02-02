@@ -15,11 +15,13 @@ class DeviceModel {
 
   factory DeviceModel.fromJson(Map<String, dynamic> json) {
     return DeviceModel(
-      id: json['id'] ?? 0,
+      id: json['id'] is int ? json['id'] : int.parse(json['id'].toString()),
       name: json['name'] ?? '',
       specialty: json['specialty'] ?? '',
       description: json['description'] ?? '',
-      rating: double.tryParse(json['rating'].toString()) ?? 0.0,
+      rating: json['rating'] is double
+          ? json['rating']
+          : double.tryParse(json['rating'].toString()) ?? 0.0,
     );
   }
 

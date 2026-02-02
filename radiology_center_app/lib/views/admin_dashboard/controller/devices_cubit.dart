@@ -1,26 +1,24 @@
-// ignore_for_file: unnecessary_brace_in_string_interps
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:radiology_center_app/core/constant/constant.dart';
 import 'package:radiology_center_app/core/services/api/api_link.dart';
 import 'package:radiology_center_app/core/services/api/api_services.dart';
 import 'package:radiology_center_app/models/device_model.dart';
-import 'device_state.dart'; // استيراد الحالات
+import 'device_state.dart';
 
 class DevicesCubit extends Cubit<DevicesState> {
   final ApiServices _apiServices = ApiServices();
-  final String baseUrl = "${ApiLink.baseUrl}/api/radiology/devices/";
+  final String baseUrl = "http://127.0.0.1:8000/api/radiology/devices/";
 
   DevicesCubit() : super(DevicesInitial());
 
-  // ================================
+  // ========================
   // 1) جلب الأجهزة
-  // ================================
+  // ========================
   Future<void> fetchDevices() async {
     emit(DevicesLoading());
     try {
       final response = await _apiServices.getData(
-        url: baseUrl,
+        url: ApiLink.devices,
         token: ConstantData.tokenValue,
       );
 
@@ -34,73 +32,62 @@ class DevicesCubit extends Cubit<DevicesState> {
     }
   }
 
-  // ================================
-  // 2) جلب جهاز واحد
-  // ================================
-  Future<DeviceModel?> getDeviceById(int id) async {
-    try {
-      final response = await _apiServices.getData(
-        url: "$baseUrl$id/",
-        token: ConstantData.tokenValue,
-      );
-      return DeviceModel.fromJson(response);
-    } catch (e) {
-      emit(DevicesFailure("فشل جلب الجهاز: $e"));
-      return null;
-    }
-  }
-
-  // ================================
-  // 3) إضافة جهاز
-  // ================================
+  // ========================
+  // 2) إضافة جهاز
+  // ========================
   Future<void> addDevice(DeviceModel device) async {
     final currentState = state;
     if (currentState is! DevicesLoadSuccess) return;
 
     emit(DeviceOperationLoading());
     try {
-      await _apiServices.postData(
-        url: baseUrl,
+      final response = await _apiServices.postData(
+        url: ApiLink.postDevice,
         body: device.toJson(),
         token: ConstantData.tokenValue,
       );
 
-      await fetchDevices();
-      emit(
-        DeviceOperationSuccess("تمت إضافة الجهاز بنجاح", currentState.devices),
-      );
+      final newDevice = DeviceModel.fromJson(response);
+
+      final updatedList = [...currentState.devices, newDevice];
+
+      emit(DevicesLoadSuccess(updatedList));
     } catch (e) {
       emit(DevicesFailure("فشل إضافة الجهاز: $e"));
     }
   }
 
-  // ================================
-  // 4) تعديل جهاز
-  // ================================
+  // ========================
+  // 3) تعديل جهاز
+  // ========================
   Future<void> editDevice(int id, Map<String, dynamic> updatedData) async {
     final currentState = state;
     if (currentState is! DevicesLoadSuccess) return;
 
     emit(DeviceOperationLoading());
     try {
-      await _apiServices.putData(
-        url: "$baseUrl$id/",
+      final response = await _apiServices.putData(
+        url: "${ApiLink.devices}$id/",
         body: updatedData,
         token: ConstantData.tokenValue,
       );
 
-      await fetchDevices();
-      emit(
-        DeviceOperationSuccess("تم تعديل الجهاز بنجاح", currentState.devices),
-      );
+      final updatedDevice = DeviceModel.fromJson(response);
+
+      final updatedList = currentState.devices.map((device) {
+        if (device.id == id) return updatedDevice;
+        return device;
+      }).toList();
+
+      emit(DevicesLoadSuccess(updatedList));
     } catch (e) {
       emit(DevicesFailure("فشل تعديل الجهاز: $e"));
     }
   }
 
-  // ================================
-  // 5) حذف جهاز
-  // ================================
+  // ========================
+  // 4) حذف جهاز
+  // ========================
   Future<void> deleteDevice(int id) async {
     final currentState = state;
     if (currentState is! DevicesLoadSuccess) return;
@@ -108,12 +95,15 @@ class DevicesCubit extends Cubit<DevicesState> {
     emit(DeviceOperationLoading());
     try {
       await _apiServices.deleteData(
-        url: "$baseUrl$id/",
+        url: "${ApiLink.devices}$id/",
         token: ConstantData.tokenValue,
       );
 
-      await fetchDevices();
-      emit(DeviceOperationSuccess("تم حذف الجهاز بنجاح", currentState.devices));
+      final updatedList = currentState.devices
+          .where((device) => device.id != id)
+          .toList();
+
+      emit(DevicesLoadSuccess(updatedList));
     } catch (e) {
       emit(DevicesFailure("فشل حذف الجهاز: $e"));
     }

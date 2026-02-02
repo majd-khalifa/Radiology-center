@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
 import 'package:radiology_center_app/core/enums/user_role.dart';
 import 'package:radiology_center_app/models/user_model.dart';
 
@@ -14,14 +15,16 @@ class ManageAccountsTab extends StatelessWidget {
   const ManageAccountsTab({super.key});
 
   void showAddUserDialog(BuildContext context) {
+    final adminCubit = context.read<AdminCubit>();
+
     final nameController = TextEditingController();
     final emailController = TextEditingController();
     final fullNameController = TextEditingController();
-    UserRole selectedRole = UserRole.user; // default role
+    UserRole selectedRole = UserRole.user;
 
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
@@ -35,27 +38,19 @@ class ManageAccountsTab extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Username
                 TextField(
                   controller: nameController,
                   decoration: const InputDecoration(labelText: "Username"),
                 ),
-
-                // Email
                 TextField(
                   controller: emailController,
                   decoration: const InputDecoration(labelText: "Email"),
                 ),
-
-                // Full Name
                 TextField(
                   controller: fullNameController,
                   decoration: const InputDecoration(labelText: "Full Name"),
                 ),
-
                 const SizedBox(height: 10),
-
-                // Role Dropdown
                 DropdownButtonFormField<UserRole>(
                   value: selectedRole,
                   decoration: const InputDecoration(labelText: "Role"),
@@ -77,21 +72,21 @@ class ManageAccountsTab extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogContext),
               child: const Text("Cancel"),
             ),
             ElevatedButton(
               onPressed: () {
                 final newUser = {
+                  "user_name": nameController.text,
                   "name": nameController.text,
                   "email": emailController.text,
                   "full_name": fullNameController.text,
                   "role": selectedRole == UserRole.admin ? "admin" : "user",
                 };
 
-                context.read<AdminCubit>().createUser(newUser);
-
-                Navigator.pop(context);
+                adminCubit.createUser(newUser);
+                Navigator.pop(dialogContext);
               },
               child: const Text("Create"),
             ),
@@ -102,6 +97,8 @@ class ManageAccountsTab extends StatelessWidget {
   }
 
   void showEditUserDialog(BuildContext context, UserModel user) {
+    final adminCubit = context.read<AdminCubit>();
+
     final nameController = TextEditingController(text: user.name);
     final emailController = TextEditingController(text: user.email);
     final fullNameController = TextEditingController(text: user.name);
@@ -109,7 +106,7 @@ class ManageAccountsTab extends StatelessWidget {
 
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
@@ -123,27 +120,19 @@ class ManageAccountsTab extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Username
                 TextField(
                   controller: nameController,
                   decoration: const InputDecoration(labelText: "Username"),
                 ),
-
-                // Email
                 TextField(
                   controller: emailController,
                   decoration: const InputDecoration(labelText: "Email"),
                 ),
-
-                // Full Name
                 TextField(
                   controller: fullNameController,
                   decoration: const InputDecoration(labelText: "Full Name"),
                 ),
-
                 const SizedBox(height: 10),
-
-                // Role Dropdown
                 DropdownButtonFormField<UserRole>(
                   value: selectedRole,
                   decoration: const InputDecoration(labelText: "Role"),
@@ -165,7 +154,7 @@ class ManageAccountsTab extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogContext),
               child: const Text("Cancel"),
             ),
             ElevatedButton(
@@ -177,9 +166,8 @@ class ManageAccountsTab extends StatelessWidget {
                   "role": selectedRole == UserRole.admin ? "admin" : "user",
                 };
 
-                context.read<AdminCubit>().updateUser(user.id, updatedData);
-
-                Navigator.pop(context);
+                adminCubit.updateUser(user.id, updatedData);
+                Navigator.pop(dialogContext);
               },
               child: const Text("Update"),
             ),
@@ -225,9 +213,6 @@ class ManageAccountsTab extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ============================
-                // Title + Add Button
-                // ============================
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -239,9 +224,7 @@ class ManageAccountsTab extends StatelessWidget {
                       ),
                     ),
                     ElevatedButton.icon(
-                      onPressed: () {
-                        showAddUserDialog(context);
-                      },
+                      onPressed: () => showAddUserDialog(context),
                       icon: const Icon(Icons.person_add),
                       label: const Text("Add User"),
                       style: ElevatedButton.styleFrom(
@@ -251,25 +234,17 @@ class ManageAccountsTab extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 SizedBox(height: 20.h),
-
-                // ============================
-                // Users List
-                // ============================
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: users.length,
                   itemBuilder: (context, index) {
                     final user = users[index];
-
                     return UserAccountTile(
                       name: user.name,
                       email: user.email,
-                      onEdit: () {
-                        showEditUserDialog(context, user);
-                      },
+                      onEdit: () => showEditUserDialog(context, user),
                       onDelete: () {
                         context.read<AdminCubit>().deleteUser(user.id);
                       },

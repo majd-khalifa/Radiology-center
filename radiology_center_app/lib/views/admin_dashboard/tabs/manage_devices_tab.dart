@@ -1,11 +1,8 @@
-// ignore_for_file: deprecated_member_use
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:radiology_center_app/models/device_model.dart';
 import 'package:radiology_center_app/views/admin_dashboard/controller/device_state.dart';
-
 import '../controller/devices_cubit.dart';
 import '../../../../core/constant/app_color.dart';
 import '../../../../core/constant/text_style.dart';
@@ -14,12 +11,13 @@ class ManageDevicesTab extends StatelessWidget {
   const ManageDevicesTab({super.key});
 
   void showEditDeviceDialog(BuildContext context, DeviceModel device) {
+    final devicesCubit = context.read<DevicesCubit>();
     final nameController = TextEditingController(text: device.name);
     final descController = TextEditingController(text: device.description);
 
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
@@ -33,13 +31,10 @@ class ManageDevicesTab extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // Device Name
                 TextField(
                   controller: nameController,
                   decoration: const InputDecoration(labelText: "Device Name"),
                 ),
-
-                // Description
                 TextField(
                   controller: descController,
                   decoration: const InputDecoration(labelText: "Description"),
@@ -50,19 +45,16 @@ class ManageDevicesTab extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogContext),
               child: const Text("Cancel"),
             ),
             ElevatedButton(
               onPressed: () {
-                final updatedData = {
+                devicesCubit.editDevice(device.id, {
                   "name": nameController.text,
                   "description": descController.text,
-                };
-
-                context.read<DevicesCubit>().editDevice(device.id, updatedData);
-
-                Navigator.pop(context);
+                });
+                Navigator.pop(dialogContext);
               },
               child: const Text("Update"),
             ),
@@ -73,14 +65,13 @@ class ManageDevicesTab extends StatelessWidget {
   }
 
   void showAddDeviceDialog(BuildContext context) {
+    final devicesCubit = context.read<DevicesCubit>();
     final nameController = TextEditingController();
-    final specialtyController = TextEditingController();
     final descController = TextEditingController();
-    final ratingController = TextEditingController();
 
     showDialog(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
@@ -99,25 +90,16 @@ class ManageDevicesTab extends StatelessWidget {
                   decoration: const InputDecoration(labelText: "Device Name"),
                 ),
                 TextField(
-                  controller: specialtyController,
-                  decoration: const InputDecoration(labelText: "Specialty"),
-                ),
-                TextField(
                   controller: descController,
                   decoration: const InputDecoration(labelText: "Description"),
                   maxLines: 2,
-                ),
-                TextField(
-                  controller: ratingController,
-                  decoration: const InputDecoration(labelText: "Rating (0–5)"),
-                  keyboardType: TextInputType.number,
                 ),
               ],
             ),
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => Navigator.pop(dialogContext),
               child: const Text("Cancel"),
             ),
             ElevatedButton(
@@ -125,13 +107,12 @@ class ManageDevicesTab extends StatelessWidget {
                 final device = DeviceModel(
                   id: 0,
                   name: nameController.text,
-                  specialty: specialtyController.text,
                   description: descController.text,
-                  rating: double.tryParse(ratingController.text) ?? 0.0,
+                  specialty: '',
+                  rating: 0.0,
                 );
-
-                context.read<DevicesCubit>().addDevice(device);
-                Navigator.pop(context);
+                devicesCubit.addDevice(device);
+                Navigator.pop(dialogContext);
               },
               child: const Text("Create"),
             ),
@@ -143,18 +124,14 @@ class ManageDevicesTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    context.read<DevicesCubit>().fetchDevices();
+
     return BlocBuilder<DevicesCubit, DevicesState>(
       builder: (context, state) {
-        // ============================
-        // Loading
-        // ============================
         if (state is DevicesLoading) {
           return const Center(child: CircularProgressIndicator());
         }
 
-        // ============================
-        // Error
-        // ============================
         if (state is DevicesFailure) {
           return Center(
             child: Text(
@@ -164,22 +141,14 @@ class ManageDevicesTab extends StatelessWidget {
           );
         }
 
-        // ============================
-        // Success (Load or Operation)
-        // ============================
-        if (state is DevicesLoadSuccess || state is DeviceOperationSuccess) {
-          final devices = state is DevicesLoadSuccess
-              ? state.devices
-              : (state as DeviceOperationSuccess).devices;
+        if (state is DevicesLoadSuccess) {
+          final devices = state.devices;
 
           return SingleChildScrollView(
             padding: EdgeInsets.all(20.r),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ============================
-                // Title + Add Button
-                // ============================
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
@@ -191,9 +160,7 @@ class ManageDevicesTab extends StatelessWidget {
                       ),
                     ),
                     ElevatedButton.icon(
-                      onPressed: () {
-                        showAddDeviceDialog(context);
-                      },
+                      onPressed: () => showAddDeviceDialog(context),
                       icon: const Icon(Icons.add),
                       label: const Text("Add Device"),
                       style: ElevatedButton.styleFrom(
@@ -203,19 +170,13 @@ class ManageDevicesTab extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 SizedBox(height: 20.h),
-
-                // ============================
-                // Devices List
-                // ============================
                 ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: devices.length,
                   itemBuilder: (context, index) {
                     final device = devices[index];
-
                     return Container(
                       margin: EdgeInsets.only(bottom: 15.h),
                       padding: EdgeInsets.all(12.r),
@@ -232,7 +193,6 @@ class ManageDevicesTab extends StatelessWidget {
                       ),
                       child: Row(
                         children: [
-                          // Icon
                           CircleAvatar(
                             backgroundColor: AppColor.buttonBackground
                                 .withOpacity(0.1),
@@ -241,16 +201,13 @@ class ManageDevicesTab extends StatelessWidget {
                               color: AppColor.buttonBackground,
                             ),
                           ),
-
                           SizedBox(width: 15.w),
-
-                          // Device Info
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  device.name ,
+                                  device.name,
                                   style: AppTextStyles.textStyle16.copyWith(
                                     color: AppColor.black,
                                     fontWeight: FontWeight.bold,
@@ -265,8 +222,6 @@ class ManageDevicesTab extends StatelessWidget {
                               ],
                             ),
                           ),
-
-                          // Edit Button
                           IconButton(
                             icon: const Icon(
                               Icons.edit_note,
@@ -276,8 +231,6 @@ class ManageDevicesTab extends StatelessWidget {
                               showEditDeviceDialog(context, device);
                             },
                           ),
-
-                          // Delete Button
                           IconButton(
                             icon: const Icon(
                               Icons.delete_sweep,
