@@ -11,8 +11,16 @@ import 'package:radiology_center_app/core/constant/constant.dart';
 import 'package:radiology_center_app/core/services/api/api_services.dart';
 import 'package:radiology_center_app/models/my_appointment_model.dart';
 
-class HomeBody extends StatelessWidget {
+class HomeBody extends StatefulWidget {
   const HomeBody({super.key});
+
+  @override
+  State<HomeBody> createState() => _HomeBodyState();
+}
+
+class _HomeBodyState extends State<HomeBody> {
+  // مفتاح للتحكم بـ AppointmentSection
+  final GlobalKey<_AppointmentSectionState> appointmentKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -46,13 +54,16 @@ class HomeBody extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 GestureDetector(
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) => AppointmentScreen(deviceId: 5),
                       ),
                     );
+                    if (result == true) {
+                      appointmentKey.currentState?.refreshAppointments();
+                    }
                   },
                   child: const CategoryItem(
                     "X-Ray",
@@ -60,13 +71,16 @@ class HomeBody extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) => AppointmentScreen(deviceId: 6),
                       ),
                     );
+                    if (result == true) {
+                      appointmentKey.currentState?.refreshAppointments();
+                    }
                   },
                   child: const CategoryItem(
                     "UltraSound",
@@ -74,13 +88,16 @@ class HomeBody extends StatelessWidget {
                   ),
                 ),
                 GestureDetector(
-                  onTap: () {
-                    Navigator.push(
+                  onTap: () async {
+                    final result = await Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => AppointmentScreen(deviceId: 1),
+                        builder: (_) => AppointmentScreen(deviceId: 13),
                       ),
                     );
+                    if (result == true) {
+                      appointmentKey.currentState?.refreshAppointments();
+                    }
                   },
                   child: const CategoryItem("MRI", 'assets/icons/mri.svg'),
                 ),
@@ -90,8 +107,7 @@ class HomeBody extends StatelessWidget {
 
           SizedBox(height: 20.h),
 
-          /// هنا فقط نضع Expanded واحد
-          Expanded(child: AppointmentSection()),
+          Expanded(child: AppointmentSection(key: appointmentKey)),
         ],
       ),
     );
@@ -125,7 +141,7 @@ class ServicesSection extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => AppointmentScreen(deviceId: 1),
+                      builder: (_) => AppointmentScreen(deviceId: 5),
                     ),
                   );
                 },
@@ -136,7 +152,7 @@ class ServicesSection extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => AppointmentScreen(deviceId: 2),
+                      builder: (_) => AppointmentScreen(deviceId: 6),
                     ),
                   );
                 },
@@ -150,7 +166,7 @@ class ServicesSection extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => AppointmentScreen(deviceId: 3),
+                      builder: (_) => AppointmentScreen(deviceId: 13),
                     ),
                   );
                 },
@@ -187,6 +203,13 @@ class _AppointmentSectionState extends State<AppointmentSection> {
     final data = await api.getData(url: ApiLink.myAppointments, token: token);
 
     return (data as List).map((e) => MyAppointmentModel.fromJson(e)).toList();
+  }
+
+  // ✨ دالة جديدة لتحديث المواعيد
+  void refreshAppointments() {
+    setState(() {
+      _appointmentsFuture = fetchUserAppointments();
+    });
   }
 
   Future<void> deleteAppointment(int id) async {

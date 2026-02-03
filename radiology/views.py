@@ -107,7 +107,7 @@ class GetAvailableAppointmentsView(APIView):
         device = get_object_or_404(Device, id=device_id)
 
         # توليد المواعيد تلقائيًا
-        generate_device_appointments(device, datetime.now().date())
+        generate_device_appointments(device, datetime.now().date(), days=7)
 
         appointments = Appointment.objects.filter(
             device=device,

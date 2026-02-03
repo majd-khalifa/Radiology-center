@@ -55,149 +55,151 @@ class _PatientDetailsStep2State extends State<PatientDetailsStep2> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Backgroundimage(
-        child: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: Column(
-              children: [
-                CustomAppBar(title: "PatientDetails"),
-                SizedBox(height: 24.h),
+      body: SingleChildScrollView(
+        child: Backgroundimage(
+          child: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.w),
+              child: Column(
+                children: [
+                  CustomAppBar(title: "PatientDetails"),
+                  SizedBox(height: 24.h),
 
-                /// Step indicator
-                Container(
-                  height: 38.h,
-                  width: 1.sw,
-                  decoration: BoxDecoration(
-                    color: AppColor.white,
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 14.w),
-                    child: Row(
-                      children: [
-                        Text(
-                          "Step 2/2",
-                          style: AppTextStyles.textStyle14.copyWith(
-                            color: AppColor.black,
+                  /// Step indicator
+                  Container(
+                    height: 38.h,
+                    width: 1.sw,
+                    decoration: BoxDecoration(
+                      color: AppColor.white,
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 14.w),
+                      child: Row(
+                        children: [
+                          Text(
+                            "Step 2/2",
+                            style: AppTextStyles.textStyle14.copyWith(
+                              color: AppColor.black,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 15),
-                        const Expanded(child: CustomProgressBar(progress: 1)),
-                      ],
+                          const SizedBox(width: 15),
+                          const Expanded(child: CustomProgressBar(progress: 1)),
+                        ],
+                      ),
                     ),
                   ),
-                ),
 
-                SizedBox(height: 24.h),
-                const CustomText(text: "Profile Image"),
-                SizedBox(height: 8.h),
+                  SizedBox(height: 24.h),
+                  const CustomText(text: "Profile Image"),
+                  SizedBox(height: 8.h),
 
-                Center(
-                  child: GestureDetector(
-                    onTap: pickImage,
-                    child: CircleAvatar(
-                      radius: 48.r,
-                      backgroundColor: AppColor.grey.withOpacity(0.2),
-                      backgroundImage: selectedImage != null
-                          ? FileImage(selectedImage!)
-                          : widget.profile.profileImageUrl != null
-                          ? NetworkImage(widget.profile.profileImageUrl!)
-                                as ImageProvider
-                          : null,
-                      child:
-                          selectedImage == null &&
-                              widget.profile.profileImageUrl == null
-                          ? Icon(
-                              Icons.camera_alt,
-                              size: 28.sp,
-                              color: AppColor.grey,
-                            )
-                          : null,
+                  Center(
+                    child: GestureDetector(
+                      onTap: pickImage,
+                      child: CircleAvatar(
+                        radius: 48.r,
+                        backgroundColor: AppColor.grey.withOpacity(0.2),
+                        backgroundImage: selectedImage != null
+                            ? FileImage(selectedImage!)
+                            : widget.profile.profileImageUrl != null
+                            ? NetworkImage(widget.profile.profileImageUrl!)
+                                  as ImageProvider
+                            : null,
+                        child:
+                            selectedImage == null &&
+                                widget.profile.profileImageUrl == null
+                            ? Icon(
+                                Icons.camera_alt,
+                                size: 28.sp,
+                                color: AppColor.grey,
+                              )
+                            : null,
+                      ),
                     ),
                   ),
-                ),
 
-                SizedBox(height: 20.h),
+                  SizedBox(height: 20.h),
 
-                /// Card
-                Container(
-                  width: 1.sw,
-                  decoration: BoxDecoration(
-                    color: AppColor.white,
-                    borderRadius: BorderRadius.circular(12.r),
-                  ),
-                  child: SingleChildScrollView(
-                    child: Form(
-                      key: _formKey,
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      child: Padding(
-                        padding: EdgeInsets.all(16.w),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const CustomText(text: "Location"),
-                            SizedBox(height: 8.h),
-                            Mytextfield(
-                              text: "Damascus, Syria",
-                              controller: locationController,
-                              validator: (String? p1) {
-                                return null;
-                              },
-                            ),
+                  /// Card
+                  Container(
+                    width: 1.sw,
+                    decoration: BoxDecoration(
+                      color: AppColor.white,
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    child: SingleChildScrollView(
+                      child: Form(
+                        key: _formKey,
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        child: Padding(
+                          padding: EdgeInsets.all(16.w),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const CustomText(text: "Location"),
+                              SizedBox(height: 8.h),
+                              Mytextfield(
+                                text: "Damascus, Syria",
+                                controller: locationController,
+                                validator: (String? p1) {
+                                  return null;
+                                },
+                              ),
 
-                            SizedBox(height: 20.h),
+                              SizedBox(height: 20.h),
 
-                            const CustomText(text: "Medical Description"),
-                            SizedBox(height: 8.h),
-                            Mytextfield(
-                              text: "Patient suffers from back pain",
-                              controller: descriptionController,
-                              validator: (String? p1) {
-                                return null;
-                              },
-                            ),
-                          ],
+                              const CustomText(text: "Medical Description"),
+                              SizedBox(height: 8.h),
+                              Mytextfield(
+                                text: "Patient suffers from back pain",
+                                controller: descriptionController,
+                                validator: (String? p1) {
+                                  return null;
+                                },
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
 
-                SizedBox(height: 32.h),
+                  SizedBox(height: 32.h),
 
-                /// Continue button
-                GreenButton(
-                  widget: Text(
-                    "Continue",
-                    style: AppTextStyles.textStyle18.copyWith(
-                      color: AppColor.white,
+                  /// Continue button
+                  GreenButton(
+                    widget: Text(
+                      "Continue",
+                      style: AppTextStyles.textStyle18.copyWith(
+                        color: AppColor.white,
+                      ),
                     ),
+                    onPressed: () async {
+                      if (!_formKey.currentState!.validate()) return;
+
+                      widget.profile.description = descriptionController.text;
+                      widget.profile.location = locationController.text;
+
+                      try {
+                        await api.createOrUpdateProfileMultipart(
+                          profile: widget.profile,
+                          token: ConstantData.tokenValue, // نفس التوكن
+                        );
+
+                        SnackBarHelper.showSuccess(
+                          context,
+                          "Profile completed successfully",
+                        );
+
+                        Navigator.pushReplacementNamed(context, AppRoute.home);
+                      } catch (e) {
+                        SnackBarHelper.showError(context, e.toString());
+                      }
+                    },
                   ),
-                  onPressed: () async {
-                    if (!_formKey.currentState!.validate()) return;
-
-                    widget.profile.description = descriptionController.text;
-                    widget.profile.location = locationController.text;
-
-                    try {
-                      await api.createOrUpdateProfileMultipart(
-                        profile: widget.profile,
-                        token: ConstantData.tokenValue, // نفس التوكن
-                      );
-
-                      SnackBarHelper.showSuccess(
-                        context,
-                        "Profile completed successfully",
-                      );
-
-                      Navigator.pushReplacementNamed(context, AppRoute.home);
-                    } catch (e) {
-                      SnackBarHelper.showError(context, e.toString());
-                    }
-                  },
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),

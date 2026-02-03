@@ -7,7 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart' show kIsWeb;
 
 class CxrApiService {
-  static const String _baseUrl = 'http://192.168.1.5:8000';
+  static const String _baseUrl = 'http://192.168.1.8:8000';
 
   static Future<Map<String, dynamic>> analyzeXray(dynamic imageSource) async {
     var uri = Uri.parse('$_baseUrl/analyze-xray');

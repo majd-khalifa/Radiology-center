@@ -30,28 +30,38 @@ def login_view(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    user = authenticate(
-        username=email,
-        password=password
-    )
-
-    if not user:
+    try:
+        user_obj = User.objects.get(email=email)
+    except User.DoesNotExist:
         return Response(
             {"message": "Invalid email or password"},
             status=status.HTTP_401_UNAUTHORIZED
         )
 
-    # إعادة إنشاء التوكن
-    Token.objects.filter(user=user).delete()
-    token = Token.objects.create(user=user)
+    if not user_obj.check_password(password):
+        return Response(
+            {"message": "Invalid email or password"},
+            status=status.HTTP_401_UNAUTHORIZED
+        )
+
+    if not user_obj.is_active:
+        return Response(
+            {"message": "User account is inactive"},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    Token.objects.filter(user=user_obj).delete()
+    token = Token.objects.create(user=user_obj)
 
     return Response({
         "message": "Login successfully",
         "data": {
-            "user": UserSerializer(user).data,
+            "user": UserSerializer(user_obj).data,
             "token": token.key
         }
     }, status=status.HTTP_200_OK)
+
+
 
 
 # ===========================

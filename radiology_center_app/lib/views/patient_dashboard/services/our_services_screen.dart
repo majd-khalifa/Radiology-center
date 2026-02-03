@@ -1,4 +1,4 @@
-// ignore_for_file: deprecated_member_use
+// ignore_for_file: deprecated_member_use, use_build_context_synchronously
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -14,7 +14,6 @@ class OurServicesScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF3FFF8),
-
       body: SafeArea(
         child: Column(
           children: [
@@ -28,19 +27,19 @@ class OurServicesScreen extends StatelessWidget {
                     context,
                     title: "X-Ray",
                     iconPath: 'assets/icons/skeleton.svg',
-                    deviceId: 1,
+                    deviceId: 5,
                   ),
                   _serviceItem(
                     context,
                     title: "MRI",
                     iconPath: 'assets/icons/mri.svg',
-                    deviceId: 3,
+                    deviceId: 13,
                   ),
                   _serviceItem(
                     context,
                     title: "Ultrasound",
                     iconPath: 'assets/icons/ultrasound.svg',
-                    deviceId: 2,
+                    deviceId: 6,
                   ),
                 ],
               ),
@@ -58,13 +57,19 @@ class OurServicesScreen extends StatelessWidget {
     required int deviceId,
   }) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        final result = await Navigator.push(
           context,
           MaterialPageRoute(
             builder: (_) => AppointmentScreen(deviceId: deviceId),
           ),
         );
+
+        if (result == true) {
+          // لما يرجع true من AppointmentScreen → نعمل تحديث للهوم
+          // نرجع لصفحة الهوم ونستدعي refreshAppointments إذا موجودة
+          Navigator.pop(context, true);
+        }
       },
       child: Container(
         margin: const EdgeInsets.only(bottom: 16),
@@ -82,7 +87,6 @@ class OurServicesScreen extends StatelessWidget {
         ),
         child: Row(
           children: [
-            // نفس الأيقونات المستخدمة في HomeBody
             SvgPicture.asset(
               iconPath,
               width: 40,
@@ -92,9 +96,7 @@ class OurServicesScreen extends StatelessWidget {
                 BlendMode.srcIn,
               ),
             ),
-
             const SizedBox(width: 16),
-
             Text(
               title,
               style: AppTextStyles.textStyle18.copyWith(

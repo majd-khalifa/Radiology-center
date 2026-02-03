@@ -114,6 +114,7 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
       );
 
       if (response != null && response['message'] != null) {
+        // عرض رسالة نجاح
         SnackBarHelper.showSuccess(context, response['message']);
 
         setState(() {
@@ -121,6 +122,9 @@ class _AppointmentScreenState extends State<AppointmentScreen> {
           afternoonSlots.remove(selectedSlot);
           selectedSlot = null;
         });
+
+        // رجّع قيمة true للـ HomePage حتى يعمل تحديث
+        Navigator.pop(context, true);
       }
     } catch (e) {
       SnackBarHelper.showError(context, "Failed to book appointment");

@@ -1,7 +1,7 @@
 // ignore_for_file: unnecessary_brace_in_string_interps
 
 class ApiLink {
-  static const String baseUrl = "http://10.0.2.2:8000";
+  static const String baseUrl = "http://192.168.1.8:8000";
 
   // ==================================================
   // =================== Auth =========================
